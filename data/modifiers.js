@@ -148,14 +148,18 @@ const modifierData = {
     },
     Disloyal: {
       internal: ["Disloyal"],
-      description:
+      description: [
         "If this player visits a player of the same alignment, their actions will be blocked.",
+        "Does not affect Mafia/Cult meetings.",
+      ],
       incompatible: ["Loyal"],
     },
     Loyal: {
       internal: ["Loyal"],
-      description:
+      description: [
         "If this player visits a player of the opposite alignment, their actions will be blocked.",
+        "Does not affect Mafia/Cult meetings.",
+      ],
       incompatible: ["Disloyal"],
     },
     Hemophilic: {
