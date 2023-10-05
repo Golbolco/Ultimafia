@@ -431,6 +431,16 @@ const roleData = {
       ],
       graveyardParticipation: "all",
     },
+    Exorcist: {
+      alignment: "Village",
+      newlyAdded: true,
+      description: [
+        "Visits a dead player during the night once per game.",
+        "That player will be permanently removed from the game and cannot speak or take actions while dead.",
+        "That player cannot be resurrected.",
+      ],
+      graveyardParticipation: "all",
+    },
     Trickster: {
       alignment: "Village",
       recentlyUpdated: true,
@@ -1005,6 +1015,16 @@ const roleData = {
         "Visits a dead player during the night once per game.",
         "That player will be resurrected the following day.",
         "If player's role identity was revealed upon death, they will remain revealed when resurrected.",
+      ],
+      graveyardParticipation: "all",
+    },
+    Ghostbuster: {
+      alignment: "Mafia",
+      newlyAdded: true,
+      description: [
+        "Visits a dead player during the night once per game.",
+        "That player will be permanently removed from the game and cannot speak or take actions while dead.",
+        "That player cannot be resurrected.",
       ],
       graveyardParticipation: "all",
     },
