@@ -363,6 +363,7 @@ const modifierData = {
   "Secret Dictator": {},
   "Secret Hitler": {},
   "Wacky Words": {},
+  "Card Fishing": {},
 };
 
 module.exports = modifierData;

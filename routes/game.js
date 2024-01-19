@@ -894,6 +894,10 @@ const settingsChecks = {
       roundAmt,
     };
   },
+  "Card Fishing": (settings, setup) => {
+    // return {};
+    return "Card Fishing is currently not available.";
+  },
 };
 
 module.exports = router;
