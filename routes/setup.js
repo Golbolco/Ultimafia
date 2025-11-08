@@ -1238,6 +1238,18 @@ const countChecks = {
 
     return true;
   },
+  Ironclad: (roles, count, total, closed, unique) => {
+    if (total < 2) return "Must have at least 2 players.";
+
+    const ironcladMaxPlayers = 4;
+    if (total > ironcladMaxPlayers)
+      return `Must have at most ${ironcladMaxPlayers} players.`;
+
+    if ((count["Navy"] || 0) < 1)
+      return "Must include at least one Admiral-aligned player.";
+
+    return true;
+  },
 };
 
 const optionsChecks = {
@@ -1296,6 +1308,38 @@ const optionsChecks = {
   },
   "Connect Four": (setup) => {
     return setup;
+  },
+  Ironclad: (setup) => {
+    const boardSize = Number(setup.boardSize);
+    if (Number.isNaN(boardSize) || boardSize < 6 || boardSize > 20) {
+      return "Board size must be between 6 and 20.";
+    }
+
+    let segments = setup.shipLayout;
+    if (Array.isArray(segments)) {
+      segments = segments
+        .map((value) => parseInt(value))
+        .filter((value) => Number.isInteger(value) && value > 0);
+    } else {
+      const rawLayout = String(segments || setup.shipLayout || "");
+      segments = rawLayout
+        .split(/[,\s]+/)
+        .map((value) => parseInt(value))
+        .filter((value) => Number.isInteger(value) && value > 0);
+    }
+
+    if (!segments.length) {
+      return "Ship layout must include at least one positive integer length.";
+    }
+
+    if (segments.length > 10) {
+      return "Ship layout may include at most 10 ships.";
+    }
+
+    return {
+      boardSize,
+      shipLayout: segments,
+    };
   },
 };
 

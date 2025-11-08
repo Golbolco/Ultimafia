@@ -25,6 +25,7 @@ import CreateCheatSetup from "./CreateCheatSetup";
 import CreateBattlesnakesSetup from "./CreateBattlesnakesSetup";
 import CreateDiceWarsSetup from "./CreateDiceWarsSetup";
 import CreateConnectFourSetup from "./CreateConnectFourSetup";
+import CreateIroncladSetup from "./CreateIroncladSetup";
 
 import { GameTypes } from "Constants";
 import GameIcon from "components/GameIcon";
@@ -82,6 +83,8 @@ export default function CreateSetup(props) {
         return <CreateDiceWarsSetup />;
       case "Connect Four":
         return <CreateConnectFourSetup />;
+      case "Ironclad":
+        return <CreateIroncladSetup />;
       default:
         setGameType(defaultGameType);
         return null;

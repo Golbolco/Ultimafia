@@ -1301,6 +1301,7 @@ const modifierData = {
   Battlesnakes: {},
   "Connect Four": {},
   "Dice Wars": {},
+  Ironclad: {},
 };
 
 module.exports = modifierData;

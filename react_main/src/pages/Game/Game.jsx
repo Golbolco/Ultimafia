@@ -34,6 +34,7 @@ import CheatGame from "./CheatGame";
 import BattlesnakesGame from "./BattlesnakesGame";
 import DiceWarsGame from "./DiceWarsGame";
 import ConnectFourGame from "./ConnectFourGame";
+import IroncladGame from "./IroncladGame";
 import { GameContext, SiteInfoContext, UserContext } from "Contexts";
 import Dropdown from "../../components/Dropdown";
 import Setup from "../../components/Setup";
@@ -885,6 +886,7 @@ export default function Game() {
               <DiceWarsGame />
             )}
             {gameType === "Connect Four" && <ConnectFourGame />}
+            {gameType === "Ironclad" && <IroncladGame />}
           </Box>
         </Stack>
         <LeaveGameDialog

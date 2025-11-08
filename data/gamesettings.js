@@ -277,6 +277,24 @@ const gameSettingData = {
       requires: ["Whispers"],
     },
   },
+  Ironclad: {
+    Whispers: {
+      category: "Standard",
+      internal: ["Whispers"],
+      tags: ["Speaking", "Chat"],
+      description:
+        "Allow Admirals to discreetly coordinate using whispers during placement.",
+    },
+    "Whisper Leak Chance": {
+      category: "Standard",
+      internal: ["Whispers"],
+      tags: ["Speaking", "Chat"],
+      description:
+        "Whispers will have 1% chance to leak (stackable). If a whisper leaks then everyone will see it.",
+      allowDuplicate: true,
+      requires: ["Whispers"],
+    },
+  },
 };
 
 module.exports = gameSettingData;

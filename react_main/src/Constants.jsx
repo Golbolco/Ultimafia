@@ -11,6 +11,7 @@ export const GameTypes = [
   "Battlesnakes",
   "Connect Four",
   "Dice Wars",
+  "Ironclad",
 ];
 export const Lobbies = [
   "Main",
@@ -34,6 +35,7 @@ export const Alignments = {
   Battlesnakes: ["Town", "Host"],
   "Connect Four": ["Town"],
   "Dice Wars": ["Military", "Host"],
+  Ironclad: ["Navy", "Host"],
 };
 
 export const GameStates = {
@@ -55,6 +57,7 @@ export const GameStates = {
   Battlesnakes: ["Day"],
   "Connect Four": ["Turn"],
   "Dice Wars": ["Play"],
+  Ironclad: ["Placement", "Battle"],
 };
 
 export const RatingThresholds = {

@@ -34,6 +34,7 @@ import HostCheat from "./gameTypeHostForms/HostCheat";
 import HostBattlesnakes from "./gameTypeHostForms/HostBattlesnakes";
 import HostDiceWars from "./gameTypeHostForms/HostDiceWars";
 import HostConnectFour from "./gameTypeHostForms/HostConnectFour";
+import HostIronclad from "./gameTypeHostForms/HostIronclad";
 import { useIsPhoneDevice } from "hooks/useIsPhoneDevice";
 import { getSetupBackgroundColor } from "pages/Play/LobbyBrowser/gameRowColors";
 
@@ -71,6 +72,8 @@ export default function HostGameDialogue({ open, setOpen, setup }) {
         return HostDiceWars();
       case "Connect Four":
         return HostConnectFour();
+      case "Ironclad":
+        return HostIronclad();
     }
 
     // Fail fast

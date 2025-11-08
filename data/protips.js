@@ -59,6 +59,10 @@ const protips = {
     "Look for opportunities to attack weaker neighboring territories.",
     "Remember that attacking increases your dice count, so plan your moves accordingly.",
   ],
+  Ironclad: [
+    "Drop your longest hulls early to claim safe columns.",
+    "Check your dice odds before firing. Adjacent armor can block a weak salvo.",
+  ],
 };
 
 module.exports = protips;

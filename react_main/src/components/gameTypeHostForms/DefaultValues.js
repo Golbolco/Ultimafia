@@ -17,6 +17,7 @@ const HOST_OPTIONS_VERSIONS = {
   "Wacky Words": 1,
   Cheat: 1,
   "Connect Four": 1,
+  Ironclad: 1,
 };
 
 // Associate all of the existing saved options per game type into a map
@@ -109,6 +110,13 @@ var defaultOptions = {
     boardX: 5,
     boardY: 5,
     turnLength: 1,
+  },
+  Ironclad: existingHostOptions["Ironclad"] || {
+    ...commonHostOptions,
+    boardSize: 10,
+    shipLayout: "5,4,3,3,2",
+    placementLength: 5,
+    battleLength: 20,
   },
   Resistance: existingHostOptions["Resistance"] || {
     ...commonHostOptions,

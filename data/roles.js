@@ -6372,6 +6372,22 @@ const roleData = {
       description: ["Can place counters on the board."],
     },
   },
+  Ironclad: {
+    Admiral: {
+      alignment: "Navy",
+      tags: ["Command"],
+      description: [
+        "Alternates ship placement using gravity-assisted drops.",
+        "Commands a fleet across twin battle grids.",
+        "Rolls attack dice to break through armored hulls.",
+      ],
+    },
+    Host: {
+      alignment: "Host",
+      tags: ["None"],
+      description: ["Facilitates the game."],
+    },
+  },
 };
 
 module.exports = roleData;
