@@ -549,6 +549,7 @@ export function useModCommands(argValues, commandRan, setResults) {
           .catch(errorAlert);
       },
     },
+<<<<<<< HEAD
     "Get IP Addresses": {
       perm: "viewIPs",
       category: "User Management",
@@ -590,6 +591,8 @@ export function useModCommands(argValues, commandRan, setResults) {
           .catch(errorAlert);
       },
     },
+=======
+>>>>>>> 126af9c9314f6fb7625a455fb31562be7c42fbe8
     "Clear Setup Name": {
       perm: "clearSetupName",
       category: "Setup Management",
