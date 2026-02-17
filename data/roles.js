@@ -1,4 +1,4 @@
-const itemData = require("./items");
+  const itemData = require("./items");
 const {
   // WINCHECK PRIORITY
   PRIORITY_WIN_CHECK_DEFAULT,
@@ -247,7 +247,7 @@ const roleData = {
     Celebrity: {
       alignment: "Village",
       category: "Basic",
-      tags: ["Exposed", "Basic"],
+      tags: ["Revealing", "Basic"],
       description: ["You are revealed to all players."],
       skins: [
         {
@@ -294,7 +294,6 @@ const roleData = {
       description: [
         "Each night, you will announce who visits you.",
         "Each night, you will announce any system messages you received.",
-        //"When visited, will announce the name of their visitors.",
         `You start the game "Leaky".`,
         leakyDef,
       ],
@@ -330,7 +329,7 @@ const roleData = {
     "Party Host": {
       alignment: "Village",
       category: "Basic",
-      tags: ["Meetings", "Basic"],
+      tags: ["Meetings", "Basic", "Day Actions"],
       description: [
         "Once per game during the day, you can choose to host a party at night.",
         "During a party all players can chat.",
@@ -372,7 +371,7 @@ const roleData = {
     Bawd: {
       alignment: "Village",
       category: "Protective",
-      tags: ["Protective", "Delirium", "Visiting", "Advanced"],
+      tags: ["Protective", "Delirium", "Visiting", "Advanced", "Effects"],
       description: [
         "Each night, you can choose to visit two players and protect them from death.",
         `One of the players you protect will become “Delirious” until the next night.`,
@@ -385,7 +384,7 @@ const roleData = {
     Bodyguard: {
       alignment: "Village",
       category: "Protective",
-      tags: ["Protective", "Killing", "Self Kill", "Visiting", "Basic"],
+      tags: ["Protective", "Killing", "Self Kill", "Visiting", "Basic", "Kill Interaction"],
       description: [
         "Each night, you can choose to visit one player and protect them from death.",
         "If a player you protect is attacked, you will kill one attacker and die.",
@@ -423,7 +422,7 @@ const roleData = {
     Soprano: {
       alignment: "Village",
       category: "Protective",
-      tags: ["Protective", "Visiting", "Basic", "Killing"],
+      tags: ["Protective", "Visiting", "Death Interaction", "Basic", "Killing"],
       description: [
         "Each night, you can choose to visit one player and protect them from death.",
         "If you die, the player you most recently protected will also die.",
@@ -453,7 +452,7 @@ const roleData = {
     Nurse: {
       alignment: "Village",
       category: "Protective",
-      tags: ["Malicious Effects", "Visiting", "Basic"],
+      tags: ["Effect Interaction", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and remove any malicious effects they have.",
         MalEffects,
@@ -477,7 +476,7 @@ const roleData = {
     Shrink: {
       alignment: "Village",
       category: "Protective",
-      tags: ["Protective", "Conversion", "Visiting", "Basic"],
+      tags: ["Conversion Interaction", "Conversion", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and prevent them from being converted to another role.",
         "If you visit a Hostile Independent, the Hostile Independent will be converted to Villager.",
@@ -488,7 +487,7 @@ const roleData = {
     Surgeon: {
       alignment: "Village",
       category: "Protective",
-      tags: ["Protective", "Killing", "Kill Interaction", "Visiting", "Basic"],
+      tags: ["Protective", "Killing", "Kill Interaction", "Conversion Interaction", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and protect them from death.",
         "If a player you protect is attacked, you will kill one attacker.",
@@ -501,7 +500,7 @@ const roleData = {
     "Tea Lady": {
       alignment: "Village",
       category: "Protective",
-      tags: ["Protective", "Neighbors", "Position", "Advanced"],
+      tags: ["Protective", "Position", "Advanced"],
       description: [
         "If both of your neighbors are not Evil, they cannot die.",
       ],
@@ -566,7 +565,7 @@ const roleData = {
         "Killing",
         "Visiting",
         "Day Actions",
-        "Malicious Effects",
+        "Effects",
         "Advanced",
       ],
       description: [
@@ -618,7 +617,7 @@ const roleData = {
         "Killing",
         "Items",
         "Gun",
-        "Reflexive",
+        "Visit Interaction",
         "Visiting",
         "Day Actions",
         "Advanced",
@@ -639,7 +638,7 @@ const roleData = {
         "Items",
         "Crystal Ball",
         "Visiting",
-        "Kill Interaction",
+        "Death Interaction",
         "Advanced",
       ],
       description: [
@@ -679,7 +678,7 @@ const roleData = {
     Knight: {
       alignment: "Village",
       category: "Gifting",
-      tags: ["Redirection", "Items", "Shield", "Visiting", "Advanced"],
+      tags: ["Redirection", "Items", "Shield", "Kill Interaction", "Visiting", "Advanced"],
       description: [
         `Each night, you can choose to visit one player and give them a Shield.`,
         shieldDef,
@@ -699,7 +698,7 @@ const roleData = {
     Missionary: {
       alignment: "Village",
       category: "Gifting",
-      tags: ["Items", "Tract", "Protective", "Visiting", "Basic"],
+      tags: ["Items", "Tract", "Conversion Interaction", "Visiting", "Basic"],
       description: [
         `Each night, you can choose to visit one player and give them a Tract.`,
         tractDef,
@@ -748,7 +747,6 @@ const roleData = {
       alignment: "Village",
       category: "Gifting",
       tags: [
-        "Killing",
         "Items",
         "Banished Interaction",
         "Visiting",
@@ -770,7 +768,7 @@ const roleData = {
         "Alignments",
         "Visiting",
         "Information",
-        "Self Blocking",
+        "Visit Interaction",
         "Day Actions",
         "Revive",
         "Advanced",
@@ -790,7 +788,7 @@ const roleData = {
     Trucker: {
       alignment: "Village",
       category: "Gifting",
-      tags: ["Items", "Visiting", "Basic"],
+      tags: ["Items", "Modifier Interaction", "Visiting", "Basic"],
       description: [
         "You will not start with any items.",
         `Each night, you can choose to visit one player and give them any items you would have started with.`,
@@ -801,7 +799,7 @@ const roleData = {
     Analyst: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Guess", "Speaking", "Advanced"],
+      tags: ["Information", "Guess", "Speech", "Advanced"],
       description: [
         'On your first day, you can make up to five guesses in chat following this structure: "I will analyze if (Player Name) is (Role Name)".',
         //'On their 1st day if an Analyst makes a guess in chat following this structure "I will analyze if (Player Name) is (Role Name)".',
@@ -818,7 +816,7 @@ const roleData = {
     Accountant: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Neighbors", "Position", "Advanced"],
+      tags: ["Information", "Position", "Advanced"],
       description: [
         "On your first night, you learn how many instances of two evil players neighboring each other there are.",
         //"On Night 1 learns how many pairs of Evil players there are.",
@@ -867,7 +865,6 @@ const roleData = {
       category: "Investigative",
       tags: [
         "Information",
-        "Visits",
         "Reports",
         "Visiting",
         "Visit Interaction",
@@ -887,7 +884,7 @@ const roleData = {
     Cop: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Alignment", "Visiting", "Basic"],
+      tags: ["Information", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and learn if they are guilty or innocent.",
         //"Investigates one player each night and learns their alignment.",
@@ -907,7 +904,7 @@ const roleData = {
     Sleuth: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Alignment", "Visiting", "Basic"],
+      tags: ["Information", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and learn their alignment.",
       ],
@@ -916,7 +913,7 @@ const roleData = {
     Coroner: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Roles", "Visiting", "Dead", "Basic"],
+      tags: ["Information", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one dead player and learn their role.",
         //"Chooses to visit a dead player at night and learns their role identity.",
@@ -926,7 +923,7 @@ const roleData = {
     Detective: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Roles", "Visiting", "Basic"],
+      tags: ["Information", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and learn their role.",
         //"Investigates one player each night and learns their role.",
@@ -936,7 +933,7 @@ const roleData = {
     Profiler: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Modifiers", "Visiting", "Basic"],
+      tags: ["Information", "Modifier Interaction", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and learn what modifiers are on their role.",
       ],
@@ -945,7 +942,7 @@ const roleData = {
     Empath: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Alignment", "Neighbors", "Basic"],
+      tags: ["Information", "Position", "Basic"],
       description: [
         //"Each night, can choose to visit one dead player and learn their role.",
         "Each night, you learn how many of your neighbors are evil.",
@@ -1024,7 +1021,7 @@ const roleData = {
     Diviner: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Roles", "Alignment", "Visiting", "Basic"],
+      tags: ["Information","Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and learn two roles, one of which is their role.",
         "The two roles will always be from opposite alignments.",
@@ -1050,7 +1047,7 @@ const roleData = {
     Justice: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Alignment", "Visiting", "Basic"],
+      tags: ["Information", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit two players and learn if they are the same alignment.",
         //"Investigates two players at night and learns if they share an alignment.",
@@ -1060,7 +1057,7 @@ const roleData = {
     Laundress: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Roles", "Basic"],
+      tags: ["Information", "Basic"],
       description: [
         "On your first night, you learn that 1 of 2 players is a particular role.",
       ],
@@ -1078,7 +1075,7 @@ const roleData = {
     },
     Maestro: {
       alignment: "Village",
-      tags: ["Information", "Alignment", "Basic"],
+      tags: ["Information", "Basic"],
       description: [
         "On your first night, you learn about 3 players. 1 will be Evil, 2 will be good.",
       ],
@@ -1087,7 +1084,7 @@ const roleData = {
     "Fortune Teller": {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Alignment", "Visiting", "Basic"],
+      tags: ["Information", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit two players and learn if one of them is Mafia or Demonic.",
         //"Investigates two players at night and learns if one of them is Mafia or Demonic.",
@@ -1100,8 +1097,8 @@ const roleData = {
       tags: [
         "Information",
         "Roles",
-        "Neighbors",
-        "Visits",
+        "Position",
+        "Visit Interaction",
         "Guess",
         "Day Actions",
         "Advanced",
@@ -1113,7 +1110,7 @@ const roleData = {
     Tourist: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Excess Roles", "Advanced"],
+      tags: ["Information", "Excess Role Interaction", "Advanced"],
       description: [
         "Each night, you can choose to reveal 1-3 Excess roles to all players.",
       ],
@@ -1134,7 +1131,7 @@ const roleData = {
     Manhunter: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Roles", "Visiting", "Guess", "Basic"],
+      tags: ["Information", "Visiting", "Guess", "Basic"],
       description: [
         "Each night, you choose a role.",
         "Each night, you can choose to visit one player and learn if their role is the selected role.",
@@ -1145,18 +1142,16 @@ const roleData = {
     Pathologist: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Reports", "Dead", "Visiting", "Basic"],
+      tags: ["Information", "Reports", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one dead player and learn all system messages they ever received.",
-        //"Each night, visits one dead player.",
-        //"Will receive all system messages the player ever received.",
       ],
       nightOrder: [["Learn Reports", PRIORITY_INVESTIGATIVE_DEFAULT]],
     },
     Psychic: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Roles", "Excess Roles", "Basic"],
+      tags: ["Information", "Excess Role Interaction", "Basic"],
       description: [
         "Each night, you can choose to learn a random player's role or two excess roles.",
       ],
@@ -1167,10 +1162,9 @@ const roleData = {
     Clairvoyant: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Roles", "Basic", "Visiting"],
+      tags: ["Information", "Basic", "Visiting"],
       description: [
         "Each night, you can choose to visit one player and learn two roles that are not their role.",
-        // "Visits one player each night and learns two roles that are not that player's role.",
       ],
       nightOrder: [["Learn Not Roles", PRIORITY_INVESTIGATIVE_DEFAULT]],
     },
@@ -1179,11 +1173,8 @@ const roleData = {
       category: "Investigative",
       tags: [
         "Information",
-        "Alignment",
-        "Roles",
-        "Neighbors",
         "Position",
-        "Excess Roles",
+        "Excess Role Interaction",
         "Item Interaction",
         "Visit Interaction",
         "Day Actions",
@@ -1199,7 +1190,6 @@ const roleData = {
       tags: ["Information", "Item Interaction", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and learn what items they are holding.",
-        //"Visits a player each night and learns what items they are carrying.",
       ],
       nightOrder: [["Snoop Items", PRIORITY_INVESTIGATIVE_DEFAULT]],
     },
@@ -1235,7 +1225,7 @@ const roleData = {
     Witness: {
       alignment: "Village",
       category: "Investigative",
-      tags: ["Information", "Visiting", "Basic"],
+      tags: ["Information", "Visiting", "Basic", "Kill Interaction"],
       description: [
         "Each night, you can choose to visit one player.",
         "If that player dies, you will learn that the killer is 1 of 2 players.",
@@ -1288,8 +1278,6 @@ const roleData = {
       ],
       description: [
         "Each night, you can choose to visit one player and if they didn't visit anybody, have them learn 3 players, at least one of whom is Evil.",
-        //"Each night, sings a carol to a player about 3 players, at least one of whom is Evil.",
-        //"The carol is not heard if the player chosen visits at night.",
         "You cannot choose to visit the same player consecutively.",
       ],
       nightOrder: [
@@ -1308,8 +1296,6 @@ const roleData = {
       ],
       description: [
         "Each night, you can choose to visit one player and if they didn't visit anybody, have them learn 3 roles and a player who is one of the roles.",
-        //"Each night, tells a joke to a player about 3 roles, and a different player who is one of the roles.",
-        //"The joke is not heard if the target chosen visits at night.",
         "You cannot choose to visit the same player consecutively.",
       ],
       nightOrder: [
@@ -1319,7 +1305,7 @@ const roleData = {
     Exorcist: {
       alignment: "Village",
       category: "Night-acting",
-      tags: ["Dead", "Graveyard", "Exorcise", "Visiting", "Advanced"],
+      tags: ["Graveyard", "Exorcise", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit one dead player and exorcise them.",
         "Exorcised players can't be revived or use graveyard abilities.",
@@ -1331,7 +1317,7 @@ const roleData = {
     Flapper: {
       alignment: "Village",
       category: "Night-acting",
-      tags: ["Delirium", "Roles", "Advanced"],
+      tags: ["Delirium", "Roles", "Advanced", "Effects"],
       description: [
         "Once per game at night, you can choose a role.",
         `Any players with the selected role will become "Delirious" for 3 Nights and 3 Days.`,
@@ -1345,11 +1331,9 @@ const roleData = {
     Drunk: {
       alignment: "Village",
       category: "Night-acting",
-      tags: ["Role Blocker", "Visiting", "Basic"],
+      tags: ["Blocking", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and block their night actions.",
-        //"Visits one player each night and blocks them from performing any night actions.",
-        //"Some actions cannot be blocked.",
       ],
       nightOrder: [["Block", PRIORITY_NIGHT_ROLE_BLOCKER]],
     },
@@ -1358,14 +1342,12 @@ const roleData = {
       category: "Night-acting",
       tags: [
         "Delirium",
-        "Kill Interaction",
-        "Condemn Interaction",
+        "Self Protection",
         "Visiting",
         "Advanced",
+        "Effects",
       ],
       description: [
-        //"Visits one player each night and makes them Delirious until the start of the next night.",
-        //"Delirious players get False Info and have other abilities disabled.",
         "You cannot die.",
         `Each night, you can choose to visit one player and make them "Delirious" until the next night.`,
         deliriumDef,
@@ -1375,7 +1357,7 @@ const roleData = {
     "Snake Charmer": {
       alignment: "Village",
       category: "Night-acting",
-      tags: ["Conversion", "Role Swapping", "Visiting", "Advanced"],
+      tags: ["Conversion", "Alignment Changing", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit one player and swap roles with them.",
         //"Each night, chooses a player to swap roles with.",
@@ -1386,7 +1368,7 @@ const roleData = {
     Mediator: {
       alignment: "Village",
       category: "Night-acting",
-      tags: ["Conversion", "Role Swapping", "Visiting", "Advanced"],
+      tags: ["Conversion", "Alignment Changing", "Visiting", "Advanced"],
       description: [
         `Each night, you can choose to visit two players and make them swap roles.`,
         //"Each night chooses 2 players.",
@@ -1397,10 +1379,9 @@ const roleData = {
     Guard: {
       alignment: "Village",
       category: "Night-acting",
-      tags: ["Visit Interaction", "Role Blocker", "Visiting", "Basic"],
+      tags: ["Visit Interaction", "Blocking", "Visiting", "Basic"],
       description: [
         `Each night, you can choose to visit one player and block the night actions of each player who visit them.`,
-        //"Each night, protects one player from all visits."
       ],
       nightOrder: [["Block Visitors", PRIORITY_UNTARGETABLE]],
     },
@@ -1437,7 +1418,7 @@ const roleData = {
     "Lunch Lady": {
       alignment: "Village",
       category: "Night-acting",
-      tags: ["Modifiers", "Conversion", "Visiting", "Advanced"],
+      tags: ["Modifier Interaction", "Conversion", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit one player and remove modifiers from their role.",
       ],
@@ -1446,10 +1427,9 @@ const roleData = {
     Plastician: {
       alignment: "Village",
       category: "Night-acting",
-      tags: ["Modifiers", "Conversion", "Visiting", "Advanced"],
+      tags: ["Modifier Interaction", "Conversion", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit one player and add a random modifier to their role.",
-        //"Each night visits a player and gives them a random Modifier",
         "Cannot add Exclusive, Clannish, Inclusive, or Starting Item modifiers.",
       ],
       nightOrder: [["Add Modifiers", PRIORITY_CONVERT_DEFAULT + 6]],
@@ -1457,7 +1437,7 @@ const roleData = {
     Photographer: {
       alignment: "Village",
       category: "Night-acting",
-      tags: ["Information", "Visiting", "Basic"],
+      tags: ["Information", "Visiting", "Basic", "Revealing"],
       description: [
         "Each night, you can choose to visit one player and reveal their role to all players.",
         //"Each Night the Photographer can take a picture of a player during the night.",
@@ -1495,14 +1475,13 @@ const roleData = {
       tags: [
         "Revealing",
         "Information",
-        "Kill Interaction",
+        "Death Interaction",
         "Visiting",
         "Basic",
       ],
       description: [
         "Each night, you can choose to visit one player.",
         "If you die, that player's role will be revealed to all players.",
-        //"Visits one player each night whose role will be revealed upon death.",
       ],
       nightOrder: [["Reveal Role", PRIORITY_REVEAL_DEFAULT]],
       skins: [
@@ -1528,7 +1507,6 @@ const roleData = {
       ],
       description: [
         "Each night, you can choose to visit one player and tell them a secret.",
-        //"Each night, waddles up to someone to tell them a secret.",
         "The secret will be about Visits, Visitors, or Items.",
       ],
       nightOrder: [["Tell Secret", PRIORITY_INVESTIGATIVE_DEFAULT]],
@@ -1587,7 +1565,7 @@ const roleData = {
       alignment: "Village",
       category: "Sacrificial",
       tags: [
-        "Kill Interaction",
+        "Death Interaction",
         "Items",
         "Conversion",
         "Role Swapping",
@@ -1603,7 +1581,7 @@ const roleData = {
     Butterfly: {
       alignment: "Village",
       category: "Sacrificial",
-      tags: ["Kill Interaction", "Conversion", "Advanced"],
+      tags: ["Death Interaction", "Conversion", "Conversion Interaction", "Advanced"],
       description: [
         "If you die, all players are converted to the role they had at the start of the game.",
         //"When they die all players are reset to the role they had at the start of the game.",
@@ -1630,7 +1608,7 @@ const roleData = {
     Lightkeeper: {
       alignment: "Village",
       category: "Sacrificial",
-      tags: ["Kill Interaction", "Voting", "Speaking", "Eclipse", "Basic"],
+      tags: ["Death Interaction", "Voting", "Speech","Effects", "Eclipse", "Basic"],
       description: [
         `If you die, all players will be "Blind" during the following Day.`,
         blindDef,
@@ -1641,7 +1619,7 @@ const roleData = {
     Schoolmarm: {
       alignment: "Village",
       category: "Sacrificial",
-      tags: ["Kill Interaction", "Conversion", "Villager", "Basic"],
+      tags: ["Death Interaction", "Conversion", "Villager", "Basic"],
       description: [
         "If you die, all Village-aligned players will be converted to Villager.",
       ],
@@ -1658,7 +1636,7 @@ const roleData = {
     Sheep: {
       alignment: "Village",
       category: "Sacrificial",
-      tags: ["Kill Interaction", "Setup Changes", "Self Kill", "Basic"],
+      tags: ["Death Interaction", "Setup Changes", "Self Kill", "Basic"],
       description: [
         "If you die, all other Sheep die.",
         "Adds 1 Sheep in closed setups.",
@@ -1686,7 +1664,7 @@ const roleData = {
     Typist: {
       alignment: "Village",
       category: "Sacrificial",
-      tags: ["Kill Interaction", "Voting", "Basic"],
+      tags: ["Death Interaction", "Voting", "Effects", "Basic"],
       description: [
         `If you die, all players will be "Purblind" during the following Day.`,
         purblindDef,
@@ -1697,7 +1675,7 @@ const roleData = {
     Virgin: {
       alignment: "Village",
       category: "Sacrificial",
-      tags: ["Condemn Interaction", "Protective", "Conversion", "Basic"],
+      tags: ["Condemn Interaction", "Protective", "Basic"],
       description: [
         "If you are condemned, no one can die the following night.",
         //"If condemned by the village, no one will die the following night.",
@@ -1712,7 +1690,7 @@ const roleData = {
     Mooncalf: {
       alignment: "Village",
       category: "Sacrificial",
-      tags: ["Killing", "Advanced"],
+      tags: ["Killing", "Advanced", "Day Actions", "Graveyard"],
       description: [
         "Once per game during the day when dead, you must choose a player.",
         //"After dying chooses a player.",
@@ -1770,7 +1748,6 @@ const roleData = {
         `Each night, you can choose to visit one player and give them a Sceptre.`,
         //"Gives out a sceptre each night.",
         sceptreDef,
-        //"Sceptres give a player +10000 votes in day meeting.",
       ],
       nightOrder: [["Give Sceptre", PRIORITY_ITEM_GIVER_DEFAULT]],
     },
@@ -1780,12 +1757,13 @@ const roleData = {
       tags: ["Voting", "Advanced"],
       description: [
         "All votes for whoever you are voting for do not count.",
+        "If less then 4 players are able to vote, you have no ability.",
       ],
     },
     Magistrate: {
       alignment: "Village",
       category: "Voting",
-      tags: ["Voting", "Condemn Interaction", "Visiting", "Expert"],
+      tags: ["Voting", "Visiting", "Expert"],
       description: [
         `Each night, you can choose to visit one player and prevent them from voting and from being voted.`,
         //"Every night, chooses one player and prevents them from voting and from being voted.",
@@ -1900,7 +1878,7 @@ const roleData = {
     },
     Ogre: {
       alignment: "Village",
-      tags: ["Condemn Interaction", "Sacrificial", "Advanced"],
+      tags: ["Condemn Interaction", "Sacrificial", "Advanced", "Day Actions"],
       description: [
         "Each day, one Evil player will given a chance to guess who you are.",
         "If you are correctly guessed, the day ends and you are condemned.",
@@ -1911,7 +1889,7 @@ const roleData = {
     Braggart: {
       alignment: "Village",
       category: "Manipulative",
-      tags: ["Delirium", "Banished", "Advanced", "Item Interaction"],
+      tags: ["Delirium", "Banished", "Advanced", "Item Interaction", "Unaware"],
       description: [
         "You sees self as a random non-Banished Village role from the setup.",
         `You have that role's abilities but you are "Delirious".`,
@@ -1927,17 +1905,16 @@ const roleData = {
     Coward: {
       alignment: "Village",
       category: "Manipulative",
-      tags: ["Redirection", "Reflexive", "Visiting", "Basic"],
+      tags: ["Redirection", "Visit Interaction", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and redirect anyone who visits you to that player.",
-        //"Anyone who visits the Coward will be redirect to the chosen player.",
       ],
       nightOrder: [["Redirect Visitors", PRIORITY_MODIFY_ACTION]],
     },
     Chauffeur: {
       alignment: "Village",
       category: "Manipulative",
-      tags: ["Redirection", "Visiting", "Advanced"],
+      tags: ["Redirection", "Visiting", "Visit Interaction", "Advanced"],
       description: [
         "Each night, you can choose to visit two players and swap their visitors.",
         //"Chooses two players, A and B, each night.",
@@ -1950,7 +1927,7 @@ const roleData = {
     Televangelist: {
       alignment: "Village",
       category: "Manipulative",
-      tags: ["Setup Changes", "Delirium", "Cult", "Advanced"],
+      tags: ["Meetings", "Advanced"],
       description: [
         "You sees self as a random Demonic Cult role from the setup.",
         "You can use fake versions of that role's abilities.",
@@ -1972,7 +1949,7 @@ const roleData = {
     Philosopher: {
       alignment: "Village",
       category: "Manipulative",
-      tags: ["Conversion", "Delirium", "Advanced"],
+      tags: ["Conversion", "Delirium", "Advanced","Effects"],
       description: [
         "Once per game at night, you can choose Village-aligned role from the setup.",
         "You will be converted to the chosen role.",
@@ -2020,7 +1997,7 @@ const roleData = {
     Capybara: {
       alignment: "Village",
       category: "Meeting",
-      tags: ["Meetings", "Orange", "Items", "Visiting", "Advanced"],
+      tags: ["Meetings", "Meeting Interaction", "Orange", "Items", "Visiting", "Advanced", "Day Actions"],
       description: [
         "You meets with other Capybaras at night.",
         "Each night, you can choose to visit one player and give them an Orange.",
@@ -2033,7 +2010,7 @@ const roleData = {
     Chef: {
       alignment: "Village",
       category: "Meeting",
-      tags: ["Meetings", "Information", "Basic"],
+      tags: ["Meetings", "Meeting Interaction", "Information", "Basic", "Day Actions"],
       description: [
         "Each day, you can choose two players and have them attend a banquet at night together.",
         "When attending a banquet they will learn each other's roles and cannot perform night actions.",
@@ -2085,7 +2062,7 @@ const roleData = {
     "Invisible Man": {
       alignment: "Village",
       category: "Meeting",
-      tags: ["Meetings", "Basic", "Day Actions"],
+      tags: ["Meeting Interaction", "Basic", "Day Actions"],
       description: [
         "Each day, you can choose one player and observe any night chats they are in.",
         //"Chooses one player during the day to follow at night.",
@@ -2095,7 +2072,7 @@ const roleData = {
     Matron: {
       alignment: "Village",
       category: "Meeting",
-      tags: ["Meetings", "Reflexive", "Basic"],
+      tags: ["Meetings", "Visit Interaction", "Basic"],
       description: [
         `Each night, each player who visits you will be invited to the common room.`,
         "Players invited to the common will meet with you the following night.",
@@ -2108,7 +2085,7 @@ const roleData = {
       category: "Meeting",
       tags: ["Meetings", "Setup Changes", "Basic"],
       description: [
-        "You meets with other Templars at night.",
+        "You meet with other Templars at night.",
         "Adds 1 Templar in closed setups.",
       ],
       SpecialInteractions: {
@@ -2118,8 +2095,7 @@ const roleData = {
     //reflexive roles
     Apothecary: {
       alignment: "Village",
-      category: "Reflexive",
-      tags: ["Reflexive", "Malicious Effects", "Role Share", "Advanced"],
+      tags: ["Visit Interaction", "Effect Interaction", "Role Share", "Advanced"],
       description: [
         "Each night, each player who visits you will have any malicious effects they have removed and will be protected from death.",
         //"When visited, heals and cleanses all effects currently possessed by the visiting player.",
@@ -2134,8 +2110,7 @@ const roleData = {
     },
     Dreamer: {
       alignment: "Village",
-      category: "Reflexive",
-      tags: ["Reflexive", "Information", "Alignment", "Basic"],
+      tags: ["Visit Interaction", "Information", "Alignment", "Basic"],
       description: [
         "Each night, if no one visits you, you will learn about 3 players, at least one of whom is Evil; or 1 player who is Village aligned.",
         //"Dreams about 3 players, at least one of whom is Evil; or about 1 player who is Village aligned.",
@@ -2147,8 +2122,7 @@ const roleData = {
     },
     Farmer: {
       alignment: "Village",
-      category: "Reflexive",
-      tags: ["Reflexive", "Famine", "Items", "Advanced"],
+      tags: ["Visit Interaction", "Famine", "Items", "Advanced"],
       description: [
         `Each night, each player who visits you will be given Bread.`,
         breadDef,
@@ -2159,11 +2133,9 @@ const roleData = {
     },
     Painter: {
       alignment: "Village",
-      category: "Reflexive",
       tags: [
-        "Reflexive",
         "Information",
-        "Kill Interaction",
+        "Death Interaction",
         "Basic",
         "Visit Interaction",
       ],
@@ -2185,8 +2157,7 @@ const roleData = {
     },
     Priest: {
       alignment: "Village",
-      category: "Reflexive",
-      tags: ["Reflexive", "Information", "Roles", "Visit Interaction", "Basic"],
+      tags: ["Information", "Roles", "Visit Interaction", "Basic"],
       description: ["Each night, you learn what roles visited you."],
       nightOrder: [["Learn Role Visitors", PRIORITY_INVESTIGATIVE_DEFAULT]],
     },
@@ -2205,7 +2176,7 @@ const roleData = {
     Firebrand: {
       alignment: "Village",
       category: "Killing",
-      tags: ["Killing", "Gasoline", "Visiting", "Day Actions", "Advanced"],
+      tags: ["Killing", "Gasoline", "Visiting", "Day Actions", "Advanced", "Effects"],
       description: [
         `Each night, you can choose to visit one player and make them "Doused".`,
         //"Douses one player with Gasoline each night.",
@@ -2218,12 +2189,12 @@ const roleData = {
     Granny: {
       alignment: "Village",
       category: "Killing",
-      tags: ["Killing", "Reflexive", "Advanced"],
+      tags: ["Killing", "Visit Interaction", "Advanced"],
       description: [
         "Each night, each player who visits you will be killed.",
         //"Kills all players who visit during the night.",
         "You cannot be converted.",
-        "You can only be killed by village condemnation.",
+        "You can only be killed by condemn.",
       ],
       nightOrder: [["Kill Visitors", PRIORITY_KILL_DEFAULT]],
       skins: [
@@ -2242,8 +2213,9 @@ const roleData = {
       category: "Killing",
       tags: [
         "Killing",
-        "Meeting",
-        "Role Blocker",
+        "Meetings",
+        "Meeting Interaction",
+        "Blocking",
         "Condemn Interaction",
         "Dusk",
         "Advanced",
@@ -2289,7 +2261,6 @@ const roleData = {
       tags: ["Killing", "Visit Interaction", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit one player and kill one player who visits them.",
-        //"Each night, visits one player and kills one of their visitors.",
         "Preferentially kills Mafia, Cult, Independents, then Villagers.",
         "Other players who visit the chosen player will learn that you are a Trapper.",
       ],
@@ -2308,7 +2279,7 @@ const roleData = {
     Agent: {
       alignment: "Village",
       category: "Speaking",
-      tags: ["Speaking", "Roles", "Basic"],
+      tags: ["Speech", "Basic"],
       description: [
         "You can anonymously contact any non-Village role during the day.",
       ],
@@ -2316,7 +2287,7 @@ const roleData = {
     Medium: {
       alignment: "Village",
       category: "Speaking",
-      tags: ["Speaking", "Dead", "Graveyard", "Basic"],
+      tags: ["Meetings", "Graveyard", "Basic", "Day Actions"],
       description: [
         "Each day, you can choose a dead player.",
         "You will meet anonymously with the chosen player at night.",
@@ -2338,7 +2309,7 @@ const roleData = {
     Mourner: {
       alignment: "Village",
       category: "Speaking",
-      tags: ["Speaking", "Dead", "Graveyard", "Basic"],
+      tags: ["Graveyard", "Basic", "Day Actions"],
       description: [
         "Each day, you can ask a question.",
         //"Can ask players in the graveyard a question every night.",
@@ -2351,7 +2322,7 @@ const roleData = {
     "Town Crier": {
       alignment: "Village",
       category: "Speaking",
-      tags: ["Speaking", "Basic"],
+      tags: ["Speech", "Basic"],
       description: ["You can anonymously broadcast messages during the day."],
     },
     //essential roles
@@ -2359,7 +2330,7 @@ const roleData = {
       alignment: "Village",
       tags: [
         "Setup Changes",
-        "Exposed",
+        "Revealing",
         "Treasure Chest",
         "Voting",
         "Advanced",
@@ -2382,7 +2353,7 @@ const roleData = {
     Benandante: {
       alignment: "Village",
       category: "Essential",
-      tags: ["Essential", "Graveyard", "Alignment", "Sacrificial", "Advanced"],
+      tags: ["Essential", "Graveyard", "Alignment", "Sacrificial", "Advanced", "Day Actions"],
       description: [
         "Once per game during the day when dead, you must choose a player.",
         "If that player is not village aligned, all Village-aligned players die.",
@@ -2429,7 +2400,7 @@ const roleData = {
     President: {
       alignment: "Village",
       category: "Essential",
-      tags: ["Essential", "Selective Revealing", "Exposed", "Advanced"],
+      tags: ["Essential", "Advanced"],
       description: [
         "All village aligned players will know that you are the President.",
         "If you die, the Mafia/Cult will win.",
@@ -2456,7 +2427,6 @@ const roleData = {
       category: "Essential",
       tags: [
         "Essential",
-        "Selective Revealing",
         "Information",
         "Condemn",
         "Dusk",
@@ -2464,10 +2434,10 @@ const roleData = {
         "Win Con",
       ],
       description: [
-        "You knows which players are Mafia and Cult.",
+        "You know which players are Mafia and Cult.",
         "When condemned, Mafia and Cult have a chance to guess who you are.",
         "On a correct guess, you die and the Mafia or Cult wins.",
-        "You appears as Villager on death.",
+        "You appear as Villager when killed.",
       ],
       SpecialInteractions: {
         Ghost: ["If a Ghost is Present, a Seer will not learn any words."],
@@ -2476,7 +2446,7 @@ const roleData = {
     Mole: {
       alignment: "Village",
       category: "Essential",
-      tags: ["Expert", "Meeting", "Win Con"],
+      tags: ["Expert", "Meeting Interaction", "Win Con"],
       description: [
         "You are assigned a Mafia or Cult role in addition to the Mole role",
         "You will appear as that role and have that role's abilities but will still win with Village.",
@@ -2526,7 +2496,7 @@ const roleData = {
     Begum: {
       alignment: "Village",
       category: "Linked",
-      tags: ["Information", "Visits", "Basic", "Day Actions"],
+      tags: ["Information", "Visit Interaction", "Basic", "Day Actions"],
       description: [
         "You are randomly assigned another player as a target.",
         "Each night, you learn who your target visits and is visited by.",
@@ -2538,7 +2508,7 @@ const roleData = {
     Mistress: {
       alignment: "Village",
       category: "Linked",
-      tags: ["Information", "Alignment", "Advanced"],
+      tags: ["Information", "Advanced", "Day Actions"],
       description: [
         "Each day, you can choose to open the door.",
         "When you open the door all players will learn that a Mistress opened the door.",
@@ -2550,7 +2520,7 @@ const roleData = {
     "Trick-Or-Treater": {
       alignment: "Village",
       category: "Linked",
-      tags: ["Information", "Visit Interaction", "Advanced"],
+      tags: ["Information", "Position", "Visit Interaction", "Advanced", "Day Actions"],
       description: [
         "Each day, you can choose to go trick or treating.",
         "All evils players will learn if you go trick or treating.",
@@ -2563,7 +2533,7 @@ const roleData = {
     Suitress: {
       alignment: "Village",
       category: "Linked",
-      tags: ["Revealing", "Information", "Basic"],
+      tags: ["Revealing", "Information", "Basic", "Day Actions"],
       description: [
         "Each day, you can choose one player and propose to them.",
         "That player has to publicly accept or deny the proposal.",
@@ -2623,11 +2593,9 @@ const roleData = {
     Gramps: {
       alignment: "Mafia",
       category: "Basic",
-      tags: ["Basic", "Information", "Visits", "Roles", "Reflexive"],
+      tags: ["Basic", "Information", "Visit Interaction", "Roles"],
       description: [
         "Each night, you learn the role of each player who visits you.",
-        //"Learns role of any player who visits them.",
-        // "Cannot be killed normally.",
       ],
       nightOrder: [["Learn Visitors", PRIORITY_INVESTIGATIVE_DEFAULT]],
     },
@@ -2652,7 +2620,7 @@ const roleData = {
     Arsonist: {
       alignment: "Mafia",
       category: "Killing",
-      tags: ["Killing", "Gasoline", "Visiting", "Day Actions", "Basic"],
+      tags: ["Killing", "Gasoline", "Visiting", "Day Actions", "Basic", "Effects"],
       description: [
         `Each night, you can choose to visit one player and make them "Doused".`,
         `Once per game during the day, you can choose to kill all players that are "Doused".`,
@@ -2680,7 +2648,7 @@ const roleData = {
     },
     Dentist: {
       alignment: "Mafia",
-      tags: ["Killing", "Visits", "Visiting", "Basic"],
+      tags: ["Killing", "Visit Interaction", "Visiting", "Basic", "Effects"],
       description: [
         `Each night, you can choose to visit one player and make them "Woozy".`,
         woozyDef,
@@ -2710,7 +2678,7 @@ const roleData = {
     Jinx: {
       alignment: "Mafia",
       category: "Killing",
-      tags: ["Killing", "Word Kill", "Visiting", "Speaking", "Basic"],
+      tags: ["Killing", "Word Kill", "Visiting", "Speech", "Basic", "Effects"],
       description: [
         "Each night, you can choose a word.",
         `Each night, you can choose to visit one player and "Jinx" them with the chosen word for the following day.`,
@@ -2723,7 +2691,7 @@ const roleData = {
     Poisoner: {
       alignment: "Mafia",
       category: "Killing",
-      tags: ["Killing", "Poison", "Malicious Effects", "Visiting", "Basic"],
+      tags: ["Killing", "Poison", "Effects", "Visiting", "Basic", "Effects"],
       description: [
         `Each night, you can choose to visit one player and "Poison" them`,
         poisonDef,
@@ -2753,10 +2721,7 @@ const roleData = {
       ],
       description: [
         "Each night, you can choose to visit one player and kill one player who visits them.",
-        //"Preferentially kills Mafia, Cult, Independents, then Villagers.",
         "Other players who visit the chosen player will learn that you are a Rottweiler.",
-        //"Each night, visits one player and kills one of their visitors.",
-        //"Other visitors will learn the identity of the Rottweiler.",
       ],
       nightOrder: [["Trap", PRIORITY_KILL_DEFAULT]],
     },
@@ -2783,8 +2748,6 @@ const roleData = {
       description: [
         "Each night, you can choose to visit one player and learn their role.",
         "You will appear as that player's role when you die and to information roles.",
-        //"Visits a player to appears as their role.",
-        //"Learns chosen player's role.",
       ],
       nightOrder: [
         [
@@ -2871,7 +2834,7 @@ const roleData = {
     Wrangler: {
       alignment: "Mafia",
       category: "Investigative",
-      tags: ["Information", "Roles", "Visiting", "Basic"],
+      tags: ["Information", "Visiting", "Basic", "Revealing"],
       description: [
         "Each night, you can choose to visit one player.",
         "If that player is the first to speak or vote the following day, that player's role is revealed to the Mafia.",
@@ -2882,7 +2845,7 @@ const roleData = {
     //unsorted
     Hooker: {
       alignment: "Mafia",
-      tags: ["Role Blocker", "Visiting", "Basic"],
+      tags: ["Blocking", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and block their night actions.",
       ],
@@ -2905,7 +2868,7 @@ const roleData = {
     Pimp: {
       alignment: "Mafia",
       category: "Manipulative",
-      tags: ["Manipulative", "Delirium", "Visiting", "Advanced"],
+      tags: ["Manipulative", "Delirium", "Visiting", "Advanced", "Effects"],
       description: [
         `Each night, you can choose to visit one player and make them "Delirious" until the next night.`,
         deliriumDef,
@@ -2924,7 +2887,7 @@ const roleData = {
     },
     Driver: {
       alignment: "Mafia",
-      tags: ["Redirection", "Visiting", "Advanced"],
+      tags: ["Redirection", "Visit Interaction", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit two players and swap their visitors.",
         "Players who visit first player will be redirected to second player.",
@@ -2937,7 +2900,7 @@ const roleData = {
     },
     Gondolier: {
       alignment: "Mafia",
-      tags: ["Redirection", "Control", "Visiting", "Advanced"],
+      tags: ["Redirection", "Visit Interaction", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit one player.",
         "Each night, you can choose to redirect that player's visits on to another player. (Not a visit)",
@@ -2946,7 +2909,7 @@ const roleData = {
     },
     Snitch: {
       alignment: "Mafia",
-      tags: ["Redirection", "Visiting", "Advanced"],
+      tags: ["Redirection", "Visit Interaction", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit two players and redirect anyone who visits the first player to the second player.",
         //"Chooses one player every night to snitch on.",
@@ -2976,7 +2939,7 @@ const roleData = {
     },
     Vizier: {
       alignment: "Mafia",
-      tags: ["Garbage", "Voting", "Items", "Advanced"],
+      tags: ["Garbage", "Voting", "Items", "Advanced", "Day Actions"],
       description: [
         "While alive, the Mafia's kill is replaced with a Coronation meeting.",
         "One player is picked to be King for the next day. Their vote is worth 10000 votes.",
@@ -2987,7 +2950,7 @@ const roleData = {
     },
     Santista: {
       alignment: "Mafia",
-      tags: ["Meeting", "Advanced"],
+      tags: ["Meetings", "Advanced"],
       description: [
         "While you are alive, the Mafia gain a day meeting.",
       ],
@@ -3017,7 +2980,7 @@ const roleData = {
     },
     Disguiser: {
       alignment: "Mafia",
-      tags: ["Speaking", "Disguise", "Expert"],
+      tags: ["Speech", "Disguise", "Expert", "Kill Interaction"],
       description: [
         "Each night, you can choose to steal the identity of the player the Mafia kills.",
         //"Chooses to steal the identity of the Mafia kill each night.",
@@ -3027,7 +2990,7 @@ const roleData = {
     },
     Janitor: {
       alignment: "Mafia",
-      tags: ["Clean", "Information", "Roles", "Basic"],
+      tags: ["Clean", "Information", "Roles", "Basic", "Kill Interaction"],
       description: [
         "Once per game at night, you can choose to hide and learn the role of the player killed by the Mafia.",
         //"Chooses to clean a mafia kill once per game.",
@@ -3057,7 +3020,7 @@ const roleData = {
       alignment: "Mafia",
       recentlyAdded: true,
       category: "Night-acting",
-      tags: ["Dead", "Graveyard", "Exorcise", "Visiting", "Advanced"],
+      tags: ["Graveyard", "Exorcise", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit one dead player and exorcise them.",
         "Exorcised players can't be revived or use graveyard abilities.",
@@ -3066,7 +3029,7 @@ const roleData = {
     },
     Strongman: {
       alignment: "Mafia",
-      tags: ["Kill Interaction", "Support", "Unstoppable", "Advanced"],
+      tags: ["Kill Interaction", "Protection Interaction", "Advanced"],
       description: [
         "Once per game at night, you can choose to make the mafia kill ignore protection and blocking.",
       ],
@@ -3084,7 +3047,7 @@ const roleData = {
     },
     Spy: {
       alignment: "Mafia",
-      tags: ["Speaking", "Roles", "Advanced"],
+      tags: ["Speech", "Roles", "Advanced"],
       description: ["You can anonymously contact any role during the day."],
     },
     Gunrunner: {
@@ -3093,10 +3056,11 @@ const roleData = {
         "Killing",
         "Items",
         "Gun",
-        "Tommy Gun",
+        "Gun Interaction",
         "Visiting",
         "Alignment",
         "Advanced",
+        "Day Actions",
       ],
       description: [
         `Each night, you can choose to visit one player and give them a Gun.`,
@@ -3128,7 +3092,7 @@ const roleData = {
     },
     Saboteur: {
       alignment: "Mafia",
-      tags: ["Broken", "Items", "Visiting", "Advanced"],
+      tags: ["Broken", "Item Interaction", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit one player and break any items they are holding.",
         "Broken Guns, Rifles, Knives, and Whiskey, will backfire against the player who used them.",
@@ -3142,7 +3106,7 @@ const roleData = {
     },
     Heartbreaker: {
       alignment: "Mafia",
-      tags: ["Linked", "Lover", "Visiting", "Advanced"],
+      tags: ["Linked", "Lover", "Visiting", "Advanced", "Effects"],
       description: [
         `Once per game at night, you can choose to visit one player and makes that player "Lovesick" for the Heartbreaker.`,
         lovesickDef,
@@ -3177,7 +3141,7 @@ const roleData = {
     },
     Graverobber: {
       alignment: "Mafia",
-      tags: ["Revive", "Protective", "Graveyard", "Visiting", "Basic"],
+      tags: ["Revive", "Graveyard", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one dead player and revive them.",
       ],
@@ -3199,7 +3163,7 @@ const roleData = {
     },
     Librarian: {
       alignment: "Mafia",
-      tags: ["Speech", "Whispers", "Silence", "Basic"],
+      tags: ["Speech", "Whispers", "Silence", "Basic", "Effects"],
       description: [
         `Once per game at night, you can make all players "Muffled" for the following day.`,
         muffledDef,
@@ -3209,7 +3173,7 @@ const roleData = {
     },
     Dilettante: {
       alignment: "Mafia",
-      tags: ["Speech", "Whispers", "Silence", "Advanced", "Speaking"],
+      tags: ["Speech", "Whispers", "Silence", "Advanced", "Effects"],
       description: [
         "Your vote weight is worth 0 votes",
         "Each Night, you can choose a 4-20 letter phrase.",
@@ -3226,10 +3190,10 @@ const roleData = {
       alignment: "Mafia",
       tags: [
         "Killing",
-        "Reflexive",
+        "Visit Interaction",
         "Knife",
         "Items",
-        "Malicious Effects",
+        "Effects",
         "Advanced",
       ],
       description: [
@@ -3241,7 +3205,7 @@ const roleData = {
     },
     Scrutineer: {
       alignment: "Mafia",
-      tags: ["Killing", "Voting", "Vote Kills", "Visiting", "Advanced"],
+      tags: ["Killing", "Voting", "Vote Kills", "Visiting", "Advanced", "Effects"],
       description: [
         `Each night, you can choose to visit two players and make first player have "Cold Feet" towards the second player.`,
         coldfeetDef,
@@ -3261,7 +3225,7 @@ const roleData = {
     },
     Thief: {
       alignment: "Mafia",
-      tags: ["Items", "Night-Acting", "Visiting", "Advanced"],
+      tags: ["Item Interaction", "Night-Acting", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit one player and steal an item from them.",
       ],
@@ -3282,7 +3246,7 @@ const roleData = {
     },
     Crank: {
       alignment: "Mafia",
-      tags: ["Meeting", "Dead", "Graveyard", "Basic"],
+      tags: ["Meetings", "Graveyard", "Basic", "Day Actions"],
       description: [
         "Each day, you can choose a dead player.",
         "You will meet anonymously with the chosen player at night.",
@@ -3292,10 +3256,11 @@ const roleData = {
     Interrogator: {
       alignment: "Mafia",
       tags: [
-        "Meeting",
+        "Meetings",
+        "Meeting Interaction",
         "Killing",
         "Condemn Interaction",
-        "Role Blocker",
+        "Blocking",
         "Dusk",
         "Advanced",
       ],
@@ -3366,7 +3331,7 @@ const roleData = {
     Associate: {
       alignment: "Mafia",
       category: "Manipulative",
-      tags: ["Manipulative", "Conversion", "Delirium", "Advanced"],
+      tags: ["Conversion", "Delirium", "Advanced", "Meeting Interaction", "Effects"],
       description: [
         "Once per game at night, you can choose Mafia-aligned role from the setup.",
         "You will be converted to the chosen role.",
@@ -3406,7 +3371,7 @@ const roleData = {
     },
     Ventriloquist: {
       alignment: "Mafia",
-      tags: ["Speaking", "Deception", "Expert"],
+      tags: ["Speech", "Deception", "Expert"],
       description: [
         "You can speak as any player during the day.",
         "Players you speak as won't be able to see messages said and quoted via this ability.",
@@ -3414,7 +3379,7 @@ const roleData = {
     },
     Fiddler: {
       alignment: "Mafia",
-      tags: ["Speech", "Deafen", "Visiting", "Basic"],
+      tags: ["Speech", "Deafen", "Visiting", "Basic", "Effects"],
       description: [
         `Each night, you can choose to visit one player and make them "Deaf" for the following day`,
         deafDef,
@@ -3423,7 +3388,7 @@ const roleData = {
     },
     Silencer: {
       alignment: "Mafia",
-      tags: ["Speech", "Silence", "Visiting", "Basic"],
+      tags: ["Speech", "Silence", "Visiting", "Basic", "Effects"],
       description: [
         `Each night, you can choose to visit one player and make them "Silent" for the following day`,
         silentDef,
@@ -3432,7 +3397,7 @@ const roleData = {
     },
     Scrambler: {
       alignment: "Mafia",
-      tags: ["Speech", "Clueless", "Random Messages", "Visiting", "Basic"],
+      tags: ["Speech", "Clueless", "RNG", "Visiting", "Basic", "Effects"],
       description: [
         //"Scrambles a player each night, causing them to see messages from random players the next day.",
         `Each night, you can choose to visit one player and make them "Clueless" for the following day`,
@@ -3450,14 +3415,14 @@ const roleData = {
     },
     Fed: {
       alignment: "Mafia",
-      tags: ["Condemn", "Voting", "Advanced"],
+      tags: ["Voting", "Advanced"],
       description: [
         "Votes for you will not count unless every Village-aligned player is voting for you.",
       ],
     },
     Rainmaker: {
       alignment: "Mafia",
-      tags: ["Voting", "Meeting", "Condemn", "Basic"],
+      tags: ["Voting", "Basic"],
       description: [
         "Once a game at night, you can choose to force all players to vote for no one the next day.",
       ],
@@ -3488,7 +3453,7 @@ const roleData = {
     },
     Toreador: {
       alignment: "Mafia",
-      tags: ["Manipulative", "Redirection", "Control", "Visiting", "Basic"],
+      tags: ["Redirection", "Visit Interaction", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and redirect them to you.",
       ],
@@ -3496,7 +3461,7 @@ const roleData = {
     },
     Blinder: {
       alignment: "Mafia",
-      tags: ["Speech", "Blind", "Visiting", "Basic"],
+      tags: ["Speech", "Blind", "Visiting", "Basic", "Effects"],
       description: [
         `Each night, you can choose to visit one player and make them "Blind" for the following day`,
         blindDef,
@@ -3513,7 +3478,7 @@ const roleData = {
     },
     Homeopath: {
       alignment: "Mafia",
-      tags: ["Malicious Effects", "Visiting", "Advanced"],
+      tags: ["Effect Interaction", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit one player and remove any malicious effects they have.",
         MalEffects,
@@ -3525,8 +3490,7 @@ const roleData = {
     },
     Dealer: {
       alignment: "Mafia",
-      category: "Reflexive",
-      tags: ["Reflexive", "Malicious Effects", "Role Share", "Advanced"],
+      tags: ["Visit Interaction", "Effect Interaction", "Role Share", "Advanced"],
       description: [
         "Each night, each player who visits you will have any malicious effects they have removed and will be protected from death.",
         "Players who Role Share with you will have any malicious effects they have removed.",
@@ -3549,8 +3513,7 @@ const roleData = {
     Enforcer: {
       alignment: "Mafia",
       tags: [
-        "Convert Saver",
-        "Protective",
+        "Conversion Interaction",
         "Conversion",
         "Traitor",
         "Visiting",
@@ -3574,8 +3537,7 @@ const roleData = {
     Bouncer: {
       alignment: "Mafia",
       tags: [
-        "Night-acting",
-        "Role Blocker",
+        "Blocking",
         "Visit Interaction",
         "Visiting",
         "Basic",
@@ -3587,7 +3549,7 @@ const roleData = {
     },
     Plumber: {
       alignment: "Mafia",
-      tags: ["Whispers", "Speech", "Visiting", "Basic"],
+      tags: ["Whisper Interaction", "Speech", "Visiting", "Basic", "Effects"],
       description: [
         `Each night, you can choose to visit one player and make them "Sealed" for the following day`,
         sealedDef,
@@ -3596,7 +3558,7 @@ const roleData = {
     },
     Gossiper: {
       alignment: "Mafia",
-      tags: ["Whispers", "Speech", "Visiting", "Basic"],
+      tags: ["Whisper Interaction", "Speech", "Visiting", "Basic", "Effects"],
       description: [
         `Each night, you can choose to visit one player and make them "Leaky" for the following day`,
         leakyDef,
@@ -3605,7 +3567,7 @@ const roleData = {
     },
     Paralyzer: {
       alignment: "Mafia",
-      tags: ["Voting", "Advanced"],
+      tags: ["Voting", "Advanced", "Day Actions", "Effects"],
       description: [
         `Once per game during the day, you can choose to make all players "Paralyzed" for rest of the day.`,
         paralyzedDef,
@@ -3613,7 +3575,7 @@ const roleData = {
     },
     Electrician: {
       alignment: "Mafia",
-      tags: ["Voting", "Speech", "Eclipse", "Blind", "Basic", "Day Actions"],
+      tags: ["Voting", "Speech", "Eclipse", "Blind", "Basic", "Day Actions", "Effects"],
       description: [
         `Once per game during the day, you can choose to make all players "Blind" for rest of the day.`,
         blindDef,
@@ -3645,7 +3607,7 @@ const roleData = {
     Nun: {
       alignment: "Mafia",
       category: "Night-acting",
-      tags: ["Modifiers", "Conversion", "Visiting", "Advanced"],
+      tags: ["Modifier Interaction", "Conversion", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit one player and remove modifiers from their role.",
       ],
@@ -3654,7 +3616,7 @@ const roleData = {
     Tattooist: {
       alignment: "Mafia",
       category: "Night-acting",
-      tags: ["Modifiers", "Conversion", "Visiting", "Advanced"],
+      tags: ["Modifier Interaction", "Conversion", "Visiting", "Advanced"],
       description: [
         "Each night, you can choose to visit one player and add a random modifier to their role.",
         "You cannot add Exclusive, Clannish, Inclusive, or Starting Item modifiers.",
@@ -3672,7 +3634,7 @@ const roleData = {
     },
     Bartender: {
       alignment: "Mafia",
-      tags: ["Effects", "Alcoholics", "Role Blocker", "Visiting", "Advanced"],
+      tags: ["Effects", "Alcoholics", "Blocking", "Visiting", "Advanced"],
       description: [
         `Each night, you can choose to visit one player and make them become "Alcoholic"`,
         alcoholicDef,
@@ -3681,7 +3643,7 @@ const roleData = {
     },
     Rat: {
       alignment: "Mafia",
-      tags: ["Manipulative", "Redirection", "Reflexive", "Visiting", "Basic"],
+      tags: ["Redirection", "Visit Interaction", "Visiting", "Basic"],
       description: [
         "Each night, you can choose to visit one player and redirect anyone who visits you to that player.",
       ],
@@ -3689,7 +3651,7 @@ const roleData = {
     },
     Cannoneer: {
       alignment: "Mafia",
-      tags: ["Killing", "Gun", "Items", "Day Actions", "Basic"],
+      tags: ["Killing", "Gun", "Items", "Day Actions", "Basic", "Kill Interaction"],
       description: [
         "You will gain a Gun once per game if Mafia chose to abstain from killing the previous night.",
         "A Gun gained from your ability will always reveal the shooter.",
@@ -3699,7 +3661,7 @@ const roleData = {
     },
     Imposter: {
       alignment: "Mafia",
-      tags: ["Deception", "Night-acting", "Basic"],
+      tags: ["Deception", "Basic"],
       tagsHidden: ["No Investigate"],
       description: [
         "Each night, you can choose a role and you will appear as that role on death and to information roles.",
@@ -3715,7 +3677,7 @@ const roleData = {
     },
     Assassin: {
       alignment: "Mafia",
-      tags: ["Mini-game", "Essential", "Split Decision", "Killing", "Advanced"],
+      tags: ["Mini-Game", "Split Decision", "Killing", "Advanced"],
       description: [
         "All players will be split into two rooms.",
         "During the Day, each room meets and chooses a leader.",
@@ -3760,7 +3722,7 @@ const roleData = {
     },
     Busybody: {
       alignment: "Mafia",
-      tags: ["Mini-game", "Item", "Coffee", "Voting", "Speaking", "Expert"],
+      tags: ["Mini-Game", "Item", "Coffee", "Voting", "Speech", "Expert"],
       description: [
         "Each night, you assign your teammates a task to complete the following day.",
         "Tasks will be related to voting and sending messages.",
@@ -3771,7 +3733,7 @@ const roleData = {
     Prankster: {
       alignment: "Mafia",
       category: "Gaming",
-      tags: ["Voting", "Conversion", "Expert"],
+      tags: ["Voting", "Conversion", "Expert", "Effects"],
       description: ["The first player to vote for you becomes \"Foolish\".",
         foolishDef,
       ],
@@ -3817,7 +3779,7 @@ const roleData = {
       alignment: "Cult",
       category: "Basic",
       tags: ["Vanilla", "Basic"],
-      description: ["Meets with the Cult during the night."],
+      description: ["You win when the Cult has a majority."],
     },
     //Conversions
     "Cult Leader": {
@@ -3825,8 +3787,8 @@ const roleData = {
       category: "Conversion",
       tags: ["Conversion", "Kills Cultist", "Visiting", "Basic"],
       description: [
-        "Each night, can choose to visit one player and convert them to Cultist.",
-        "If the Cult Leader dies, all Cultists die.",
+        "Each night, you can choose to visit one player and convert them to Cultist.",
+        "If you die, all Cultists die.",
       ],
       nightOrder: [["Convert", PRIORITY_CONVERT_DEFAULT]],
       RolesMadeBy: ["Cultist"],
@@ -3834,11 +3796,11 @@ const roleData = {
     Doomsayer: {
       alignment: "Cult",
       category: "Conversion",
-      tags: ["Conversion", "Kills Cultist", "Reflexive", "Role Share", "Basic"],
+      tags: ["Conversion", "Kills Cultist", "Visit Interaction", "Role Sharing", "Basic"],
       description: [
-        "Each night, each player who visits the Doomsayer will be converted to Cultist.",
-        "Players who Role Share with the Doomsayer will be converted to Cultist",
-        "If the Doomsayer dies, all Cultists die.",
+        "Each night, each player who visits you will be converted to Cultist.",
+        "Players who Role Share with you will be converted to Cultist",
+        "If you die, all Cultists die.",
       ],
       nightOrder: [["Convert", PRIORITY_CONVERT_DEFAULT]],
       RolesMadeBy: ["Cultist"],
@@ -3849,7 +3811,7 @@ const roleData = {
       tags: [
         "Conversion",
         "Visiting",
-        "Malicious Effects",
+        "Effects",
         "Advanced",
         "Group Action",
       ],
@@ -3877,10 +3839,10 @@ const roleData = {
     Hexer: {
       alignment: "Cult",
       category: "Conversion",
-      tags: ["Conversion", "Messages", "Visiting", "Advanced"],
+      tags: ["Conversion", "Messages", "Visiting", "Advanced", "Effects"],
       description: [
-        "Each night, can choose a word.",
-        `Each night, can choose to visit one player and "Hex" them with the chosen word for the following day.`,
+        "Each night, you can choose a word.",
+        `Each night, you can choose to visit one player and "Hex" them with the chosen word for the following day.`,
         hexDef,
       ],
       nightOrder: [["Hex", PRIORITY_EFFECT_GIVER_DEFAULT]],
@@ -3889,10 +3851,10 @@ const roleData = {
     Inquisitor: {
       alignment: "Cult",
       category: "Conversion",
-      tags: ["Conversion", "Killing", "Visiting", "Advanced"],
+      tags: ["Conversion", "Killing", "Visiting", "Advanced", "Protection Interaction"],
       description: [
-        "Each night, can choose to visit one player and kill them.",
-        "If that player survives, they will be converted to Cultist.",
+        "Each night, you can choose to visit one player and kill them.",
+        "If a player you attack survives, they will be converted to Cultist.",
       ],
       nightOrder: [["Kill or Convert", PRIORITY_KILL_DEFAULT + 1]],
       RolesMadeBy: ["Cultist"],
@@ -3908,7 +3870,7 @@ const roleData = {
         "Basic",
       ],
       description: [
-        "Each night, can choose to visit one player and convert them to Cultist if their role is Seeker or Hider.",
+        "Each night, you can choose to visit one player and convert them to Cultist if their role is Seeker or Hider.",
         "Forces a Seeker or Hider to Spawn in closed Setups.",
       ],
       nightOrder: [["Guess Hider/Seeker", PRIORITY_CONVERT_DEFAULT]],
@@ -3921,14 +3883,14 @@ const roleData = {
         "Conversion",
         "Kills Cultist",
         "Protective",
-        "Night Saver",
+        "Kill Interaction",
         "Visiting",
         "Advanced",
       ],
       description: [
-        "Each night, can choose to visit one player and protect them from death.",
-        "If the player the Witch Doctor protects is attacked, they will be converted to Cultist.",
-        "All Cultists die if the Witch Doctor dies.",
+        "Each night, you can choose to visit one player and protect them from death.",
+        "If a player you protect is attacked, they will be converted to Cultist.",
+        "If you die, all Cultists die.",
       ],
       nightOrder: [["Convert and Save", PRIORITY_NIGHT_SAVER]],
       RolesMadeBy: ["Cultist"],
@@ -3937,9 +3899,9 @@ const roleData = {
     Diabolist: {
       alignment: "Cult",
       category: "Killing",
-      tags: ["Vote Kills", "Killing", "Voting", "Visiting", "Basic"],
+      tags: ["Vote Kills", "Killing", "Voting", "Visiting", "Basic", "Effects"],
       description: [
-        `Each night, can choose to visit two players and make first player have "Cold Feet" towards the second player.`,
+        `Each night, you can choose to visit two players and make first player have "Cold Feet" towards the second player.`,
         coldfeetDef,
       ],
       nightOrder: [["Curse Player", PRIORITY_EFFECT_GIVER_DEFAULT]],
@@ -3957,11 +3919,11 @@ const roleData = {
     Gorgon: {
       alignment: "Cult",
       category: "Killing",
-      tags: ["Killing", "Reflexive", "Day Actions", "Basic"],
+      tags: ["Killing", "Visit Interaction", "Day Actions", "Basic", "Effects"],
       description: [
-        "Each night, learns how many players visited them.",
-        `Each night, each player who visits the Gorgon will become "Petrified" for the following day.`,
-        `Once per game during the day, can choose to kill all players who are "Petrified".`,
+        "Each night, you learn how many players visited you.",
+        `Each night, each player who visits you will become "Petrified" for the following day.`,
+        `Once per game during the day, you can choose to kill all players who are "Petrified".`,
       ],
       nightOrder: [
         ["Count Visitors", PRIORITY_INVESTIGATIVE_DEFAULT],
@@ -3974,9 +3936,9 @@ const roleData = {
       tags: ["Killing", "Blood", "Extra Lives", "Visiting", "Basic"],
       description: [
         //"Is bloodthirsty.",
-        "Each night, can choose to visit one player and steal 50% of their blood.",
-        "If that player dies from blood loss, the Leech gains an additional 50% of blood.",
-        "Gains an extra life if they have 150% blood.",
+        "Each night, you can choose to visit one player and steal 50% of their blood.",
+        "If a player you steal blood from has 0% blood, they die and you gain an additional 50% of blood.",
+        "You gain an extra life if they have 150% blood.",
       ],
       nightOrder: [["Drain Blood", PRIORITY_KILL_SPECIAL - 4]],
     },
@@ -3985,15 +3947,16 @@ const roleData = {
       category: "Killing",
       tags: [
         "Killing",
-        "Malicious Effects",
-        "Reflexive",
+        "Effects",
+        "Visit Interaction",
         "Knife",
         "Items",
         "Advanced",
+        "Day Actions",
       ],
       description: [
-        "Each night, learns who visits them.",
-        "Each night, gains a Knife for each non-Cult player who visits them",
+        "Each night, you learn who visits you.",
+        "Each night, you gain a Knife for each non-Cult player who visits you.",
         knifeDef,
         bleedingDef,
       ],
@@ -4016,9 +3979,8 @@ const roleData = {
       ],
       description: [
         "In closed setups, replaces 1 non-Banished Village role with a Banished role or replaces 1 Banished Role with a non-Banished Village role.",
-        "If that player is condemned the following day, then at night the Tormentor will be able to choose to vist one player and kill them.",
-        "If a player with a Banished Role dies during the Day, then at night the Tormentor will be able to choose to vist one player and kill them..",
-        "Knows which Banished Roles are in the Current Game.",
+        "If a Banished role dies during the day, then at night you will be able to choose to vist one player and kill them..",
+        "You know which Banished roles are in play.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_DEFAULT]],
     },
@@ -4028,16 +3990,16 @@ const roleData = {
       tags: [
         "Killing",
         "Lycan",
-        "Effect",
+        "Effects",
         "Full Moons",
         "Visiting",
         "Advanced",
       ],
       description: [
-        "When a Werewolf is present in the game, full moons will occur on even nights.",
-        `Each night, can choose to visit one player and make them become "Lycanthropic"`,
+        "Full moons will occur on even nights.",
+        `Each night, you can choose to visit one player and make them become "Lycanthropic"`,
         lycanthropicDef,
-        "Cannot be killed during full moons",
+        "You cannot be killed during full moons",
         //, except for when visiting the Apothecary.
       ],
       nightOrder: [
@@ -4048,9 +4010,9 @@ const roleData = {
     "Plague Doctor": {
       alignment: "Cult",
       category: "Killing",
-      tags: ["Killing", "Virus", "Effect", "Neighbors", "Visiting", "Advanced"],
+      tags: ["Killing", "Virus", "Effects", "Position", "Visiting", "Advanced"],
       description: [
-        `On their first night, can choose to visit a player and "Plague" them.`,
+        `On your first night, you can choose to visit a player and "Plague" them.`,
         plagueDef,
         //"Each night the infected players will infect their neighbors.",
         //"Players who have been infected for 2 nights will die.",
@@ -4065,27 +4027,28 @@ const roleData = {
       alignment: "Cult",
       category: "Speaking",
       tags: [
-        "Speaking",
+        "Speech",
         "Overturn",
         "Condemn Interaction",
         "Roles",
         "Day Actions",
         "Advanced",
+        "Effects",
       ],
       description: [
         `Each night, a random non-Cult player is made "Mad" about a role the following day.`,
         madDef,
         //"That player must say the name of the role the following day or the vote will be overturned onto them.",
-        `Each day, can choose a player, if that player is "Mad", the day ends and that player is condemned.`,
+        `Each day, you can choose a player, if that player is "Mad", the day ends and that player is condemned.`,
       ],
       nightOrder: [["Send Banshee Word", PRIORITY_EFFECT_GIVER_DEFAULT]],
     },
     Baphomet: {
       alignment: "Cult",
       category: "Speaking",
-      tags: ["Meeting", "Setup Changes", "Basic"],
+      tags: ["Meetings", "Setup Changes", "Basic"],
       description: [
-        "Meets with Templars at night.",
+        "You meet with Templars at night.",
         "Adds 1 Templar in Closed setups.",
       ],
       RolesMadeBy: ["Templar"],
@@ -4094,15 +4057,15 @@ const roleData = {
       alignment: "Cult",
       category: "Speaking",
       tags: [
-        "Speaking",
-        "Malicious Effects",
-        "Reflexive",
+        "Speech",
+        "Effects",
+        "Visit Interaction",
         "Insanity",
         "Advanced",
       ],
       description: [
-        `Each night, each player who visits Cthulhu will become "Insane".`,
-        `Players who Role Share with the Cthulhu will become "Insane".`,
+        `Each night, each player who visits you will become "Insane".`,
+        `Players who Role Share with you will become "Insane".`,
         insaneDef,
       ],
       nightOrder: [["Make Visitors Insane", PRIORITY_EFFECT_GIVER_DEFAULT]],
@@ -4111,7 +4074,7 @@ const roleData = {
       alignment: "Cult",
       category: "Speaking",
       tags: [
-        "Speaking",
+        "Effects",
         "Speech",
         "Silence",
         "Blind",
@@ -4121,8 +4084,8 @@ const roleData = {
         "Basic",
       ],
       description: [
-        `Each night, chooses one the following status effects "Silent", "Deaf", "Blind", or "Clueless"`,
-        "Each night, can choose to visit a player and make them have the chosen status effect for the following day.",
+        `Each night, you choose one the following status effects "Silent", "Deaf", "Blind", or "Clueless"`,
+        "Each night, you can choose to visit a player and make them have the chosen status effect for the following day.",
         silentDef,
         deafDef,
         blindDef,
@@ -4139,21 +4102,19 @@ const roleData = {
       alignment: "Cult",
       category: "Speaking",
       tags: [
-        "Speaking",
         "Speech",
-        "Manipulative",
         "Redirection",
-        "Control",
+        "Visit Interaction",
         "Graveyard",
         "Visiting",
         "Expert",
       ],
       description: [
-        "On their first night, must choose to die and visit a player and make them their host.",
-        "Will count towards Cult Majority when dead and not exorcised.",
-        "Can Speak as their host.",
-        "Each night, can choose to redirect their host's visits on to another player. (Not a visit)",
-        "If their host dies the Parasite is exorcised.",
+        "On your first night, you must choose to die and visit a player and make them their host.",
+        "You will count towards Cult Majority when dead and not exorcised.",
+        "You can speak as your host.",
+        "Each night, you can choose to redirect your host's visits on to another player. (Not a visit)",
+        "If your host dies, you are exorcised.",
       ],
       nightOrder: [
         ["Choose Host", PRIORITY_BLOCK_EARLY - 1],
@@ -4165,15 +4126,15 @@ const roleData = {
       alignment: "Cult",
       category: "Speaking",
       tags: [
-        "Speaking",
-        "Malicious Effects",
+        "Speech",
+        "Effects",
         "Visit Interaction",
         "Visiting",
         "Insanity",
         "Advanced",
       ],
       description: [
-        "Each night, can choose to visit one player.",
+        "Each night, you can choose to visit one player.",
         `If that player is not visited by a non-Cult player during the next night, they will become "Insane".`,
         insaneDef,
       ],
@@ -4183,10 +4144,10 @@ const roleData = {
     "Cat Lady": {
       alignment: "Cult",
       category: "Manipulative",
-      tags: ["Cat", "Role Blocker", "Information", "Roles", "Advanced"],
+      tags: ["Cat", "Role Blocker", "Information", "Roles", "Advanced", "Day Actions"],
       description: [
-        "Each day, can choose player to send a Cat.",
-        "Players holding a Cat can choose to have their night actions blocked or have the Cat Lady learn their role.",
+        "Each day, you can choose player to send a Cat.",
+        "Players holding a Cat can choose to have their night actions blocked or have you learn their role.",
         //"Chooses a player to send them a cat, each day.",
         //"The player can choose to let the cat in during the night, or chase it out.",
         //"If the cat is let in, the player is blocked from performing night actions.",
@@ -4205,7 +4166,7 @@ const roleData = {
         "Special",
       ],
       description: [
-        "Each night, can choose to visit one Cult-aligned player and convert them to a random Cult-aligned role.",
+        "Each night, you can choose to visit one Cult-aligned player and convert them to a random Cult-aligned role.",
       ],
       nightOrder: [["Randomize Role", PRIORITY_CONVERT_DEFAULT + 3]],
       RolesMadeBy: ["All Cult Roles"],
@@ -4222,8 +4183,8 @@ const roleData = {
         "Expert",
       ],
       description: [
-        "Each night, can choose a role.",
-        "Each night, can choose to visit one player and convert them to chosen role without changing their alignment.",
+        "Each night, you can choose a role.",
+        "Each night, you can choose to visit one player and convert them to chosen role without changing their alignment.",
         "If the chosen role is already in play, The conversion fails.",
         "Independent roles can only be converted to other Independent roles.",
         "Non-independent roles can not be converted to Independent roles.",
@@ -4239,12 +4200,12 @@ const roleData = {
         "Roles",
         "Manipulative",
         "Visiting",
-        "Effect",
+        "Effects",
         "Expert",
       ],
       description: [
-        "Each night, can choose a non-Demonic Cult role.",
-        `Each night, can choose to visit one player and "Infest" them with that role.`,
+        "Each night, you can choose a non-Demonic Cult role.",
+        `Each night, you can choose to visit one player and "Infest" them with that role.`,
         infestedDef,
         //"If that player is condemned they will be converted to that role and become Transcendent.",
       ],
@@ -4256,7 +4217,7 @@ const roleData = {
       category: "Manipulative",
       tags: ["Advanced", "Banished Interaction"],
       description: [
-        "Each night, can choose a banished Cult role and gains its abilities until the next night.",
+        "Each night, you can choose a banished Cult role and gains its abilities until the next night.",
       ],
       SpecialInteractionsModifiers: jackModifierOverrides,
     },
@@ -4265,8 +4226,8 @@ const roleData = {
       category: "Night-acting",
       tags: ["Kill Interaction", "Visiting", "Basic"],
       description: [
-        "Each night, can choose to visit one player.",
-        "If that player dies, the Yith will gains that player's abilities.",
+        "Each night, you can choose to visit one player.",
+        "If that player dies, you will gains that player's abilities.",
       ],
       nightOrder: [["Gain abilities if Target dies", PRIORITY_PREKILL_ACTION]],
     },
@@ -4275,34 +4236,34 @@ const roleData = {
       category: "Manipulative",
       tags: ["Manipulative", "Delayed", "Visiting", "Basic"],
       description: [
-        "Each night, can choose to visit one player and delay their night actions until the following night.",
+        "Each night, you can choose to visit one player and delay their night actions until the following night.",
       ],
       nightOrder: [["Delay Action", PRIORITY_MODIFY_ACTION_DELAY]],
     },
     Selkie: {
       alignment: "Cult",
       category: "Manipulative",
-      tags: ["Manipulative", "Redirection", "Control", "Visiting", "Advanced"],
+      tags: ["Redirection", "Visit Interaction", "Visiting", "Advanced"],
       description: [
-        "Each night, can choose to visit two players and redirect their visits onto each other.",
+        "Each night, you can choose to visit two players and redirect their visits onto each other.",
       ],
       nightOrder: [["Redirect Targets", PRIORITY_REDIRECT_ACTION + 1]],
     },
     "Snow Queen": {
       alignment: "Cult",
       category: "Manipulative",
-      tags: ["Manipulative", "Meeting", "Snow Storm", "Basic"],
+      tags: ["Meetings", "Meeting Interaction", "Basic", "Day Actions"],
       description: [
-        "Once per game during the day, can choose to start a snowstorm.",
+        "Once per game during the day, you can choose to start a snowstorm.",
         "During a snowstorm all players can chat at night and all non-Cult players cannot preform night actions.",
       ],
     },
     Succubus: {
       alignment: "Cult",
       category: "Manipulative",
-      tags: ["Manipulative", "Delirium", "Visiting", "Advanced"],
+      tags: ["Delirium", "Visiting", "Advanced", "Effects"],
       description: [
-        `Each night, can choose to visit one player and make them "Delirious" until the next night.`,
+        `Each night, you can choose to visit one player and make them "Delirious" until the next night.`,
         deliriumDef,
       ],
       nightOrder: [["Give Delirium", PRIORITY_NIGHT_ROLE_BLOCKER + 1]],
@@ -4320,18 +4281,18 @@ const roleData = {
     Witch: {
       alignment: "Cult",
       category: "Manipulative",
-      tags: ["Manipulative", "Redirection", "Control", "Visiting", "Advanced"],
+      tags: ["Redirection", "Visit Interaction", "Visiting", "Advanced"],
       description: [
-        "Each night, can choose to visit one player.",
-        "Each night, can choose to redirect that player's visits on to another player. (Not a visit)",
+        "Each night, you can choose to visit one player.",
+        "Each night, you can choose to redirect that player's visits on to another player. (Not a visit)",
       ],
       nightOrder: [["Control Player", PRIORITY_REDIRECT_ACTION]],
     },
     Skinwalker: {
       alignment: "Cult",
-      tags: ["Deception", "Night-acting", "Basic"],
+      tags: ["Deception", "Basic"],
       description: [
-        "Each night, can choose a role and will appear as that role on death and to information roles.",
+        "Each night, you can choose a role and you will appear as that role on death and to information roles.",
         "Cannot choose Villager, Impersonator or Imposter",
       ],
       nightOrder: [
@@ -4347,17 +4308,16 @@ const roleData = {
         "Information",
         "Roles",
         "Protective",
-        "Night Saver",
         "Extra Night Deaths",
         "Visiting",
         "Basic",
       ],
       description: [
-        "Each night, can choose one of three potions.",
+        "Each night, you can choose one of three potions.",
         "A damaging potion, which kills a player.",
         "A restoring potion, which protects a player from death.",
-        "An elucidating potion, which lets the Alchemist learn a players role.",
-        "Each night, can choose to visit one player and use the selected potion on the player.",
+        "An elucidating potion, which lets you learn a players role.",
+        "Each night, you can choose to visit one player and use the selected potion on the player.",
         "Once a potion has been chosen, it cannot be chosen again for the next two nights.",
       ],
       nightOrder: [
@@ -4388,16 +4348,16 @@ const roleData = {
       category: "Chaos",
       tags: ["Win Con", "Information", "Condemn Interaction", "Advanced"],
       description: [
-        "Is randomly assigned an opposing player as a Twin.",
-        "The Changeling and their target will learn each other's roles.",
+        "You are randomly assigned an opposing player as a Twin.",
+        "You and your Twin will learn each other's roles.",
         "If the Village-aligned Twin is condemned, the Cult wins.",
       ],
     },
     Ghost: {
       alignment: "Cult",
-      tags: ["Ghost", "Mini-game", "Dusk"],
+      tags: ["Ghost", "Mini-Game", "Dusk"],
       description: [
-        "When present in the game, all non-Cult-aligned players will know one of two randomly-selected words: the real word and the fake word.",
+        "All non-Cult-aligned players will know one of two randomly-selected words: the real word and the fake word.",
         "All Village roles will learn the real word.",
         "All Mafia roles and Sleepwalkers will learn the fake word instead.",
         "Each night if no one was condemned, all Ghosts must choose one player. Then all players will give clues about their word starting with that player.",
@@ -4406,13 +4366,13 @@ const roleData = {
     },
     Poet: {
       alignment: "Cult",
-      tags: ["Ghost", "Mini-game", "Dusk", "Pregame Actions"],
+      tags: ["Ghost", "Mini-Game", "Dusk", "Pregame Actions"],
       description: [
-        "Before the game starts, chooses a real word and a fake word.",
-        "Forces a Ghost to spawn in closed setups.",
+        "Before the game starts, you choose a real word and a fake word.",
         "If a Cult member guesses the real word, Village will have a chance to guess who the Poet is.",
         "On a correct guess, Village Wins and Cult loses.",
-        "Appears as villager on death.",
+        "You appear as Villager when you die.",
+        "Forces a Ghost to spawn in closed setups.",
         "Does not attend the cult meeting.",
       ],
       RolesMadeBy: ["Ghost"],
@@ -4421,11 +4381,11 @@ const roleData = {
     Reaper: {
       alignment: "Cult",
       category: "Chaos",
-      tags: ["Win Con", "Condemn Interaction", "Speaking", "Expert"],
+      tags: ["Win Con", "Condemn Interaction", "Speech", "Expert"],
       description: [
-        'If a Reaper says "I claim Reaper and choose (Player Name)" within the first minute of the day.',
+        'If you say "I claim Reaper and choose (Player Name)" within the first minute of the day.',
         "If the chosen player survives until the end of the day, that player's team wins.",
-        "A Reaper cannot choose themselves.",
+        "You cannot choose yourself.",
       ],
     },
     Devotee: {
@@ -4433,8 +4393,8 @@ const roleData = {
       category: "Chaos",
       tags: ["Conversion", "Demonic Interaction", "Basic"],
       description: [
-        "If a Demonic or Vital Cult role dies, the Devotee will convert to that role.",
-        "If there are less then 5 players alive, the Devotee has no ability.",
+        "If a Demonic or Vital Cult role dies, you will convert to that role.",
+        "If there are less then 5 players alive, you have no ability.",
       ],
     },
     Zealot: {
@@ -4457,16 +4417,14 @@ const roleData = {
       category: "Chaos",
       tags: [
         "Conversion",
-        "Items",
-        "Cult Items",
+        "Item Interaction",
         "Insanity",
         "Magic",
         "Visiting",
-        "Dawn",
         "Expert",
       ],
       description: [
-        "Each night, can choose to visit one player and corrupt their items.",
+        "Each night, you can choose to visit one player and corrupt their items.",
         "Corrupted Guns, Rifles, and Knives will convert instead of killing.",
         "Corrupted Armor will make an Attacker Insane.",
         "Corrupted Tracts will convert a player to a random Cult role if converted.",
@@ -4495,11 +4453,11 @@ const roleData = {
         "Insanity",
         "Magic",
         "Visiting",
-        "Dawn",
         "Expert",
+        "Day Actions",
       ],
       description: [
-        "Each night, can choose to visit one player and give them a corrupted item.",
+        "Each night, you can choose to visit one player and give them a corrupted item.",
         "Corrupted Guns, Rifles, and Knives will convert instead of killing.",
         "Corrupted Armor will make an Attacker Insane.",
         "Corrupted Tracts will convert a player to a random Cult role if converted.",
@@ -4520,7 +4478,7 @@ const roleData = {
       category: "Chaos",
       tags: ["Extra Lives", "Protective", "Killing", "Visiting", "Advanced"],
       description: [
-        "Each night, can choose to visit two Cult-aligned players and kill the first player and give second player an extra life.",
+        "Each night, you can choose to visit two Cult-aligned players and kill the first player and give second player an extra life.",
       ],
       nightOrder: [["Kill to grant extra life", PRIORITY_KILL_SPECIAL - 3]],
     },
@@ -4530,8 +4488,8 @@ const roleData = {
       category: "Demon",
       tags: ["Killing", "Conversion", "Visiting", "Basic"],
       description: [
-        "Each night, can choose to visit one player and kill them.",
-        "If an Imp kills themselves, a random Cult-aligned player becomes an Imp.",
+        "Each night, you can choose to visit one player and kill them.",
+        "If you kill yourself, a random Cult-aligned player becomes an Imp.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_SPECIAL]],
     },
@@ -4548,8 +4506,8 @@ const roleData = {
         "Advanced",
       ],
       description: [
-        "Each night, can choose to visit one player and kill them.",
-        "The first time a Jiangshi attacks a Banished Role, the Jiangshi will die instead and the Banished Player will be converted to Jiangshi.",
+        "Each night, you can choose to visit one player and kill them.",
+        "The first time a Jiangshi attacks a Banished Role, that Jiangshi will die instead and the Banished role will be converted to Jiangshi.",
         "In closed setups, replaces 1 non-Banished Village role with a Banished role.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_SPECIAL]],
@@ -4564,10 +4522,12 @@ const roleData = {
         "Delirium",
         "Visiting",
         "Advanced",
+        "Effects",
+        "Position",
       ],
       description: [
-        "Each night, can choose to visit one player and kill them.",
-        `If the Necromancer kills a Cult-aligned player, that player will gain the Transcendent modifier and make one of their non-banished Village-aligned neighbors "Delirious".`,
+        "Each night, you can choose to visit one player and kill them.",
+        `If you kill a Cult-aligned player, that player will gain the Transcendent modifier and make one of their non-banished Village-aligned neighbors "Delirious".`,
         deliriumDef,
         "In closed setups, replaces 1 Banished role with a non-Banished Village role.",
       ],
@@ -4577,10 +4537,10 @@ const roleData = {
     Lamia: {
       alignment: "Cult",
       category: "Demon",
-      tags: ["Killing", "Delirium", "Visiting", "Advanced"],
+      tags: ["Killing", "Delirium", "Delirium Interaction", "Visiting", "Advanced", "Protection Interaction", "Effects"],
       description: [
-        "Each night, can choose to visit one player and kill them.",
-        `If that player survives, they will become "Delirious".`,
+        "Each night, you can choose to visit one player and kill them.",
+        `If a player you attack survives, they will become "Delirious".`,
         deliriumDef,
         `If a Lamia attacks a "Delirious" player, that player will die even if protected.`,
       ],
@@ -4589,12 +4549,12 @@ const roleData = {
     Nyarlathotep: {
       alignment: "Cult",
       category: "Demon",
-      tags: ["Killing", "Win Con", "Deception", "Visiting", "Advanced"],
+      tags: ["Killing", "Win Con", "Deception", "Visiting", "Advanced", "Condemn Interaction"],
       tagsHidden: ["No Investigate"],
       description: [
-        "Each night, can choose to visit one player and kill them.",
-        "While alive, most information created by Village roles is made false.",
-        "If no one is condemned while Nyarlathotep is alive, the Cult wins.",
+        "Each night, you can choose to visit one player and kill them.",
+        "While you are alive, all information created by Village roles is made false.",
+        "Each day, if no one was condemned, the Cult wins.",
       ],
       SpecialInteractions: {
         Mayor: [
@@ -4606,12 +4566,12 @@ const roleData = {
     Puca: {
       alignment: "Cult",
       category: "Demon",
-      tags: ["Killing", "Delirium", "Poison", "Visiting", "Advanced"],
+      tags: ["Killing", "Delirium", "Poison", "Visiting", "Advanced", "Effects"],
       description: [
-        `Each night, can choose to visit one player and make them "Delirious" and "Poison" them.`,
+        `Each night, you can choose to visit one player and make them "Delirious" and "Poison" them.`,
         deliriumDef,
         poisonDef,
-        "Player's Poisoned by a Puca will not be told they were poisoned.",
+        "Player's Poisoned by you will not be told they were poisoned.",
       ],
       nightOrder: [
         ["Give Delirium and Poison", PRIORITY_NIGHT_ROLE_BLOCKER + 3],
@@ -4623,16 +4583,16 @@ const roleData = {
       tags: [
         "Killing",
         "Delirium",
-        "Neighbors",
         "Position",
         "Banished Interaction",
         "Visiting",
         "Advanced",
+        "Effects",
       ],
       description: [
-        "Each night, can choose to visit one player and kill them.",
-        `A Satyr's starting neighbors are "Delirious". Neighbors whose roles are banished or not village aligned are skipped over.`,
-        `If a Satyr's starting neighbors stop being "Delirious", they will become "Delirious" the next night.`,
+        "Each night, you can choose to visit one player and kill them.",
+        `Your starting neighbors are "Delirious". Neighbors whose roles are banished or not village aligned are skipped over.`,
+        `If your starting neighbors stop being "Delirious", they will become "Delirious" the next night.`,
         deliriumDef,
       ],
       nightOrder: [["Kill", PRIORITY_KILL_DEFAULT + 1]],
@@ -4644,16 +4604,17 @@ const roleData = {
         "Killing",
         "Delirium",
         "Visiting",
-        "Kill Interaction",
-        "Condemn Interaction",
+        "Death Interaction",
+        "Self Protection",
         "Advanced",
+        "Effects",
       ],
       description: [
-        "Each night, can choose to visit one player and kill them.",
-        `On the first night, must choose to visit one player and make them their vessel and "Delirious".`,
-        `If a Lich's vessel stops being "Delirious", they will become "Delirious" the next night.`,
+        "Each night, you can choose to visit one player and kill them.",
+        `On your first night, you must choose to visit one player and make them your vessel and "Delirious".`,
+        `If your vessel stops being "Delirious", they will become "Delirious" the next night.`,
         deliriumDef,
-        "A Lich dies if and only if their Vessel dies.",
+        "You can only die if and only if your Vessel dies.",
       ],
       nightOrder: [
         ["Kill", PRIORITY_KILL_DEFAULT + 1],
@@ -4672,9 +4633,9 @@ const roleData = {
         "Advanced",
       ],
       description: [
-        "Each night, can choose to visit two players and kill them.",
-        "Players killed by a Shoggoth have a chance of reviving the following night.",
-        "Shoggoth will only revive a player once per game.",
+        "Each night, you can choose to visit two players and kill them.",
+        "Players killed by you have a chance of reviving the following night.",
+        //"Shoggoth will only revive a player once per game.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_DEFAULT + 2]],
       graveyardParticipation: "all",
@@ -4684,9 +4645,9 @@ const roleData = {
       category: "Demon",
       tags: ["Killing", "Extra Night Deaths", "Visiting", "Basic"],
       description: [
-        "Each night, can choose to visit one player and kill them.",
-        "Can choose to charge their kill instead of killing.",
-        "If a Snallygaster chooses to charge kill, They can choose to visit three players and kill them the next night.",
+        "Each night, you can choose to visit one player and kill them.",
+        "You can choose to charge their kill instead of killing.",
+        "If you chooses to charge kill, They can choose to visit three players and kill them the next night.",
       ],
       nightOrder: [
         ["Kill", PRIORITY_KILL_DEFAULT + 1],
@@ -4699,18 +4660,19 @@ const roleData = {
       tags: [
         "Special",
         "Killing",
-        "Condemn",
+        "Condemn Interaction",
+        "Death Interaction",
         "Graveyard",
         "Exorcise Village Meeting",
         "Visiting",
         "Expert",
       ],
       description: [
-        "Each night, if no one was condemned, can choose to visit one player and kill them. (Even if dead)",
-        "Will count towards Cult Majority when dead and not exorcised.",
-        "If a Poltergeist is Exorcised, All Cult-aligned players die.",
+        "Each night, if no one was condemned, you can choose to visit one player and kill them. (Even if dead)",
+        "You will count towards Cult Majority when dead and not exorcised.",
+        //"If a Poltergeist is Exorcised, All Cult-aligned players die.",
         "If it is possible for a Poltergeist to spawn in a setup, Dead players can be voted in village meeting.",
-        "If a dead Poltergeist is condemned in the Village Meeting, they are exorcised.",
+        "If you are condemned when dead, you are exorcised.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_DEFAULT]],
       graveyardParticipation: "self",
@@ -4725,13 +4687,14 @@ const roleData = {
         "Dawn",
         "Advanced",
         "Mini-Game",
+        "Revive",
       ],
       description: [
-        "Each night, may choose three players.",
+        "Each night, you may choose three players.",
         "Each of the selected players will choose to live or die at dawn.",
-        "The Warden will visit players that choose die and kill them.",
-        "The Warden will visit players that choose live and revive them.",
-        "If all three players choose live they the Warden will visit and kill all of them.",
+        "You will visit players that choose die and kill them.",
+        "You will visit players that choose live and revive them.",
+        "If all three players choose live they you will visit and kill all of them.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_DEFAULT + 1]],
       graveyardParticipation: "all",
@@ -4741,10 +4704,10 @@ const roleData = {
       category: "Demon",
       tags: ["Killing", "Voting", "Setup Changes", "Visiting", "Expert"],
       description: [
-        "Vampire votes only count if a Village-aligned player votes with them.",
+        "Your votes only counts if a Village-aligned player votes with you.",
         "Most players including all non-Village roles are Vampires",
-        "Vampires will appear as random Non-Vampire evil roles on Investigations.",
-        "Each Night, One Vampire must choose to visit one player and kill them.",
+        "You will appear as Non-Vampire evil role to information roles.",
+        "Each Night, one Vampire must choose to visit one player and kill them.",
         "Vampires can only select Vampires for killing until 1 remains.",
         "Cult can only win when one or fewer Village players are alive.",
       ],
@@ -4765,8 +4728,8 @@ const roleData = {
       alignment: "Cult",
       tags: ["Condemn", "Protective", "Condemn Immune", "Visiting", "Advanced"],
       description: [
-        "Each night, can choose to visit one player and protect them from being condemned the following day",
-        "Cannot choose to visit the player they visited the previous night",
+        "Each night, you can choose to visit one player and protect them from being condemned the following day",
+        "You cannot choose to visit the player you visited the previous night",
       ],
       nightOrder: [["Make Safe from Condemns", PRIORITY_EFFECT_GIVER_DEFAULT]],
     },
@@ -4780,17 +4743,17 @@ const roleData = {
     },
     Shadow: {
       alignment: "Cult",
-      tags: ["Information", "Visits", "Visiting", "Basic"],
+      tags: ["Information", "Visit Interaction", "Visiting", "Basic"],
       description: [
-        "Each night, can choose to visit one player and learn who they visited and who visited them.",
+        "Each night, you can choose to visit one player and learn who they visited and who visited them.",
       ],
       nightOrder: [["Track and Watch", PRIORITY_INVESTIGATIVE_DEFAULT]],
     },
     Druid: {
       alignment: "Cult",
-      tags: ["Graveyard", "Dead", "Revive", "Visiting", "Voting", "Garbage"],
+      tags: ["Graveyard", "Revive", "Visiting", "Voting", "Garbage"],
       description: [
-        "Each night, can choose to visit one dead player and revive them as a tree.",
+        "Each night, you can choose to visit one dead player and revive them as a tree.",
         "Trees are immune to most ways of dying.",
         "Trees cannot vote.",
       ],
@@ -4800,7 +4763,7 @@ const roleData = {
     Sorcerer: {
       alignment: "Cult",
       tags: ["Events", "Advanced"],
-      description: ["Each night, can choose an Event, that Event occurs."],
+      description: ["Each night, you can choose an Event, that Event occurs."],
       SpecialInteractionsModifiers: {
         Refined: ["Cannot use Banished Events."],
         Unrefined: ["Cannot use non-Banished Events."],
@@ -4811,7 +4774,7 @@ const roleData = {
       category: "Night-acting",
       tags: ["Visiting", "Basic"],
       description: [
-        "Each night, can choose to visit one player.",
+        "Each night, you can choose to visit one player.",
         "Bogeyman roles with the Scatterbrained modifier appear as this role to self.",
       ],
       nightOrder: [["Visit", PRIORITY_SUPPORT_VISIT_DEFAULT]],
@@ -4843,9 +4806,8 @@ const roleData = {
       alignment: "Independent",
       tags: ["Condemn Interaction", "Visiting", "Basic"],
       description: [
-        "Each night, can choose to visit one player.",
-        "Wins if condemned.",
-        "Independent roles with the Scatterbrained modifier appear as this role to self.",
+        "Each night, you can choose to visit one player.",
+        "You win if you are condemned.",
       ],
       nightOrder: [["Visit", PRIORITY_SUPPORT_VISIT_DEFAULT]],
       SpecialInteractions: {
@@ -4868,8 +4830,8 @@ const roleData = {
       alignment: "Independent",
       tags: ["Condemn Interaction", "Linked", "Basic"],
       description: [
-        "Randomly assigned a Village/Independent player as a target.",
-        "Wins if their target player is condemned in Village meeting while alive.",
+        "You are assigned a Village/Independent player as a target.",
+        "You win if your target is condemned.",
       ],
       SpecialInteractions: {
         Assassin: [
@@ -4879,39 +4841,39 @@ const roleData = {
     },
     Dodo: {
       alignment: "Independent",
-      tags: ["Items", "Gun", "Killing", "Visiting", "Basic"],
+      tags: ["Items", "Gun", "Killing", "Visiting", "Basic", "Gun Interaction"],
       description: [
-        `Each night, can choose to visit one player and give them a Gun.`,
+        `Each night, you can choose to visit one player and give them a Gun.`,
         gunDef,
-        "Wins if shot and killed with a gun.",
+        "You win if you are killed with a gun.",
       ],
       nightOrder: [["Give Gun", PRIORITY_ITEM_GIVER_DEFAULT]],
     },
     Joker: {
       alignment: "Independent",
       tags: ["Kill Interaction", "Basic"],
-      description: ["Wins if killed at Night."],
+      description: ["You win if you are killed at night."],
     },
     Amnesiac: {
       alignment: "Independent",
       tags: ["Dead", "Conversion", "Visiting", "Basic"],
       description: [
-        "Once per game at night, can choose to visit one dead player and convert to their role.",
-        "Cannot win the game as Amnesiac.",
+        "Once per game at night, you can choose to visit one dead player and convert to their role.",
+        "You cannot win as Amnesiac.",
       ],
       nightOrder: [["Become Dead Role", PRIORITY_BECOME_DEAD_ROLE]],
     },
     Survivor: {
       alignment: "Independent",
       tags: ["Basic"],
-      description: ["Wins if alive at the end of the game."],
+      description: ["You win if alive at the end of the game."],
     },
     "Old Maid": {
       alignment: "Independent",
       tags: ["Conversion", "Role Swapping", "Visiting", "Advanced"],
       description: [
-        "Each night, can choose to visit one player and swap roles with them.",
-        "Cannot win the game as Old Maid.",
+        "Each night, you can choose to visit one player and swap roles with them.",
+        "You cannot win as Old Maid.",
       ],
       nightOrder: [["Swap Roles", PRIORITY_SWAP_ROLES]],
     },
@@ -4919,19 +4881,19 @@ const roleData = {
       alignment: "Independent",
       tags: ["Traitor", "Mafia", "Basic"],
       description: [
-        "Wins with Mafia.",
-        "Does not count towards Mafia win count.",
+        "You win if Mafia wins.",
+        //"Does not count towards Mafia win count.",
       ],
     },
     Clown: {
       alignment: "Independent",
-      tags: ["Condemn", "Mafia", "Win Con", "Visiting", "Expert"],
+      tags: ["Condemn", "Mafia", "Win Con", "Visiting", "Expert", "Death Interaction"],
       description: [
-        "Each night, can choose to visit one player.",
-        "All Mafia-aligned players will learn if a Clown is present.",
-        "The Mafia can not win unless a Clown is condemned.",
-        "If a Clown is killed by non-condemn, a Mafia-Aligned player becomes Clown",
-        "Wins with Mafia.",
+        "Each night, you can choose to visit one player.",
+        "Mafia will learn if a Clown is in the game.",
+        "The Mafia can not win unless you are condemned.",
+        "If killed, a Mafia-Aligned player is converted to Clown",
+        "You win if Mafia wins.",
       ],
       nightOrder: [["Visit", PRIORITY_SUPPORT_VISIT_DEFAULT]],
     },
@@ -4939,8 +4901,8 @@ const roleData = {
       alignment: "Independent",
       tags: ["Village", "Win Steal", "Advanced"],
       description: [
-        "All players will learn if a Autocrat is present.",
-        "Wins instead of Village and counts toward their total.",
+        "All players will learn if an Autocrat is in the game.",
+        "If Village wins, you win instead.",
       ],
     },
     Palladist: {
@@ -4948,17 +4910,17 @@ const roleData = {
       tags: [
         "Village",
         "Win Steal",
-        "Meeting",
+        "Meetings",
         "Conversion",
         "Visiting",
         "Expert",
       ],
       description: [
-        "Meets with Freemasons at night.",
-        "Anonymizes Freemason meetings and forces them to act.",
-        "Each night, choose to visit one player with the Freemasons and convert them to Freemason.",
-        "Immune to conversions.",
-        "Wins instead of Village if there is a Freemason majority and counts toward their total.",
+        "You meet with Freemasons at night.",
+        "You anonymizes Freemason meeting.",
+        "Each night, you and all Freemasons must choose to visit one player and convert them to Freemason.",
+        "You cannot be converted.",
+        "If Village wins and majority of players are Freemasons, you win instead.",
       ],
       nightOrder: [
         ["Convert to Mason", PRIORITY_CONVERT_DEFAULT + 2],
@@ -4971,15 +4933,14 @@ const roleData = {
       tags: [
         "Village",
         "Win Steal",
-        "Visits",
+        "Visit Interaction",
         "Setup Changes",
         "Visiting",
         "Expert",
       ],
       description: [
-        "Each night, can choose to visit one player and mate with them if they are a Panda Bear.",
-        "When present in the game, the Village cannot win unless the Panda Bear visits another Panda Bear and they mate.",
-        "Wins instead of Village if the Panda Bears survive without mating.",
+        "Each night, you can choose to visit one player and mate with them if they are a Panda Bear.",
+        "If Village wins and you have not mated, you win instead.",
         "Adds another Panda in Closed Setups.",
       ],
       nightOrder: [["Visit", PRIORITY_EFFECT_GIVER_DEFAULT]],
@@ -4988,19 +4949,19 @@ const roleData = {
       alignment: "Independent",
       tags: ["Voting", "Alignment", "Basic"],
       description: [
-        "Vote weight is worth 2 votes.",
-        "Gets assigned to random alignment on game start.",
-        "Each night, switches to a random alignment.",
-        "Wins if their current alignment wins.",
+        "Your vote weight is worth 2 votes.",
+        "You are assigned to a random alignment at the start of the game.",
+        "Each night, you switch to a random alignment.",
+        "You win if your current alignment wins.",
       ],
     },
     Lover: {
       alignment: "Independent",
-      tags: ["Survivor", "Lover", "Linked", "Visiting", "Basic"],
+      tags: ["Survivor", "Visiting", "Basic", "Effects"],
       description: [
-        `Once per game at night, can choose to visit one player and become "Lovesick" for them and make them "Lovesick" for the Lover.`,
+        `Once per game at night, you can choose to visit one player and become "Lovesick" for them and make them "Lovesick" for the Lover.`,
         lovesickDef,
-        `Wins if alive with the player they are "Lovesick" for at the end of the game.`,
+        `You win if you and the player you are "Lovesick" for are alive at the end of the game.`,
       ],
       nightOrder: [["Fall in love", PRIORITY_EFFECT_GIVER_EARLY]],
       skins: [
@@ -5022,24 +4983,24 @@ const roleData = {
       alignment: "Independent",
       tags: ["Guess", "Day", "Night", "Basic"],
       description: [
-        "Once per game, predicts which day/night cycle the game will end on.",
-        "Wins if guess is correct.",
+        "On your first night, you guess which day/night cycle the game will end on.",
+        "You win if your guess is correct.",
       ],
       nightOrder: [["Make Guess", PRIORITY_WIN_CON_SET]],
     },
     Fatalist: {
       alignment: "Independent",
-      tags: ["Guess", "Death", "Expert"],
+      tags: ["Guess", "Death Interaction", "Expert"],
       description: [
-        "Once per game, predicts which day/night cycle they will be killed on.",
-        "Wins if guess is correct.",
+        "On your first night, you guess which day/night cycle you will die on.",
+        "You win if your guess is correct.",
       ],
       nightOrder: [["Make Guess", PRIORITY_WIN_CON_SET]],
     },
     Fumigator: {
       alignment: "Independent",
-      tags: ["Neighbors", "Death", "Basic"],
-      description: ["Wins if both of their starting neighbors are dead."],
+      tags: ["Position", "Death Interaction", "Basic"],
+      description: ["You win if both of your starting neighbors are dead."],
       SpecialInteractions: {
         "Blood Moon": [
           "During the Blood Moon Event, Fumigator Wins if one of their starting neighbors is killed during the Blood Moon.",
@@ -5050,18 +5011,18 @@ const roleData = {
       alignment: "Independent",
       tags: ["Conversion", "Basic"],
       description: [
-        "Once per game at night, must choose a player.",
-        "Will instantly convert to that player's role.",
-        "Cannot win the game as Doppelgänger.",
+        "Once per game at night, you must choose a player.",
+        "You will instantly convert to that player's role.",
+        "You cannot win as Doppelgänger.",
       ],
     },
     "Vengeful Spirit": {
       alignment: "Independent",
-      tags: ["Killing", "Graveyard", "Visiting", "Advanced"],
+      tags: ["Killing", "Graveyard", "Visiting", "Advanced", "Kill Interaction"],
       description: [
-        "If killed by another player, gains the ability: Each night, can choose to visit one player and kill them.",
-        "Does not gain the ability if condemned by village vote.",
-        "Wins if they kill all of their killers.",
+        "If killed by another player, you gain the ability: Each night, you can choose to visit one player and kill them.",
+        "You do not gain the ability if condemned by village vote.",
+        "You win if you are killed and all of your killers are dead.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_DEFAULT + 1]],
       graveyardParticipation: "self",
@@ -5073,11 +5034,11 @@ const roleData = {
     },
     Mummy: {
       alignment: "Independent",
-      tags: ["Effect", "Killing", "Visit Interaction", "Graveyard", "Advanced"],
+      tags: ["Killing", "Visit Interaction", "Graveyard", "Advanced", "Revive", "Effects"],
       description: [
-        `Each night, each player who visits the Mummy is "Wrapped".`,
-        `If condemned, will gain the ability: Once per game at night, can choose to revive themselves and kill all "Wrapped" players.`,
-        "Wins if among the last two alive.",
+        `Each night, each player who visits you becomes "Wrapped".`,
+        `If condemned, you will gain the ability: Once per game at night, you can choose to revive yourself and kill all "Wrapped" players.`,
+        "You win if you are alive in final 2.",
       ],
       nightOrder: [
         ["Revive and Kill ", PRIORITY_KILL_DEFAULT + 2],
@@ -5087,21 +5048,21 @@ const roleData = {
     },
     Phantom: {
       alignment: "Independent",
-      tags: ["Killing", "Conversion", "Visiting", "Basic"],
+      tags: ["Killing", "Alignment Changing", "Conversion", "Visiting", "Basic"],
       description: [
-        "Once per game at night, can choose to visit one player and convert to their role and kill them.",
-        "The killed player will have their role hidden upon death, and instead reveal as their alignment.",
-        "Cannot win the game as Phantom.",
+        "Once per game at night, you can choose to visit one player and convert to their role and kill them.",
+        "Players killed by you only have their alignment revealed.",
+        "You cannot win as Phantom.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_DEFAULT]],
     },
     Prince: {
       alignment: "Independent",
-      tags: ["Essential", "Alignment", "Visiting", "Advanced"],
+      tags: ["Essential", "Alignment Changing", "Visiting", "Advanced", "Death Interaction"],
       description: [
-        "On their first night, must choose to visit a player and become their alignment.",
-        "If the Prince dies, everyone of that alignment dies.",
-        "Wins if their alignment wins.",
+        "On your first night, you must choose to visit a player and become their alignment.",
+        "If you dies, all players who are aligned with you die.",
+        "You win if your current alignment wins.",
       ],
       nightOrder: [
         ["Conquer Alignment", PRIORITY_MODIFY_INVESTIGATIVE_RESULT_DEFAULT],
@@ -5109,12 +5070,12 @@ const roleData = {
     },
     Nomad: {
       alignment: "Independent",
-      tags: ["Alignments", "Visiting", "Basic"],
+      tags: ["Alignment Changing", "Visiting", "Basic"],
       description: [
-        "Each night, must choose to visit one player and become their alignment.",
-        "Does not learn their new alignment.",
-        "Cannot choose the same player consecutively.",
-        "Wins with their current alignment.",
+        "Each night, you must choose to visit one player and become their alignment.",
+        "You do not learn your new alignment.",
+        "You cannot choose to visit the same player consecutively.",
+        "You win if your current alignment wins.",
       ],
       nightOrder: [
         ["Become Alignment", PRIORITY_MODIFY_INVESTIGATIVE_RESULT_DEFAULT],
@@ -5122,12 +5083,12 @@ const roleData = {
     },
     Hitchhiker: {
       alignment: "Independent",
-      tags: ["Alignments", "Visits", "Delirium", "Reflexive", "Advanced"],
+      tags: ["Alignment Changing", "Visit Interaction", "Delirium", "Advanced", "Effects"],
       description: [
-        `Each night, makes one player who visits them "Delirious" and becomes their alignment.`,
+        `Each night, one player who visits you will become "Delirious" and you will become their alignment.`,
         deliriumDef,
-        "Hitchhiker will start the game Village-aligned.",
-        "Wins with their current alignment.",
+        "You will start the game Village-aligned.",
+        "You win if your current alignment wins.",
       ],
       nightOrder: [
         ["Become Alignment of Visitor", PRIORITY_BLOCK_VISITORS - 1],
@@ -5135,11 +5096,11 @@ const roleData = {
     },
     "Creepy Girl": {
       alignment: "Independent",
-      tags: ["Kill Interaction", "Items", "Advanced"],
+      tags: ["Death Interaction", "Items", "Advanced"],
       description: [
-        "On their first night, must choose to visit one player and give them a Doll",
+        "On their first night, you must choose to visit one player and give them a Doll",
         "Players with the Doll can passed it to someone else each night.",
-        "Wins if the player holding the Doll dies.",
+        "You win if a player holding the Doll dies.",
       ],
       nightOrder: [["Give Doll", PRIORITY_ITEM_GIVER_EARLY]],
     },
@@ -5147,12 +5108,12 @@ const roleData = {
       alignment: "Independent",
       tags: [
         "Host",
-        "Unkillable",
-        "Whispers",
+        "Self Protection",
+        "Whisper Interaction",
         "Pregame Actions",
         "Dusk",
         "Dawn",
-        "Exposed",
+        "Revealing",
         "Hostile",
       ],
       description: [
@@ -5168,62 +5129,53 @@ const roleData = {
       alignment: "Independent",
       tags: ["Pregame Actions"],
       description: [
-        "Before the game starts the Host can assign them a role.",
-        "Wins if the Host chooses for them to win.",
+        "Before the game starts the Host can assign you a role.",
+        "You win if the Host chooses for you to win.",
       ],
-    },
-    Siren: {
-      alignment: "Independent",
-      tags: ["Killing", "Visits", "Reflexive", "Advanced"],
-      description: [
-        "Each night, can choose one player and kill them if they visit the Siren.",
-        "Wins if successfully kills two players.",
-      ],
-      nightOrder: [["Kill Beckoned", PRIORITY_KILL_SIREN]],
     },
     Fisherman: {
       alignment: "Independent",
       category: "Gifting",
-      tags: ["Killing", "Items", "Meeting", "Mini-game"],
+      tags: ["Killing", "Items", "Meetings", "Meeting Interaction", "Mini-Game"],
       description: [
-        "Each night, can choose to visit one player and give them a Fishing Rod.",
+        "Each night, you can choose to visit one player and give them a Fishing Rod.",
         "Fishing Rods can be used to play a terrible fishing mini-game instead of Mafia.",
       ],
       nightOrder: [["Give Fishing Rod", PRIORITY_ITEM_GIVER_DEFAULT]],
     },
     "Gingerbread Man": {
       alignment: "Independent",
-      tags: ["Survivor", "Visits", "Extra Lives", "Visiting", "Basic"],
+      tags: ["Survivor", "Visit Interaction", "Extra Lives", "Visiting", "Basic"],
       description: [
-        "Each night, can choose to visit a player and become immune to death unless that player visits the Gingerbread Man.",
-        "If that player visits the Gingerbread Man, the Gingerbread Man dies and that player will gain an extra life.",
-        "Wins if alive at the end of the game.",
+        "Each night, you can choose to visit a player and become immune to death unless that player visits you.",
+        "If that player visits you, you die and that player will gain an extra life.",
+        "You win if alive at the end of the game.",
       ],
       nightOrder: [["Hide Behind Player", PRIORITY_NIGHT_SAVER]],
     },
     Astrologer: {
       alignment: "Independent",
-      tags: ["Linked", "Survivor", "Visiting", "Advanced"],
+      tags: ["Linked", "Survivor", "Visiting", "Advanced", "Effects"],
       description: [
-        `On their first night, must choose to visit two players and make them "Lovesick" for each other.`,
+        `On your first night, you must choose to visit two players and make them "Lovesick" for each other.`,
         lovesickDef,
-        "Wins if their chosen lovers are alive at the end of the game.",
+        "You win if your chosen lovers are alive at the end of the game.",
       ],
       nightOrder: [["Make players in love.", PRIORITY_EFFECT_GIVER_EARLY]],
     },
     Grouch: {
       alignment: "Independent",
-      tags: ["Mafia", "Cult", "Survivor", "Vanilla", "Basic"],
-      description: ["Wins if alive when Village loses."],
+      tags: ["Survivor", "Vanilla", "Basic"],
+      description: ["You win if alive at the end of the game and Village has not won."],
     },
     Shinigami: {
       alignment: "Independent",
-      tags: ["Killing", "Items", "Visiting", "Advanced"],
+      tags: ["Killing", "Items", "Visiting", "Advanced", "Day Actions"],
       description: [
         "At the beginning of the game, one player randomly receives a Notebook.",
         "A player holding a Notebook can kill a selected player during the night.",
         "A player holding a Notebook must pass it to another player each day.",
-        "Each night, can choose to visit one player and win if they are holding a Notebook.",
+        "Each night, you can choose to visit one player and win if they are holding a Notebook.",
       ],
       nightOrder: [["Guess Book Holder", PRIORITY_ITEM_TAKER_DEFAULT]],
     },
@@ -5231,37 +5183,37 @@ const roleData = {
       alignment: "Independent",
       tags: ["Linked", "Independent", "Basic"],
       description: [
-        "Assigned to a random Independent player at the start of the game.",
-        "Meets with that player at night.",
-        "If that player is killed or converted, the Sidekick takes their role.",
-        "Independent roles with the Backup modifier become Sidekick with their original roles as the target.",
-        "Wins if their teammate wins.",
+        "You are assigned an Independent player as a target.",
+        "You meet with your target at night.",
+        "If your target is killed or converted, you convert to their role.",
+        //"Independent roles with the Backup modifier become Sidekick with their original roles as the target.",
+        "You win if your target wins.",
       ],
     },
     Supervillain: {
       alignment: "Independent",
       tags: ["Independent", "Basic"],
-      description: ["Wins if they are the sole remaining Independent player."],
+      description: ["You win if you are the only Independent player alive."],
     },
     Monk: {
       alignment: "Independent",
-      tags: ["Voting", "Protective", "Visiting", "Basic"],
+      tags: ["Voting", "Protective", "Visiting", "Basic", "Kill Interaction"],
       description: [
-        "Each night, can choose to visit one player and protect them from death until the following night.",
-        "If that player is attacked, the Monk gains 1 point.",
-        "Vote weight is worth 0 votes.",
-        "Wins from if they have 2 points, or if no deaths happen in 2 days and 2 nights.",
+        "Each night, you can choose to visit one player and protect them from death until the following night.",
+        "If a player you protect is attacked, you gain 1 point.",
+        "Your vote weight is worth 0 votes.",
+        "You win if you have 2 points, or if no deaths happen in 2 days and 2 nights.",
       ],
       nightOrder: [["Protect Player", PRIORITY_NIGHT_SAVER]],
     },
     Warlock: {
       alignment: "Independent",
-      tags: ["Voting", "Condemn", "Visiting", "Guess", "Basic"],
+      tags: ["Voting", "Condemn Interaction", "Visiting", "Guess", "Basic"],
       description: [
-        "Each night, can choose to visit one player.",
-        "If that player is condemned the next day, the Warlock gains 1 point.",
-        "If the Warlock visits no one and no one is condemned, the Warlock gains 1 point.",
-        "The Warlock wins if they get 2 points.",
+        "Each night, you can choose to visit one player.",
+        "If that player is condemned the next day, you gain 1 point.",
+        "If you visit no one and no one is condemned, you gain 1 point.",
+        "You win if you get 2 points.",
       ],
       nightOrder: [["Guess Vote", PRIORITY_SUPPORT_VISIT_DEFAULT]],
       SpecialInteractions: {
@@ -5277,7 +5229,7 @@ const roleData = {
       alignment: "Independent",
       tags: ["Linked", "Setup Changes", "Basic"],
       description: [
-        "Wins if they survive and all other rivals are dead.",
+        "You win if you survive and all other rivals are dead.",
         "Adds 1 Rival in closed setups.",
       ],
     },
@@ -5285,10 +5237,9 @@ const roleData = {
       alignment: "Independent",
       tags: ["Mafia", "Conversion", "Visiting", "Expert"],
       description: [
-        "Each night, can choose to visit one player.",
-        "If that player is mafia, the Picciotto will be notified.",
-        "When the Picciotto has visited all the living mafia, they are converted into a random mafia role.",
-        "Does not win if not converted to mafia.",
+        "Each night, you can choose to visit one player and learn if they are Mafia.",
+        "When you have visited all the living mafia, you are converted into a random mafia role.",
+        "You cannot win as Picciotto.",
       ],
       nightOrder: [
         ["Visit", PRIORITY_SUPPORT_VISIT_DEFAULT],
@@ -5300,22 +5251,22 @@ const roleData = {
       tags: ["Protective", "Graveyard", "Sacrificial", "Basic"],
       graveyardParticipation: "self",
       description: [
-        "Randomly assigned a player as a target.",
-        "Once per game while alive or dead at night, can choose to protect their target from death until the following night.",
-        "If their target is attacked when protected, the Angel dies.",
-        "Wins if their target is alive at the end of the game.",
+        "You are assigned an random player as a target.",
+        "Once per game while alive or dead at night, you can choose to protect their target from death until the following night.",
+        "If your target is attacked when protected, you die.",
+        "You win if your target is alive at the end of the game.",
       ],
       nightOrder: [["Protect Player", PRIORITY_NIGHT_SAVER]],
     },
     Emperor: {
       alignment: "Independent",
-      tags: ["Voting", "Condemn", "Visiting", "Basic"],
+      tags: ["Voting", "Condemn Interaction", "Visiting", "Basic"],
       description: [
-        "Each night, can choose to visit two players.",
+        "Each night, you can choose to visit two players.",
         "During the following day, only those two players may be voted.",
-        "Each night, must choose one of the two player to be their champion.",
-        "If the champion survives the following day, the Emperor gains 1 point.",
-        "Wins if they have 2 points.",
+        "Each night, you must choose one of the two player to be your champion.",
+        "If your champion survives the following day, you gains 1 point.",
+        "You win if you have 2 points.",
       ],
       nightOrder: [["Duel", PRIORITY_EFFECT_GIVER_EARLY + 1]],
     },
@@ -5331,14 +5282,13 @@ const roleData = {
       ],
       tagsHidden: ["No Investigate"],
       description: [
-        "If a Magus is present, no Evil roles will be present in the game.",
-        "At night, the Magus will passively and randomly kill players and use abilities of Evil roles that can spawn in the setup.",
-        "Upon death, the Magus has a suit as a random Evil role from the setup.",
-        "Information is arbitrary if a Magus is present",
+        "No Evil roles will be present in the game.",
+        "At night, you will passively and randomly kill players and use abilities of Evil roles that can spawn in the setup.",
+        "All information and death reveals are arbitrary.",
         "If Village declares Magus Game and a Magus is not present, all Village-aligned players die.",
-        "Village must declare a Magus game to win if a Magus is present.",
-        "Village and The Magus lose if only 2 players are alive.",
-        "Magus Wins with Village.",
+        "Village must declare a Magus game to win.",
+        "Village and you lose if only 2 players are alive.",
+        "You win if Village wins.",
       ],
       skins: [
         {
@@ -5354,22 +5304,14 @@ const roleData = {
     Superhero: {
       alignment: "Independent",
       tags: [
-        "Conversion",
-        "Information",
-        "Revealing",
-        "Role Swapping",
-        "Dusk",
-        "Pregame Actions",
-        "Position",
-        "Excess Roles",
-        "Meeting",
+        "Meetings",
         "Hostile",
-        "Advanced",
+        "Basic",
       ],
       description: [
-        "Meets with all Independents roles.",
-        "Grants All Independents a random infomation or role swapping ability.",
-        "Wins if Independents have majority.",
+        "You meet with all Independents roles.",
+        //"Grants All Independents a random infomation or role swapping ability.",
+        "You win if Independents have majority.",
         "Lone Independents do not meet or count for majority",
       ],
       nightOrder: [
@@ -5386,8 +5328,8 @@ const roleData = {
       alignment: "Independent",
       tags: ["Killing", "Must Act", "Last Two", "Visiting", "Hostile", "Basic"],
       description: [
-        "Each night, must choose to visit one player and kill them.",
-        "Wins if among the last two alive.",
+        "Each night, you must choose to visit one player and kill them.",
+        "You win if you are alive in the final two.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_DEFAULT + 1]],
     },
@@ -5401,12 +5343,14 @@ const roleData = {
         "Visiting",
         "Hostile",
         "Advanced",
+        "Effects",
+        "Death Interaction",
       ],
       description: [
         `On their first night, must choose to visit one player and become "Lovesick" for them.`,
         lovesickDef,
         "Each night, must choose to visit one player and kill them.",
-        `Wins if alive and only players they are "Lovesick" for are alive.`,
+        `You win if only you and players you are "Lovesick" for are alive.`,
       ],
       nightOrder: [
         ["Kill", PRIORITY_KILL_DEFAULT + 1],
@@ -5424,22 +5368,22 @@ const roleData = {
         "Advanced",
       ],
       description: [
-        "Has a clock that starts at 6 o'clock.",
-        "Each night, can choose to visit one player and kill them.",
-        "Clock goes up by 1 hour for killing Village roles, 2 hours for killing Mafia or Cult roles, and down by 3 hours for killing Independent roles.",
-        "If the clock strikes 3 o'clock, the Clockmaker dies.",
-        "If the clock strikes 9 o'clock, the Clockmaker gains an extra life.",
-        "Wins when clock strikes 12 o'clock or if among the last two alive.",
+        "You have a clock that starts at 6 o'clock.",
+        "Each night, you can choose to visit one player and kill them.",
+        "Your clock goes up by 1 hour for killing Village roles, 2 hours for killing Mafia or Cult roles, and down by 3 hours for killing Independent roles.",
+        "If your clock strikes 3 o'clock, you die.",
+        "If your clock strikes 9 o'clock, you gain an extra life.",
+        "You win when your clock strikes 12 o'clock or if you are alive in the final two.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_DEFAULT + 1]],
     },
     Pyromaniac: {
       alignment: "Independent",
-      tags: ["Killing", "Gasoline", "Last Two", "Visiting", "Hostile", "Basic"],
+      tags: ["Killing", "Gasoline", "Effects", "Last Two", "Visiting", "Hostile", "Basic", "Day Actions"],
       description: [
-        `Each night, can choose to visit one player and make them "Doused".`,
-        `Each day, can choose to kill all players that are "Doused".`,
-        "Wins if among the last two alive.",
+        `Each night, you can choose to visit one player and make them "Doused".`,
+        `Each day, you can choose to kill all players that are "Doused".`,
+        "You win if you are alive in the final two.",
       ],
       nightOrder: [["Douse In Gasoline", PRIORITY_EFFECT_GIVER_DEFAULT - 1]],
     },
@@ -5447,10 +5391,10 @@ const roleData = {
       alignment: "Independent",
       tags: ["Hostile", "Conversion", "Advanced"],
       description: [
-        "Once per game at night, can choose Independent role from the setup.",
-        "The Egg will convert to the chosen role.",
-        `If the chosen role is already in play, The player with that role will be converted to Amnesiac.`,
-        "Cannot win the game as Egg.",
+        "Once per game at night, you can choose Independent role from the setup.",
+        "You will be converted to that role.",
+        `If another player is that role, that player will be converted to Amnesiac.`,
+        "You cannot win the game as Egg.",
       ],
       nightOrder: [
         [
@@ -5474,20 +5418,19 @@ const roleData = {
       alignment: "Independent",
       tags: [
         "Killing",
-        "Roles",
         "Last Two",
-        "Immortal",
-        "Condemn Immune",
+        "Self Protection",
         "Visiting",
         "Hostile",
         "Advanced",
+        "Revealing",
       ],
       description: [
-        "Each night, chooses a role.",
-        "Each night, can choose to visit one player and kill them if their role is the selected role.",
-        "If that player dies, the Hellhound will protected from death the following day.",
-        "If that player's role is not chosen role, the Hellhound will be revealed to all.",
-        "Wins if Hellhounds have majority.",
+        "Each night, you chooses a role.",
+        "Each night, you can choose to visit one player and kill them if their role is the selected role.",
+        "If you kill a player, you will be protected from death the following day.",
+        "If that player's role is not chosen role, you will be revealed to all.",
+        "You win if Hellhounds have majority.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_GUESS_ROLE]],
       skins: [
@@ -5510,8 +5453,8 @@ const roleData = {
       alignment: "Independent",
       tags: ["Killing", "Independent", "Visiting", "Hostile", "Advanced"],
       description: [
-        "Each night, can choose to visit one player and kill them.",
-        "Wins when all other Hostile Independents are dead.",
+        "Each night, you can choose to visit one player and kill them.",
+        "You win if all other Hostile Independents are dead.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_DEFAULT + 1]],
     },
@@ -5528,11 +5471,11 @@ const roleData = {
         "Advanced",
       ],
       description: [
-        "Each night, can choose to visit one player and kill them and hide their role.",
-        "Players killed by a Blob meet with the Blob.",
-        "For every two players the Blob kills, the Blob gains an extra life.",
-        "If the Blob dies, all players killed by the Blob are revived.",
-        "Wins if among the last two alive.",
+        "Each night, you can choose to visit one player and kill them and hide their role.",
+        "Players you kill meet with you.",
+        "For every two players you kill, you gain an extra life.",
+        "If you die, all players you killed are revived.",
+        "You win if you are alive in the final two.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_DEFAULT + 1]],
       graveyardParticipation: "all",
@@ -5548,45 +5491,42 @@ const roleData = {
         "Advanced",
       ],
       description: [
-        "Each night, can choose to visit one player and die, then convert that player to Grey Goo.",
-        "Wins if a Grey Goo is in the last two alive.",
+        "Each night, you can choose to visit one player and die, then convert that player to Grey Goo.",
+        "You win if a Grey Goo is alive in the final two.",
       ],
       nightOrder: [["Convert and Die", PRIORITY_CONVERT_DEFAULT + 5]],
     },
     Mastermind: {
       alignment: "Independent",
       tags: [
-        "Mafia",
-        "Cult",
-        "Meeting",
+        "Meetings",
         "Faction Meeting Interaction",
         "Hostile",
         "Advanced",
       ],
       description: [
-        "Meets with Mafia and Cult.",
-        "Anonymizes Mafia and Cult meetings.",
-        "Wins instead of Mafia/Cult and counts toward their total.",
+        "You meet with the Mafia and Cult.",
+        "You anonymizes the Mafia and Cult meetings.",
+        "You count toward Mafia/Cult majority.",
+        "If the Mafia or Cult wins, you win instead.",
       ],
     },
     Usurper: {
       alignment: "Independent",
       tags: [
-        "Mafia",
-        "Mafioso",
-        "Meeting",
+        "Meetings",
         "Faction Meeting Interaction",
-        "Cultist",
         "Visiting",
         "Hostile",
         "Conversion",
+        "Vanilla Interaction",
         "Advanced",
       ],
       description: [
-        "Meets with Mafia and Cult.",
-        "Anonymizes Mafia and Cult meetings.",
-        "Each night, can choose to visit one player and if the player is sided with the Mafia/Cult convert them to Mafioso/Cultist.",
-        "Wins when all Mafia-aligned players are Mafiosos or all Cult-aligned players are Cultists.",
+        "You meet with the Mafia and Cult.",
+        "You anonymizes the Mafia and Cult meetings.",
+        "Each night, you can choose to visit one player and if the player is sided with the Mafia/Cult convert them to Mafioso/Cultist.",
+        "You win if all Mafia-aligned players are Mafiosos or all Cult-aligned players are Cultists.",
       ],
       nightOrder: [["Convert", PRIORITY_CONVERT_DEFAULT + 8]],
       RolesMadeBy: ["Mafioso", "Cultist"],
@@ -5594,8 +5534,7 @@ const roleData = {
     Mutineer: {
       alignment: "Independent",
       tags: [
-        "Mafia",
-        "Meeting",
+        "Meetings",
         "Killing",
         "Last Two",
         "Faction Meeting Interaction",
@@ -5604,10 +5543,10 @@ const roleData = {
         "Advanced",
       ],
       description: [
-        "Meets with Mafia and Cult but does not act with them.",
-        "Anonymizes Mafia and Cult meetings.",
-        "Each night, can choose to visit one player and kill them.",
-        "Wins if alive alone or the final two, and the other is not a Mafia or Cult",
+        "You meet with the Mafia and Cult but does not act with them.",
+        "You anonymizes the Mafia and Cult meetings.",
+        "Each night, you can choose to visit one player and kill them.",
+        "You win if you are alive in the final two and all Mafia and Cult are dead.",
       ],
       nightOrder: [["Kill", PRIORITY_KILL_DEFAULT + 1]],
     },
@@ -5615,31 +5554,31 @@ const roleData = {
       alignment: "Independent",
       tags: ["Probe", "Visiting", "Hostile", "Advanced", "Group Action"],
       description: [
-        "Meets with other Aliens at night.",
+        "You meet with other Aliens at night.",
         "Each night, all Aliens can choose to visit one player and probe them.",
-        "Wins if all players left alive have been probed.",
+        "You win if all alive players have been probed.",
       ],
       nightOrder: [["Probe", PRIORITY_EFFECT_GIVER_DEFAULT]],
     },
     Matchmaker: {
       alignment: "Independent",
-      tags: ["Linked", "Alignment", "Visiting", "Hostile", "Advanced"],
+      tags: ["Visiting", "Hostile", "Advanced", "Effects"],
       description: [
-        `Each night, can choose to visit two players and if they are the same alignment, they will become "Starstruck".`,
-        `Wins if all players left alive are "Starstruck".`,
+        `Each night, you can choose to visit two players and if they are the same alignment, they will become "Starstruck".`,
+        `You win if all alive players are "Starstruck".`,
       ],
       nightOrder: [["Matchmaker", PRIORITY_ITEM_GIVER_DEFAULT]],
     },
     Tofurkey: {
       alignment: "Independent",
-      tags: ["Famine", "Alignment", "Survivor", "Hostile", "Advanced"],
+      tags: ["Famine", "Survivor", "Hostile", "Advanced"],
       description: [
         //"The game begins with a famine, with each player starting with four bread.",
         "Adds the Famine event to the setup.",
-        "Tofurkeys are immune to the famine.",
-        "If a Tofurkey dies, each remaining player loses one food.",
-        "Appears as Turkey to investigators.",
-        "Wins if they survive to the end of the game and everyone else dies of famine.",
+        "You are immune to the famine.",
+        "If you die, each remaining player loses one food.",
+        "You appear as Turkey to information roles.",
+        "You win if only Turkeys and Tofurkeys are alive.",
       ],
     },
     Turkey: {
@@ -5648,19 +5587,19 @@ const roleData = {
       description: [
         //"The game begins with a famine, with each player starting with four bread.",
         "Adds the Famine event to the setup.",
-        "Turkeys are immune to the famine.",
-        "If a Turkey dies, each remaining player gets given a food.",
-        "Wins if they survive to the end of the game and everyone else dies of famine.",
+        "You are immune to the famine.",
+        "If you die, each remaining player gets given a food.",
+        "You win if only Turkeys and Tofurkeys are alive.",
       ],
     },
     Leprechaun: {
       alignment: "Independent",
-      tags: ["Items", "Killing", "Visiting", "Hostile", "Advanced"],
+      tags: ["Items", "Item Interaction", "Killing", "Visiting", "Hostile", "Advanced"],
       description: [
-        "When present in the game, Clovers are randomly assigned to players.",
-        "Each night, can choose to visit one player and steals a random item from them, preferentially stealing Clovers.",
-        "If that player is a Leprechaun, the Leprechaun kills them.",
-        "Wins if holding three Clovers.",
+        "At the beginning of the game, some players randomly receive clovers.",
+        "Each night, you can choose to visit one player and steals a random item from them, preferentially stealing Clovers.",
+        "If that player is a Leprechaun, you kill them.",
+        "You win if you are holding three Clovers.",
       ],
       nightOrder: [["Steal Items", PRIORITY_ITEM_TAKER_DEFAULT]],
     },
@@ -5675,12 +5614,14 @@ const roleData = {
         "Visiting",
         "Hostile",
         "Advanced",
+        "Day Actions",
       ],
       description: [
-        "Each night, can choose to visit one player and give them a Timebomb.",
+        "Each night, you can choose to visit one player and give them a Timebomb.",
         timeBombDef,
-        "Wins if 3 players are killed by the timebomb, or if the Anarchist is among the last two alive.",
-        "Timebomb reveals Anarchist when it explodes on themselves.",
+        "If you kill a player with a timebomb, you gain a point.",
+        "You win if you are alive in the final two or if you have 3 points.",
+        "Your Timebomb will reveal you if it explodes on you.",
       ],
       nightOrder: [["Give Timebomb", PRIORITY_ITEM_GIVER_DEFAULT]],
     },
@@ -5695,9 +5636,9 @@ const roleData = {
         "Group Action",
       ],
       description: [
-        "Meets with other Communists at night.",
+        "You meet with other Communists at night.",
         "Each night, all Communists can choose to visits one player each night and convert them to their alignment's vanilla role.",
-        "Wins if alive when all other players are vanilla.",
+        "You win if all other players are vanilla.",
       ],
       nightOrder: [["Convert to Vanilla", PRIORITY_CONVERT_DEFAULT + 8]],
       RolesMadeBy: ["Villager", "Mafioso", "Cultist"],
@@ -5713,12 +5654,14 @@ const roleData = {
         "Visiting",
         "Hostile",
         "Advanced",
+        "Day Actions",
       ],
       description: [
-        "Each night, can choose to visit one player and give them a Revolver.",
+        "Each night, you can choose to visit one player and give them a Revolver.",
         revolverDef,
-        "Wins if 3 players are killed by the revolver, or if the Dragoon is among the last two alive.",
-        "Revolver reveals Dragoon when shooting themselves.",
+        "If you kill a player with a revolver, you gain a point.",
+        "You win if you are alive in the final two or if you have 3 points.",
+        "Your Revolver will reveal you if it shoots you.",
       ],
       nightOrder: [["Give Revolver", PRIORITY_ITEM_GIVER_DEFAULT]],
     },
@@ -5731,17 +5674,18 @@ const roleData = {
         "Visiting",
         "Hostile",
         "Advanced",
+        "Day Actions",
       ],
       description: [
-        "On their first night, must choose a sequence of numbers.",
-        "Each night, can choose to visit one player.",
+        "On your first night, you must choose a sequence of numbers.",
+        "Each night, you can choose to visit one player.",
         "The following day, that player must guess the number sequence.",
         "If that player guesses incorrectly they die and all players are given a hint.",
         "Pico if the guess contained a correct digit.",
         "Fermi if the guess contained a correct digit in the correct location.",
         "Bagel if the guess contained no correct digits.",
-        "A Sphinx dies if and only if their number sequence is correctly guessed.",
-        "Wins if among the last two alive.",
+        "You can only die if and only if your number sequence is correctly guessed.",
+        "You win if you are alive in the final two.",
       ],
       nightOrder: [["Visit Player", PRIORITY_SUPPORT_VISIT_DEFAULT]],
     },
@@ -5754,11 +5698,12 @@ const roleData = {
         "Visiting",
         "Hostile",
         "Advanced",
+        "Day Actions",
       ],
       description: [
-        "Each night, can choose to visit one player and challenges them to a game of Rock, Paper, Scissors the following day.",
-        "If the Gambler wins, that player dies.",
-        "Wins the game when they have 2 gamble wins, or are among the last two alive.",
+        "Each night, you can choose to visit one player and challenge them to a game of Rock, Paper, Scissors the following day.",
+        "If you win the game of Rock, Paper, Scissors, that player dies and you gain 1 point.",
+        "You win if you are alive in the final two or if you have 2 points.",
       ],
       nightOrder: [["Gamble", 0]],
     },
@@ -5767,15 +5712,15 @@ const roleData = {
       tags: [
         "Killing",
         "Last Two",
-        "Visits",
+        "Visit Interaction",
         "Visiting",
         "Hostile",
         "Advanced",
       ],
       description: [
-        "Each night, can choose to visit one player and kill each player who visits that player.",
-        "If no one visits that player, the Grizzly Bear kills them.",
-        "Wins if among the last two alive.",
+        "Each night, you can choose to visit one player and kill each player who visits that player.",
+        "If no one visits that player, you kill them.",
+        "You win if you are alive in the final two.",
       ],
       nightOrder: [["Kill Visitors", PRIORITY_KILL_DEFAULT + 1]],
     },
@@ -5784,15 +5729,15 @@ const roleData = {
       tags: [
         "Killing",
         "Last Two",
-        "Visits",
-        "Malicious Effects",
+        "Visit Interaction",
+        "Effects",
         "Visiting",
         "Hostile",
         "Advanced",
         "Group Action",
       ],
       description: [
-        "Meets with other Polar Bears at night.",
+        "You meet with other Polar Bears at night.",
         `Each night, all Polar Bears can choose to visit two players and make them "Polarised".`,
         polarisedDef,
         "A polarised player visiting another polarised player will kill both of them.",
@@ -5801,65 +5746,73 @@ const roleData = {
       ],
       nightOrder: [["Polarize", PRIORITY_EFFECT_GIVER_EARLY]],
     },
+    Siren: {
+      alignment: "Independent",
+      tags: ["Killing", "Visit Interaction", "Hostile", "Advanced", "Visiting"],
+      description: [
+        "Each night, you can choose to visit one player and kill them if they visit you.",
+        "If you kill a player, you gain a point.",
+        "You win if you are alive in the final two or if you have 2 points.",
+      ],
+      nightOrder: [["Kill Beckoned", PRIORITY_KILL_SIREN]],
+    },
     Samurai: {
       alignment: "Independent",
       tags: [
         "Killing",
-        "Turn Based",
         "Mini-Game",
         "Visiting",
         "Hostile",
-        "Exposed",
         "Advanced",
+        "Day Actions",
       ],
       description: [
-        "Each night, can choose to visit one player and duel them in turn based combat mini-game.",
-        "The Samurai and that player have the option to use four moves during the duel:",
+        "Each night, you can choose to visit one player and duel them in turn based combat mini-game.",
+        "You and that player have the option to use four moves during the duel:",
         "Attack - Deals damage. There is a chance to Crit for double damage.",
         "Defend - Grants Block. Block will absorb damage.",
         "Focus - Raises Attack Power, Block Power, or Crit Chance at random",
         "Charge - Strengthens the duelist's next move. Charging multiple times will allow for special moves to be used.",
-        "Wins if they win their duel.",
+        "You win if you win your duel.",
       ],
       nightOrder: [["Start Duel", PRIORITY_ITEM_GIVER_DEFAULT]],
     },
     Snowman: {
       alignment: "Independent",
-      tags: ["Items", "Mini-Game", "Hostile", "Advanced"],
+      tags: ["Items", "Mini-Game", "Hostile", "Advanced", "Day Actions"],
       description: [
-        "Each night, may declare a snowball fight.",
-        "Half of all players will receive a Snowball.",
+        "Each night, you may declare a snowball fight.",
+        "Dduring a snowball fight, half of all players will receive a Snowball.",
         snowballDef,
         frozenDef,
-        "Wins if all living players have been frozen.",
+        "You win if all living players have been frozen.",
       ],
       nightOrder: [["Snowballs", PRIORITY_ITEM_GIVER_DEFAULT]],
     },
     Judge: {
       alignment: "Independent",
-      tags: ["Speaking", "Voting", "Meeting", "Dusk", "Hostile", "Advanced"],
+      tags: ["Speech", "Voting", "Meetings", "Condemn Interaction", "Dusk", "Hostile", "Advanced", "Day Actions"],
       description: [
-        "Can anonymously broadcast messages during the day.",
-        "Twice per game during the day, can choose for a court session to happen at dusk.",
+        "You can anonymously broadcast messages during the day.",
+        "Twice per game during the day, you can choose for a court session to happen at dusk.",
         "During a court session an additional player can be condemned and all voting and speaking is anonymous.",
-        "The Judge's vote counts for three during a Court session.",
-        "Wins among the last two standing.",
+        "Your vote counts for three during a Court session.",
+        "You win if you are alive in the final two.",
       ],
     },
     Puppeteer: {
       alignment: "Independent",
       tags: [
-        "Speaking",
         "Redirection",
-        "Control",
+        "Visit Interaction",
         "Visiting",
         "Hostile",
         "Advanced",
       ],
       description: [
-        "Each night, can choose to visit one player and learn their role and attach strings to them.",
-        "Each night, can choose to redirect each player they have attached strings to's visits on to other players. (Not a visit)",
-        "Wins among the last two alive.",
+        "Each night, you can choose to visit one player and learn their role and attach strings to them.",
+        "Each night, you can choose to redirect each player they have attached strings to's visits on to other players. (Not a visit)",
+        "You win if you are alive in the final two.",
       ],
       nightOrder: [
         ["Control Players", PRIORITY_REDIRECT_ACTION],
@@ -6007,7 +5960,7 @@ const roleData = {
     },
     Eclipse: {
       alignment: "Event",
-      tags: ["Event"],
+      tags: ["Event", "Effects"],
       description: [
         `If this Event occurs, all players will become "Blind".`,
         blindDef,
@@ -6026,7 +5979,7 @@ const roleData = {
     },
     Fog: {
       alignment: "Event",
-      tags: ["Event"],
+      tags: ["Event", "Effects"],
       description: [
         `If this Event occurs, all players will become "Foggy".`,
         foggyDef,
@@ -6044,7 +5997,7 @@ const roleData = {
     },
     "Mail-In Ballots": {
       alignment: "Event",
-      tags: ["Event"],
+      tags: ["Event", "Effects"],
       description: [
         `If this Event occurs, all players will become "Paralyzed".`,
         paralyzedDef,
@@ -6485,3 +6438,4 @@ const roleData = {
 };
 
 module.exports = roleData;
+
