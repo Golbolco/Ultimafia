@@ -580,6 +580,7 @@ router.post("/updateSetupOrder", async function (req, res) {
     res.status(500);
     res.send("Error updating setup order.");
   }
+});
   
 // Update round settings (minimumPoints) for the current season
 router.post("/updateRoundSettings", async function (req, res) {
