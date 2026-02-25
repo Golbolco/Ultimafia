@@ -2377,6 +2377,68 @@ router.post("/announcement", async function (req, res) {
   }
 });
 
+router.put("/announcement", async function (req, res) {
+  res.setHeader("Content-Type", "application/json");
+  try {
+    var userId = await routeUtils.verifyLoggedIn(req);
+    var announcementId = String(req.body.id);
+    var content = String(req.body.content);
+    var perm = "announce";
+
+    if (!(await routeUtils.verifyPermission(res, userId, perm))) return;
+
+    if (content.length > constants.maxAnnouncementLength) {
+      res.status(500);
+      res.send("Announcement is too long.");
+      return;
+    }
+
+    var announcement = await models.Announcement.findOne({ id: announcementId });
+    if (!announcement) {
+      res.status(404);
+      res.send("Announcement not found.");
+      return;
+    }
+
+    await models.Announcement.updateOne(
+      { id: announcementId },
+      { $set: { content } }
+    );
+
+    res.sendStatus(200);
+  } catch (e) {
+    logger.error(e);
+    res.status(500);
+    res.send("Error editing announcement.");
+  }
+});
+
+router.post("/announcement/delete", async function (req, res) {
+  res.setHeader("Content-Type", "application/json");
+  try {
+    var userId = await routeUtils.verifyLoggedIn(req);
+    var announcementId = String(req.body.id);
+    var perm = "announce";
+
+    if (!(await routeUtils.verifyPermission(res, userId, perm))) return;
+
+    var announcement = await models.Announcement.findOne({ id: announcementId });
+    if (!announcement) {
+      res.status(404);
+      res.send("Announcement not found.");
+      return;
+    }
+
+    await models.Announcement.deleteOne({ id: announcementId });
+
+    res.sendStatus(200);
+  } catch (e) {
+    logger.error(e);
+    res.status(500);
+    res.send("Error deleting announcement.");
+  }
+});
+
 router.post("/rankedApprove", async function (req, res) {
   res.setHeader("Content-Type", "application/json");
   try {

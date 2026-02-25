@@ -901,7 +901,7 @@ export function useModCommands(argValues, commandRan, setResults) {
         {
           label: "Content",
           name: "content",
-          type: "text",
+          type: "markdown",
         },
       ],
       run: function () {

@@ -13,10 +13,11 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Paper,
 } from "@mui/material";
 
 import { useErrorAlert } from "components/Alerts";
-import { UserSearchSelect } from "components/Form";
+import { UserSearchSelect, TextEditor } from "components/Form";
 import { SearchBar } from "components/Nav";
 import { UserContext } from "Contexts";
 
@@ -216,6 +217,33 @@ export function ModCommands(props) {
         );
       }
 
+      if (arg.type === "markdown") {
+        return (
+          <Paper
+            key={arg.name}
+            sx={{
+              p: 1,
+              width: "100%",
+              ".react-mde, .mde-header, .mde-text, .mde-preview": {
+                backgroundColor: "unset !important",
+                borderColor: "var(--mui-palette-divider)",
+              },
+              ".react-mde": {
+                borderRadius: "var(--mui-shape-borderRadius)",
+              },
+            }}
+          >
+            <Stack direction="column" spacing={0.5}>
+              <Typography variant="subtitle2">{arg.label}</Typography>
+              <TextEditor
+                value={argValue || ""}
+                onChange={(value) => updateArgValue(arg.name, value, arg.isArray)}
+              />
+            </Stack>
+          </Paper>
+        );
+      }
+
       return (
         <TextField
           value={argValue || ""}
@@ -238,8 +266,14 @@ export function ModCommands(props) {
     });
 
     args = args.map((arg, index) => {
+      const fullWidth = modCommands[command].args[index]?.type === "markdown";
       return (
-        <Grid item xs={12} md={6} key={arg.key ?? `arg-${index}`}>
+        <Grid
+          item
+          xs={12}
+          md={fullWidth ? 12 : 6}
+          key={arg.key ?? `arg-${index}`}
+        >
           {arg}
         </Grid>
       );
