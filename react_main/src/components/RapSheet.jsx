@@ -236,6 +236,16 @@ function VerdictDialog({
                 <Typography variant="body2" color="textSecondary">
                   This report was reviewed and dismissed with no violation found.
                 </Typography>
+                {report.finalRuling?.notes && (
+                  <Box sx={{ mt: 1.5 }}>
+                    <Typography variant="caption" color="textSecondary">
+                      Notes
+                    </Typography>
+                    <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+                      {report.finalRuling.notes}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             </>
           )}
