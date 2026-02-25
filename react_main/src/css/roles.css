@@ -2452,8 +2452,16 @@
   background-image: url("/src/images/modifiers/wannabe.png");
 }
 
+.modifier-Mafia-Combustible {
+  background-image: url("/src/images/modifiers/immolated.png");
+}
+
 .modifier-Mafia-Commuting {
   background-image: url("/src/images/modifiers/commuting.png");
+}
+
+.modifier-Mafia-Complacent {
+  background-image: url("/src/images/modifiers/suspended.png");
 }
 
 .modifier-Mafia-Complex {
@@ -2738,6 +2746,10 @@
 
 .modifier-Mafia-Paranormal {
   background-image: url("/src/images/modifiers/lone.png");
+}
+
+.modifier-Mafia-Perceptive {
+  background-image: url("/src/images/modifiers/peeking.png");
 }
 
 .modifier-Mafia-Peeking {
