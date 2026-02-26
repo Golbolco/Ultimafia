@@ -1,238 +1,503 @@
-import React, { useEffect, useState } from "react";
-import { useTheme } from "@mui/material/styles";
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
 import {
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
   Box,
-  Tabs,
-  Tab,
+  Button,
+  Stack,
+  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
 } from "@mui/material";
-import { useViolations } from "../../hooks/useViolations";
+import { NameWithAvatar } from "pages/User/User";
+import { UserContext, SiteInfoContext } from "../Contexts";
+import { useErrorAlert } from "./Alerts";
+import AppealDialog from "./AppealDialog";
 
-function TabPanel({ children, value, index, ...other }) {
+// Verdict icons mapping
+export const VERDICT_ICONS = {
+  "No Violation": require(`images/verdicts/no-violation.png`),
+  "Warning": require(`images/emotes/system.webp`),
+  "Personal Attacks & Harassment (PA)": require(`images/verdicts/personal-attacks.png`),
+  "Adult Content": require(`images/verdicts/adult-content.png`),
+  "Instigation": require(`images/verdicts/instigation.png`),
+  "Hazing": require(`images/verdicts/hazing.png`),
+  "Outing of Personal Information (OPI)": require(`images/verdicts/outing-personal-information.png`),
+  "Coercion": require(`images/verdicts/coercion.png`),
+  "Impersonation": require(`images/verdicts/impersonation.png`),
+  "Illegal Content & Activity (IC)": require(`images/verdicts/illegal-content.png`),
+  "Antagonization": require(`images/emotes/system.webp`),
+  "Game Throwing": require(`images/verdicts/game-throwing.png`),
+  "Game-Related Abandonment (GRA)": require(`images/verdicts/game-related-abandonment.png`),
+  "Insufficient Participation (ISP)": require(`images/verdicts/insufficient-participation.png`),
+  "Outside of Game Information (OGI)": require(`images/verdicts/out-of-game-information.png`),
+  "Exploits": require(`images/verdicts/exploits.png`),
+  "Cheating": require(`images/verdicts/cheating.png`),
+  "Intolerance": require(`images/verdicts/intolerance.png`),
+};
+
+function getVerdictIcon(violationName) {
+  if (!violationName) {
+    return VERDICT_ICONS["No Violation"];
+  }
+  // Remove offense suffix if present (e.g., " (1st Offense)")
+  const baseName = violationName.replace(/\s*\(\d+(st|nd|rd|th)\s+Offense\)\s*$/, "");
+  return VERDICT_ICONS[baseName] || VERDICT_ICONS[violationName] || VERDICT_ICONS["No Violation"];
+}
+
+function DigitsCount({ digits }) {
+  if (!digits || digits.length === 0) return null;
   return (
     <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`rules-tabpanel-${index}`}
-      aria-labelledby={`rules-tab-${index}`}
-      {...other}
+      className="digits-wrapper"
+      style={{
+        position: "absolute",
+        bottom: "0px",
+        right: "0px",
+      }}
     >
-      {value === index && <Box sx={{ pt: 3 }}>{children}</Box>}
+      {digits.map((digit, index) => (
+        <div key={index} className={`digit digit-${digit}`} />
+      ))}
     </div>
   );
 }
 
-export default function Rules() {
-  const theme = useTheme();
-  const { violationDefinitions, loading } = useViolations();
-  const [selectedTab, setSelectedTab] = useState(0);
 
-  useEffect(() => {
-    document.title = "Rules | UltiMafia";
-  }, []);
+function extractOffenseNumber(violationName) {
+  if (!violationName) return null;
+  // Match patterns like "(1st Offense)", "(2nd Offense)", etc.
+  const match = violationName.match(/\((\d+)(st|nd|rd|th)\s+Offense\)/);
+  return match ? parseInt(match[1]) : null;
+}
 
-  const communityRules = violationDefinitions.filter((r) => r.category === "Community");
-  const gameRules = violationDefinitions.filter((r) => r.category === "Game");
+function VerdictDialog({
+  open,
+  onClose,
+  report,
+  showRestrictedInfo,
+  isSelfViewing,
+  violationStatus,
+  statusLabel,
+  statusColor,
+  onAppealClick,
+}) {
+  if (!report) return null;
 
-  const handleTabChange = (event, newValue) => {
-    setSelectedTab(newValue);
+  const isWarning = report.finalRuling?.warning === true;
+  const isDismissed =
+    (!report.finalRuling || !report.finalRuling.violationName) && !isWarning;
+  const completedDate = report.completedAt ? new Date(report.completedAt) : null;
+
+  // Extract offense number from violationName (format: "Rule Name (1st Offense)")
+  const offenseNumber = extractOffenseNumber(report.finalRuling?.violationName);
+  const degreeDigits = offenseNumber ? String(offenseNumber).split("") : [];
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>
+        {isWarning
+          ? "Warning"
+          : isDismissed
+          ? "No Violation"
+          : report.finalRuling?.violationName || "Violation"}
+      </DialogTitle>
+      <DialogContent>
+        <Stack spacing={1.5}>
+          {showRestrictedInfo && (
+            <Box>
+              <Typography variant="caption" color="textSecondary">
+                Report ID
+              </Typography>
+              <Typography variant="body2" sx={{ fontFamily: "monospace" }}>
+                {report.id}
+              </Typography>
+            </Box>
+          )}
+
+          {showRestrictedInfo && report.reporterName && (
+            <Box>
+              <Typography variant="caption" color="textSecondary">
+                Reported By
+              </Typography>
+              <Box>
+                <NameWithAvatar id={report.reporterId} name={report.reporterName} />
+              </Box>
+            </Box>
+          )}
+
+          <Box>
+            <Typography variant="caption" color="textSecondary">
+              Rule Broken
+            </Typography>
+            <Typography variant="body2">{report.rule}</Typography>
+          </Box>
+
+          {report.gameId && (
+            <Box>
+              <Typography variant="caption" color="textSecondary">
+                Game
+              </Typography>
+              <Typography variant="body2">
+                <a
+                  href={`/game/${report.gameId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {report.gameId}
+                </a>
+              </Typography>
+            </Box>
+          )}
+
+          {showRestrictedInfo && report.description && (
+            <Box>
+              <Typography variant="caption" color="textSecondary">
+                Description
+              </Typography>
+              <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+                {report.description}
+              </Typography>
+            </Box>
+          )}
+
+          {!isDismissed && report.finalRuling && (
+            <>
+              <Divider />
+              <Box>
+                {showRestrictedInfo && (
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                    Final Ruling
+                  </Typography>
+                )}
+                <Stack spacing={0.5}>
+                  {showRestrictedInfo && (
+                    <>
+                      <Box>
+                        <Typography variant="caption" color="textSecondary">
+                          Violation
+                        </Typography>
+                        <Typography variant="body2">
+                          {report.finalRuling.violationName}
+                        </Typography>
+                      </Box>
+                      {report.finalRuling.violationCategory && (
+                        <Box>
+                          <Typography variant="caption" color="textSecondary">
+                            Category
+                          </Typography>
+                          <Typography variant="body2">
+                            {report.finalRuling.violationCategory}
+                          </Typography>
+                        </Box>
+                      )}
+                      {report.finalRuling.banType && (
+                        <Box>
+                          <Typography variant="caption" color="textSecondary">
+                            Ban Type
+                          </Typography>
+                          <Typography variant="body2">
+                            {report.finalRuling.banType}
+                          </Typography>
+                        </Box>
+                      )}
+                      {report.finalRuling.banLength && (
+                        <Box>
+                          <Typography variant="caption" color="textSecondary">
+                            Ban Length
+                          </Typography>
+                          <Typography variant="body2">
+                            {report.finalRuling.banLength}
+                          </Typography>
+                        </Box>
+                      )}
+                    </>
+                  )}
+                  {report.finalRuling.notes && (
+                    <Box>
+                      <Typography variant="caption" color="textSecondary">
+                        Notes
+                      </Typography>
+                      <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+                        {report.finalRuling.notes}
+                      </Typography>
+                    </Box>
+                  )}
+                </Stack>
+              </Box>
+            </>
+          )}
+
+          {isDismissed && (
+            <>
+              <Divider />
+              <Box>
+                <Typography variant="body2" color="textSecondary">
+                  This report was reviewed and dismissed with no violation found.
+                </Typography>
+                {report.finalRuling?.notes && (
+                  <Box sx={{ mt: 1.5 }}>
+                    <Typography variant="caption" color="textSecondary">
+                      Notes
+                    </Typography>
+                    <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+                      {report.finalRuling.notes}
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            </>
+          )}
+
+          {showRestrictedInfo && report.completedAt && completedDate && (
+            <Box>
+              <Typography variant="caption" color="textSecondary">
+                Completed
+              </Typography>
+              <Typography variant="body2">
+                {completedDate.toLocaleString()}
+              </Typography>
+            </Box>
+          )}
+
+          {showRestrictedInfo &&
+            !isDismissed &&
+            report.violationTicket && (
+              <Box>
+                <Typography variant="caption" color="textSecondary">
+                  Violation Status
+                </Typography>
+                <Typography variant="body2">
+                  {violationStatus === "active" && "Active"}
+                  {violationStatus === "expired" && "Expired"}
+                  {violationStatus === "permanent" && "Permanent"}
+                </Typography>
+                {report.violationTicket.activeUntil &&
+                  report.violationTicket.activeUntil > 0 && (
+                    <Typography variant="caption" color="textSecondary">
+                      Active until:{" "}
+                      {new Date(report.violationTicket.activeUntil).toLocaleString()}
+                    </Typography>
+                  )}
+              </Box>
+            )}
+
+          {/* Appeal button - only show for violations (not dismissed) and if user is viewing their own profile */}
+          {isSelfViewing &&
+            !isDismissed &&
+            report.finalRuling &&
+            report.linkedViolationTicketId && (
+              <Box sx={{ mt: 2 }}>
+                <Button variant="outlined" color="primary" onClick={onAppealClick}>
+                  Appeal Violation
+                </Button>
+              </Box>
+            )}
+
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Close</Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+export default function RapSheet({ userId }) {
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAppealDialog, setShowAppealDialog] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [showVerdictDialog, setShowVerdictDialog] = useState(false);
+  const [selectedVerdictReport, setSelectedVerdictReport] = useState(null);
+  const user = useContext(UserContext);
+  const siteInfo = useContext(SiteInfoContext);
+  const errorAlert = useErrorAlert();
+
+  // Check if user is viewing their own profile and is not a mod
+  const isSelfViewing = user.id === userId;
+  const isMod = user.perms?.seeModPanel;
+  const showRestrictedInfo = isMod || !isSelfViewing;
+
+  const loadReports = async () => {
+    if (!userId) return;
+    try {
+      setLoading(true);
+      const res = await axios.get(`/api/user/${userId}/reports`);
+      setReports(res.data.reports || []);
+    } catch (e) {
+      if (e.response?.status === 403 || e.response?.status === 401) {
+        // User doesn't have permission - don't show component
+        setReports([]);
+      } else {
+        errorAlert(e);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
+  useEffect(() => {
+    loadReports();
+  }, [userId]);
+
+  // Don't render if no reports and not loading (or if user doesn't have permission)
   if (loading) {
+    return null; // Or a loading indicator if desired
+  }
+
+  if (reports.length === 0) {
     return null;
   }
 
+  const panelStyle = {
+    marginBottom: "16px",
+  };
+
+  const headingStyle = {
+    marginBottom: "8px",
+  };
+
+  const handleVerdictClick = (report) => {
+    setSelectedVerdictReport(report);
+    setShowVerdictDialog(true);
+  };
+
+  const handleAppealClick = (report) => {
+    setShowVerdictDialog(false);
+    setSelectedReport(report);
+    setShowAppealDialog(true);
+  };
+
   return (
-    <>
-      <Typography variant="h2" gutterBottom>
-        UltiMafia Rules of Conduct
+    <div className="box-panel" style={panelStyle}>
+      <Typography variant="h3" style={headingStyle}>
+        Rap Sheet
       </Typography>
-      <Typography variant="body2" color="text.secondary" paragraph>
-        Last Updated: February 22, 2026
-      </Typography>
-
-      <Box sx={{ borderBottom: 1, borderColor: "divider"}}>
-        <Tabs 
-          value={selectedTab}
-          onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          allowScrollButtonsMobile
+      <div className="content">
+        <Box
           sx={{
-            borderBottom: 1,
-            borderColor: "divider",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 1,
           }}
-          >
-          <Tab label="Community Violations" />
-          <Tab label="Game-Related Violations" />
-          <Tab label="Violation Lengths" />
-          <Tab label="Filing an Appeal" />
-          <Tab label="Other Policies" />
-        </Tabs>
-      </Box>
+        >
+          {reports.map((report) => {
+            // A report is dismissed if finalRuling is null or doesn't have a violationName
+            // A report is a warning if finalRuling has warning: true
+            // If it has a violationName, it's a violation, not dismissed or warning
+            const isWarning = report.finalRuling?.warning === true;
+            const isDismissed =
+              (!report.finalRuling || !report.finalRuling.violationName) &&
+              !isWarning;
+            const violationName = isWarning
+              ? "Warning"
+              : isDismissed
+              ? "No Violation"
+              : report.finalRuling?.violationName || "Violation";
 
-      <TabPanel value={selectedTab} index={0}>
-        <Typography variant="h3" gutterBottom>
-          Community Violations
-        </Typography>
-        <Typography variant="body1" paragraph>
-          These are violations relating to personal and community conduct.
-          Receiving any of these violations will lead to bans from the
-          entirety of the site (including games, forums, chat, and the Discord
-          server).
-        </Typography>
-        {communityRules.map((rule) => (
-          <Box key={rule.name} sx={{ mb: 2 }}>
-            <Typography
-              variant="h4"
-              gutterBottom
-              sx={{ textDecoration: "underline" }}
-            >
-              {rule.name}
-            </Typography>
-            <Typography variant="body1">{rule.description}</Typography>
-          </Box>
-        ))}
-      </TabPanel>
+            // Determine violation status
+            let violationStatus = null;
+            if (!isDismissed && report.violationTicket) {
+              const status = report.violationTicket.status;
+              if (status === "active") {
+                violationStatus = "active";
+              } else if (status === "expired") {
+                violationStatus = "expired";
+              } else if (status === "permanent") {
+                violationStatus = "permanent";
+              }
+            }
 
-      <TabPanel value={selectedTab} index={1}>
-        <Typography variant="h3" gutterBottom>
-          Game-Related Violations
-        </Typography>
-        <Typography variant="body1" paragraph>
-          These violations will only earn you bans from ranked and competitive
-          games; you will be able to access other games and the rest of the
-          site.
-        </Typography>
-        {gameRules.map((rule) => (
-          <Box key={rule.name} sx={{ mb: 2 }}>
-            <Typography
-              variant="h4"
-              gutterBottom
-              sx={{ textDecoration: "underline" }}
-            >
-              {rule.name}
-            </Typography>
-            <Typography variant="body1">{rule.description}</Typography>
-          </Box>
-        ))}
-      </TabPanel>
+            // Get icon for this verdict
+            const verdictIcon = getVerdictIcon(violationName);
 
-      <TabPanel value={selectedTab} index={2}>
-        <Typography variant="h3" gutterBottom>
-          Violation Lengths
-        </Typography>
-        <Typography variant="body1" paragraph>
-          After serving the ban length for an offense, the violation will
-          remain on one's record for three months starting from the day that
-          the ban was first issued.
-        </Typography>
-        <TableContainer component={Paper} sx={{ overflowX: "auto" }}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell
+            // Extract offense number from violationName (format: "Rule Name (1st Offense)")
+            const offenseNumber = extractOffenseNumber(report.finalRuling?.violationName);
+            const degreeDigits = offenseNumber ? String(offenseNumber).split("") : [];
+
+            return (
+              <Box
+                key={report.id}
+                className="verdict-item"
+                onClick={() => handleVerdictClick(report)}
+                sx={{
+                  position: "relative",
+                  cursor: "pointer",
+                  "&:hover": {
+                    opacity: 0.8,
+                  },
+                }}
+              >
+                <Box
                   sx={{
-                    fontWeight: "bold",
-                    backgroundColor: "var(--scheme-color-sec)",
+                    position: "relative",
+                    width: "var(--role-icon-size)",
+                    height: "var(--role-icon-size)",
                   }}
-                  align="center"
                 >
-                  Violation
-                </TableCell>
-                {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <TableCell
-                    key={n}
-                    sx={{
-                      fontWeight: "bold",
-                      backgroundColor: "var(--scheme-color-sec)",
+                  <img
+                    src={verdictIcon}
+                    alt={violationName}
+                    className="verdict-icon"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
                     }}
-                    align="center"
-                  >
-                    {n}st Offense
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {violationDefinitions.map((rule) => (
-                <TableRow key={rule.name}>
-                  <TableCell
-                    sx={{
-                      backgroundColor: "var(--scheme-color-sec)",
-                      fontWeight: 600,
-                    }}
-                    align="center"
-                  >
-                    {rule.name}
-                  </TableCell>
-                  {rule.offenses.map((penalty, i) => (
-                    <TableCell
-                      key={i}
-                      sx={{
-                        backgroundColor: "var(--scheme-color-sec)",
-                      }}
-                      align="center"
-                    >
-                      {penalty}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </TabPanel>
-
-      <TabPanel value={selectedTab} index={3}>
-        <Typography variant="h3" gutterBottom>
-          Filing an Appeal
-        </Typography>
-        <Typography variant="body1" paragraph>
-          If you believe that a violation on your record is in error, you may
-          file an appeal. Navigate to your profile page and view
-          your Rap Sheet. Click on any violation to view
-          its details and file an appeal directly. Please provide a detailed
-          explanation for why you believe the violation should be removed from
-          your record. Your appeal will be reviewed by moderators, and you will
-          be notified of the decision.
-        </Typography>
-        <Typography variant="body2" paragraph>
-          Note: You can only appeal reports that resulted in violations. Reports
-          that were dismissed cannot be appealed. If you
-          already have a pending appeal for a violation, you must wait for it
-          to be reviewed before filing another appeal for the same violation.
-        </Typography>
-      </TabPanel>
-
-      <TabPanel value={selectedTab} index={4}>
-        <Typography variant="h3" gutterBottom>
-          Other Policies
-        </Typography>
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{ textDecoration: "underline" }}
-          >
-            Hydra Accounts
-          </Typography>
-        <Typography variant="body1" paragraph>
-            Accounts wherein two or more users share a single account are permitted, 
-            provided that admins are notified and approve of the account sharing. 
-            The account must exist for the express purpose of being shared; a hydra 
-            is not the same as a user inviting another user to play on their personal 
-            account. It is required to announce which user is currently on the account 
-            when joining a pregame, and the involved users may not chat on-site or off-site 
-            when the account is in a game.
-        </Typography>
-      </TabPanel>
-    </>
+                  />
+                  {degreeDigits.length > 0 && <DigitsCount digits={degreeDigits} />}
+                </Box>
+              </Box>
+            );
+          })}
+        </Box>
+      </div>
+      {showVerdictDialog && selectedVerdictReport && (
+        <VerdictDialog
+          open={showVerdictDialog}
+          onClose={() => {
+            setShowVerdictDialog(false);
+            setSelectedVerdictReport(null);
+          }}
+          report={selectedVerdictReport}
+          showRestrictedInfo={showRestrictedInfo}
+          isSelfViewing={isSelfViewing}
+          violationStatus={
+            !selectedVerdictReport.finalRuling ||
+            !selectedVerdictReport.finalRuling.violationName
+              ? null
+              : selectedVerdictReport.violationTicket?.status === "active"
+              ? "active"
+              : selectedVerdictReport.violationTicket?.status === "expired"
+              ? "expired"
+              : selectedVerdictReport.violationTicket?.status === "permanent"
+              ? "permanent"
+              : null
+          }
+          statusLabel=""
+          statusColor="default"
+          onAppealClick={() => handleAppealClick(selectedVerdictReport)}
+        />
+      )}
+      {showAppealDialog && selectedReport && (
+        <AppealDialog
+          open={showAppealDialog}
+          onClose={() => {
+            setShowAppealDialog(false);
+            setSelectedReport(null);
+          }}
+          report={selectedReport}
+          onSuccess={() => {
+            setShowAppealDialog(false);
+            setSelectedReport(null);
+            // Reload reports to update the UI
+            loadReports();
+          }}
+        />
+      )}
+    </div>
   );
 }
