@@ -59,8 +59,10 @@ import {
 import { RoleCount } from "components/Roles";
 import { PieChart } from "./PieChart";
 
+import "css/buttons.css";
 import "css/setupPage.css";
 import { useIsPhoneDevice } from "hooks/useIsPhoneDevice";
+import TwoPanelLayout from "components/SetupProfileLayout";
 
 export default function Setups() {
   return (
@@ -136,24 +138,6 @@ function getEloPieStats(factionRatings) {
   return { data: data, colors: colors };
 }
 
-/** Shared two-column profile-style layout for Info and Version History tabs. */
-function SetupProfileLayout({ left, right }) {
-  return (
-    <Grid container rowSpacing={1} columnSpacing={1} className="profile" sx={{ mt: 0 }}>
-      <Grid item xs={12} md={8}>
-        <Stack direction="column" spacing={1}>
-          {left}
-        </Stack>
-      </Grid>
-      <Grid item xs={12} md={4}>
-        <Stack direction="column" spacing={1}>
-          {right}
-        </Stack>
-      </Grid>
-    </Grid>
-  );
-}
-
 export function SetupPage() {
   const user = useContext(UserContext);
   const siteInfo = useContext(SiteInfoContext);
@@ -208,7 +192,7 @@ export function SetupPage() {
           setVersionGamesPlayed(setup.setupVersion.played);
           setDescription(setup.description ?? "");
 
-          document.title = `Setup | ${res.data.name} | UltiMafia`;
+          document.title = `${res.data.name} | UltiMafia`;
 
           if (setup.gameType === "Mafia") {
             setEloPieData(getEloPieStats(setup.factionRatings));
@@ -547,7 +531,7 @@ export function SetupPage() {
       </Tabs>
       {tabValue === 0 && (
         <><FullRoleList setup={setup} compact={isPhoneDevice} />
-        <SetupProfileLayout
+          <TwoPanelLayout
           left={
             <>
               <div className="box-panel">
@@ -725,7 +709,7 @@ export function SetupPage() {
         </Box>
       )}
       {tabValue === 3 && (
-        <SetupProfileLayout
+        <TwoPanelLayout
           left={
             <>
               {shouldDisplayChangelog ? (

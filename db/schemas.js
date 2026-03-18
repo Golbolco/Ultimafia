@@ -161,6 +161,7 @@ var schemas = {
     winRate: { type: Number, default: 0 },
     achievements: [],
     achievementCount: { type: Number, default: 0 },
+    favoriteRoles: { type: [String], default: [] },
     redHearts: { type: Number, default: 0 },
     goldHearts: { type: Number, default: 0 },
     kudos: { type: Number, default: 0 },
@@ -183,6 +184,15 @@ var schemas = {
     expires: Date,
     lastModified: Date,
     session: mongoose.Schema.Types.Mixed,
+  }),
+  Fanart: new mongoose.Schema({
+    id: { type: String, index: true },
+    roleId: { type: String, index: true },
+    title: { type: String, default: "" },
+    imagePath: { type: String, default: "" },
+    author: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
+    createdAt: { type: Number, index: true },
+    deleted: { type: Boolean, default: false, index: true },
   }),
   Setup: new mongoose.Schema(
     {
@@ -469,6 +479,15 @@ var schemas = {
     voteCount: { type: Number, default: 0, index: true },
     deleted: { type: Boolean, default: false },
     deletedAt: { type: Number, default: null },
+  }),
+  RoleVote: new mongoose.Schema({
+    id: { type: String, index: true },
+    roleName: { type: String, index: true },
+    alignment: { type: String },
+    voteCount: { type: Number, default: 0 },
+    upVotes: { type: Number, default: 0 },
+    downVotes: { type: Number, default: 0 },
+    controversialScore: { type: Number, default: 0, index: true },
   }),
   Comment: new mongoose.Schema({
     id: { type: String, index: true },

@@ -1,26 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
-import {
-  Route,
-  Routes,
-  Navigate,
-  useParams,
-  useNavigate,
-  Link,
-} from "react-router-dom";
+import { Navigate, useParams, useNavigate } from "react-router-dom";
 import { NameWithAvatar } from "../../User/User";
 import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Box,
-  Button,
+  Card,
+  Grid,
+  IconButton,
   Typography,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  LinearProgress,
   Stack,
   List,
   ListItem,
@@ -34,12 +20,17 @@ import axios from "axios";
 import { UserContext, SiteInfoContext } from "../../../Contexts";
 import Comments from "../../Community/Comments";
 
+import "css/buttons.css";
 import "css/setupPage.css";
 
 import { useErrorAlert } from "../../../components/Alerts";
 import { Loading } from "../../../components/Loading";
 import { RoleCount } from "../../../components/Roles";
+import { getAlignmentColor } from "../../../components/Setup";
 import { ExtraRoleData } from "../../../constants/ExtraRoleData";
+import { VoteWidget } from "../../../components/VoteWidget";
+import TwoPanelLayout from "../../../components/SetupProfileLayout";
+import FanartPanel from "../../../components/FanartPanel";
 
 export default function RolePage() {
   return (
@@ -59,6 +50,7 @@ export function RoleThings() {
   const [loaded, setLoaded] = useState(false);
 
   const [achievements, setAchievements] = useState(null);
+  const [favoriteRoles, setFavoriteRoles] = useState([]);
   const [tempSkins, setTempSkins] = useState([
     { label: "Vivid", value: "vivid" },
   ]);
@@ -87,6 +79,16 @@ export function RoleThings() {
         navigate("/play");
       });
   }, [user?.id]);
+
+  useEffect(() => {
+    if (!user?.id || !user.loggedIn) return;
+    axios
+      .get("/api/user/me/favorite-roles")
+      .then((res) =>
+        setFavoriteRoles(Array.isArray(res.data) ? res.data : [])
+      )
+      .catch(() => setFavoriteRoles([]));
+  }, [user?.id, user?.loggedIn]);
 
   useEffect(() => {
     if (!role || !achievements) return;
@@ -313,34 +315,244 @@ export function RoleThings() {
     examples = "";
   }
 
+  const alignmentColor = getAlignmentColor(role[1].alignment);
+
+  function getHeaderTextColor(bg) {
+    // Simple luminance check assuming hex color like #rrggbb
+    if (!bg || bg[0] !== "#" || bg.length !== 7) return "#ffffff";
+    const r = parseInt(bg.slice(1, 3), 16) / 255;
+    const g = parseInt(bg.slice(3, 5), 16) / 255;
+    const b = parseInt(bg.slice(5, 7), 16) / 255;
+    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+    return luminance > 0.6 ? "#000000" : "#ffffff";
+  }
+
+  const headerTextColor = getHeaderTextColor(alignmentColor);
+
+  const roleVoteItem = {
+    id: `Mafia:${RoleName}`,
+    vote: role[1].vote ?? 0,
+    voteCount: role[1].voteCount ?? 0,
+  };
+
+  const roleId = `Mafia:${RoleName}`;
+  const isFavorited = favoriteRoles.indexOf(roleId) !== -1;
+
+  const roleSkinField = siteFields.find((f) => f.ref === "roleSkins");
+  const roleSkinOptions = roleSkinField?.options || [];
+
+  let currentRoleSkin = "vivid";
+  if (user?.settings && typeof user.settings.roleSkins === "string") {
+    const userRoleSkins = user.settings.roleSkins.split(",");
+    const matched = userRoleSkins.find((s) => s.split(":")[0] === RoleName);
+    if (matched && matched.split(":")[1]) {
+      currentRoleSkin = matched.split(":")[1];
+    }
+  }
+
+  if (
+    roleSkinField &&
+    roleSkinField.value &&
+    roleSkinOptions.some((o) => o.value === roleSkinField.value)
+  ) {
+    currentRoleSkin = roleSkinField.value;
+  }
+
+  function onFavRole() {
+    if (!user.loggedIn) return;
+    axios
+      .post("/api/user/role-favorite", { id: roleId })
+      .then((res) =>
+        setFavoriteRoles(Array.isArray(res.data) ? res.data : [])
+      )
+      .catch(errorAlert);
+  }
+
   return (
     <Stack direction="column" spacing={1}>
-      <RoleCount key={0} scheme="vivid" role={role[0]} gameType={"Mafia"} />
-      <div className="setup-page">
-        <div className="span-panel main">
-          <div className="heading">Role Info</div>
-          <div className="meta">
-            <SetupRowInfo title="Name" content={RoleName} />
-            <Form
-              fields={siteFields}
-              deps={{ user }}
-              onChange={(action) =>
-                onRoleSkinChange(action, RoleName, null, user, roleSkins)
-              }
-            />
-            <SetupRowInfo
-              title="Tags"
-              content={role[1].tags.sort().join(", ")}
-            />
-            <SetupRowInfo title="Description" content={description} />
-            {examples}
-            {specialBox}
-            {overrideBox}
-            <SetupRowInfo title="Icon Artists" content={artists} />
-          </div>
-        </div>
-      </div>
-      <Comments location={commentLocation} />
+      <Card
+        variant="outlined"
+        sx={{
+          backgroundColor: alignmentColor,
+          mb: 1,
+          p: 1,
+          color: headerTextColor,
+        }}
+      >
+        <Grid container spacing={1} alignItems="center">
+          <Grid item xs={12} md={8}>
+            <Stack direction="column" spacing={1}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: "center",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <VoteWidget
+                      item={roleVoteItem}
+                      itemType="role"
+                      setItemHolder={() => {}}
+                    />
+                  </Box>
+                  <RoleCount
+                    key={0}
+                    scheme="vivid"
+                    role={role[0]}
+                    gameType={"Mafia"}
+                    large
+                  />
+                </Box>
+                <Typography
+                  variant="h2"
+                  sx={{
+                    ml: 2,
+                    color: headerTextColor,
+                  }}
+                >
+                  {RoleName}
+                </Typography>
+              </Stack>
+              <Stack
+                direction={{ xs: "column", md: "row" }}
+                alignItems={{ xs: "flex-start", md: "center" }}
+                spacing={1}
+                sx={{ mt: 0.5, maxWidth: 320 }}
+              >
+                <Typography
+                  component="label"
+                  variant="body2"
+                  sx={{ whiteSpace: "nowrap" }}
+                >
+                  Role Skin
+                </Typography>
+                <Box
+                  sx={{
+                    width: { xs: "100%", md: "auto" },
+                    minWidth: 72,
+                  }}
+                >
+                  <select
+                    value={currentRoleSkin}
+                    onChange={(e) =>
+                      onRoleSkinChange(
+                        {
+                          prop: "value",
+                          value: e.target.value,
+                          ref: "roleSkins",
+                          localOnly: false,
+                        },
+                        RoleName,
+                        null,
+                        user,
+                        roleSkins
+                      )
+                    }
+                    style={{
+                      width: "100%",
+                      minWidth: 72,
+                      boxSizing: "border-box",
+                    }}
+                  >
+                    {roleSkinOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </Box>
+              </Stack>
+            </Stack>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Stack
+              direction="column"
+              spacing={0.5}
+              sx={{
+                textAlign: { xs: "left", md: "right" },
+                color: headerTextColor,
+              }}
+            >
+              <Typography
+                variant="italicRelation"
+                sx={{
+                  ml: isPhoneDevice ? "auto" : 1,
+                }}
+              >
+                Icon Artists
+              </Typography>
+              <Typography variant="body2">{artists}</Typography>
+            </Stack>
+          </Grid>
+        </Grid>
+      </Card>
+      <TwoPanelLayout
+        left={
+          <>
+            <div className="setup-page">
+              <div className="span-panel main">
+                <div className="heading">Role Info</div>
+                <div className="meta">
+                  <SetupRowInfo
+                    title="Tags"
+                    content={role[1].tags.sort().join(", ")}
+                  />
+                  <SetupRowInfo title="Description" content={description} />
+                  {examples}
+                  {specialBox}
+                  {overrideBox}
+                </div>
+              </div>
+            </div>
+            <Box sx={{ mt: 1 }}>
+              <Comments location={commentLocation} />
+            </Box>
+          </>
+        }
+        right={
+          user.loggedIn && (
+            <Stack direction="column" spacing={1}>
+              <div className="box-panel">
+                <div className="heading">Favorite this Role</div>
+                <div className="content">
+                  <Grid container sx={{ width: "8rem" }}>
+                    <Grid item xs={3}>
+                      <IconButton aria-label="favorite" onClick={onFavRole}>
+                        <i
+                          className={`setup-btn fav-setup fa-star ${
+                            isFavorited ? "fas" : "far"
+                          }`}
+                        />
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+                </div>
+              </div>
+              <div className="box-panel">
+                <div className="content">
+                  <FanartPanel roleId={roleId} />
+                </div>
+              </div>
+            </Stack>
+          )
+        }
+      />
     </Stack>
   );
 }
