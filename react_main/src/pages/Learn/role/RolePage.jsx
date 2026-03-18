@@ -31,6 +31,7 @@ import { ExtraRoleData } from "../../../constants/ExtraRoleData";
 import { VoteWidget } from "../../../components/VoteWidget";
 import TwoPanelLayout from "../../../components/SetupProfileLayout";
 import FanartPanel from "../../../components/FanartPanel";
+import { useIsPhoneDevice } from "hooks/useIsPhoneDevice";
 
 export default function RolePage() {
   return (
@@ -46,6 +47,7 @@ export function RoleThings() {
   const siteInfo = useContext(SiteInfoContext);
   const navigate = useNavigate();
   const errorAlert = useErrorAlert();
+  const isPhoneDevice = useIsPhoneDevice();
   const [contributors, setContributors] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
