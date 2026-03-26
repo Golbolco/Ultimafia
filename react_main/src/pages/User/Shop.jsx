@@ -18,6 +18,10 @@ import {
   Grid2,
   CardActionArea,
   Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 
 import { Loading } from "../../components/Loading";
@@ -25,12 +29,24 @@ import { Loading } from "../../components/Loading";
 import coin from "images/umcoin.png";
 import { useIsPhoneDevice } from "hooks/useIsPhoneDevice";
 
+function parseGameId(input) {
+  const trimmed = (input || "").trim();
+  if (!trimmed) return "";
+  const match = trimmed.match(/\/game\/([^/?\s]+)/);
+  if (match) return match[1];
+  // If no URL pattern, treat the whole input as a raw game ID (no slashes/spaces)
+  if (/^[^\s/]+$/.test(trimmed)) return trimmed;
+  return "";
+}
+
 export default function Shop(props) {
   const [shopInfo, setShopInfo] = useState({ shopItems: [], balance: 0 });
   const [loaded, setLoaded] = useState(false);
 
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
+  const [stampGameUrl, setStampGameUrl] = useState("");
+  const [stampDialogOpen, setStampDialogOpen] = useState(false);
 
   const user = useContext(UserContext);
   const siteInfo = useContext(SiteInfoContext);
@@ -165,7 +181,7 @@ export default function Shop(props) {
         >
           <CardActionArea
             disabled={disabled}
-            onClick={() => onBuyItem(i)}
+            onClick={() => item.key === "stamp" ? setStampDialogOpen(true) : onBuyItem(i)}
             sx={{
               height: "100%",
               width: "100%",
@@ -256,6 +272,94 @@ export default function Shop(props) {
       <Grid2 container spacing={1}>
         {shopItems}
       </Grid2>
+
+      <Dialog
+        open={stampDialogOpen}
+        onClose={() => {
+          setStampDialogOpen(false);
+          setStampGameUrl("");
+        }}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Buy Scrapbook Stamp</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            Enter the URL or ID of a Mafia game you won. You will receive a
+            stamp of the role you played.
+          </Typography>
+          <TextField
+            autoFocus
+            fullWidth
+            label="Game URL or ID"
+            value={stampGameUrl}
+            onChange={(e) => setStampGameUrl(e.target.value)}
+            placeholder="e.g. https://ultimafia.com/game/abc123 or abc123"
+          />
+          {stampGameUrl.trim() && (
+            <Typography
+              variant="caption"
+              sx={{ mt: 1, display: "block" }}
+              color={parseGameId(stampGameUrl) ? "textSecondary" : "error"}
+            >
+              {parseGameId(stampGameUrl)
+                ? `Game ID: ${parseGameId(stampGameUrl)}`
+                : "Could not parse a game ID from this input."}
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setStampDialogOpen(false);
+              setStampGameUrl("");
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            disabled={!parseGameId(stampGameUrl)}
+            onClick={() => {
+              const gameId = parseGameId(stampGameUrl);
+              if (!gameId) {
+                siteInfo.showAlert("Could not parse a game ID.", "error");
+                return;
+              }
+              const stampIndex = shopInfo.shopItems.findIndex((si) => si.key === "stamp");
+              const stampItem = shopInfo.shopItems[stampIndex];
+              axios
+                .post("/api/shop/checkStampEligibility", { gameId })
+                .then((eligibility) => {
+                  const shouldBuy = window.confirm(
+                    `You will receive a stamp for ${eligibility.data.role}. Purchase for ${stampItem.price} coins?`
+                  );
+                  if (!shouldBuy) return;
+                  return axios.post("/api/shop/spendCoins", {
+                    item: stampIndex,
+                    gameId: eligibility.data.gameId,
+                  });
+                })
+                .then((res) => {
+                  if (!res) return;
+                  siteInfo.showAlert(
+                    `Stamp purchased: ${res.data.role}!`,
+                    "success"
+                  );
+                  setStampGameUrl("");
+                  setStampDialogOpen(false);
+                  setShopInfo((prev) => ({
+                    ...prev,
+                    balance: prev.balance - stampItem.price,
+                  }));
+                })
+                .catch(errorAlert);
+            }}
+          >
+            Check Eligibility
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Divider flexItem orientation="horizontal" />
 

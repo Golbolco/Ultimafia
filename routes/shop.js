@@ -7,6 +7,53 @@ const logger = require("../modules/logging")(".");
 const shortid = require("shortid");
 const router = express.Router();
 
+async function checkStampEligibility(userId, gameId) {
+  const game = await models.Game.findOne({ id: gameId }).select(
+    "type endTime broken winners playerIdMap playerRoleMap history"
+  );
+
+  if (!game) throw new Error("Game not found.");
+  if (!game.endTime) throw new Error("This game has not finished yet.");
+  if (game.type !== "Mafia")
+    throw new Error("Stamps are only available for Mafia games.");
+  if (game.broken)
+    throw new Error("Cannot purchase a stamp from a broken game.");
+
+  const playerIdMap = JSON.parse(game.playerIdMap || "{}");
+  const playerId = playerIdMap[userId];
+  if (!playerId) throw new Error("You were not a player in this game.");
+
+  if (!game.winners.includes(playerId))
+    throw new Error("You did not win this game.");
+
+  let role;
+  const playerRoleMap = JSON.parse(game.playerRoleMap || "{}");
+  if (playerRoleMap[userId]) {
+    role = playerRoleMap[userId];
+  } else {
+    try {
+      const history = JSON.parse(game.history || "{}");
+      const stateKeys = Object.keys(history)
+        .filter((k) => !isNaN(k))
+        .sort((a, b) => Number(b) - Number(a));
+      for (const key of stateKeys) {
+        const stateRoles = history[key]?.roles;
+        if (stateRoles && stateRoles[playerId]) {
+          role = stateRoles[playerId].split(":")[0];
+          break;
+        }
+      }
+    } catch (e) {
+      // history parsing failed
+    }
+  }
+
+  if (!role)
+    throw new Error("Could not determine your role in this game.");
+
+  return { gameType: game.type, role };
+}
+
 const shopItems = [
   {
     name: "Name and Text Colors",
@@ -189,6 +236,40 @@ const shopItems = [
     limit: 1,
     onBuy: async function (userId) {},
   },
+  {
+    name: "Scrapbook Stamp",
+    desc: "Commemorate a Mafia game win with a stamp of your role. Displayed on your profile scrapbook.",
+    key: "stamp",
+    price: 5,
+    limit: null,
+    validate: async function (userId, body) {
+      const gameId = String(body.gameId || "").trim();
+      if (!gameId) throw new Error("Please provide a game ID.");
+
+      const existing = await models.Stamp.findOne({ userId, gameId });
+      if (existing) throw new Error("You already have a stamp from this game.");
+
+      const result = await checkStampEligibility(userId, gameId);
+      return { gameId, gameType: result.gameType, role: result.role };
+    },
+    onBuy: async function (userId, context) {
+      const userDoc = await models.User.findOne({ id: userId }).select("_id");
+      try {
+        await models.Stamp.create({
+          user: userDoc._id,
+          userId,
+          gameId: context.gameId,
+          gameType: context.gameType,
+          role: context.role,
+        });
+      } catch (e) {
+        if (e.code === 11000) {
+          throw new Error("You already have a stamp from this game.");
+        }
+        throw e;
+      }
+    },
+  },
 ];
 
 router.get("/info", async function (req, res) {
@@ -244,6 +325,17 @@ router.post(
         return;
       }
 
+      var context;
+      if (item.validate) {
+        try {
+          context = await item.validate(userId, req.body);
+        } catch (e) {
+          res.status(400);
+          res.send(e.message);
+          return;
+        }
+      }
+
       let userChanges = {
         [`itemsOwned.${item.key}`]: 1,
         coins: -1 * item.price,
@@ -261,11 +353,11 @@ router.post(
         }
       ).exec();
 
-      await item.onBuy(userId);
+      await item.onBuy(userId, context);
 
       await redis.cacheUserInfo(userId, true);
 
-      res.sendStatus(200);
+      res.send(context || {});
     } catch (e) {
       logger.error(e);
       res.status(500);
@@ -361,5 +453,59 @@ router.post(
     }
   })
 );
+
+router.post("/checkStampEligibility", async function (req, res) {
+  try {
+    var userId = await routeUtils.verifyLoggedIn(req);
+
+    let gameId = String(req.body.gameId || "").trim();
+    const urlMatch = gameId.match(/\/game\/([^/?\s]+)/);
+    if (urlMatch) gameId = urlMatch[1];
+
+    if (!gameId) {
+      return res.status(400).send("Please provide a game URL or ID.");
+    }
+
+    var result;
+    try {
+      result = await checkStampEligibility(userId, gameId);
+    } catch (e) {
+      return res.status(400).send(e.message);
+    }
+    res.send({ gameId, gameType: result.gameType, role: result.role });
+  } catch (e) {
+    logger.error(e);
+    res.status(500).send("Error checking stamp eligibility.");
+  }
+});
+
+router.post("/stamp/toggle-hide", async function (req, res) {
+  try {
+    var userId = await routeUtils.verifyLoggedIn(req);
+    const { stampId } = req.body;
+
+    if (!stampId) {
+      return res.status(400).send("Missing stamp ID.");
+    }
+
+    var stamp;
+    try {
+      stamp = await models.Stamp.findById(stampId);
+    } catch (e) {
+      return res.status(400).send("Invalid stamp ID.");
+    }
+    if (!stamp || stamp.userId !== userId) {
+      return res.status(404).send("Stamp not found.");
+    }
+
+    stamp.hidden = !stamp.hidden;
+    await stamp.save();
+
+    res.send({ hidden: stamp.hidden });
+  } catch (e) {
+    logger.error(e);
+    res.status(500).send("Error toggling stamp visibility.");
+  }
+});
 
 module.exports = router;
