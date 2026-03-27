@@ -9,6 +9,7 @@ const deathMessages = require("./death");
 const revivalMessages = require("./revival");
 const constants = require("../../data/constants");
 const logger = require("../../modules/logging")("games");
+const gameContext = require("../../modules/gameContext");
 const dbStats = require("../../db/stats");
 const roleData = require("../../data/roles");
 const gameAchievements = require("../../data/Achievements");
@@ -113,12 +114,13 @@ module.exports = class Player {
 
   async handleError(e) {
     var stack = e.stack.split("\n").slice(0, 6).join("\n");
+    const playerSummary = this.game.getPlayerSummary();
     const discordAlert = JSON.parse(process.env.DISCORD_ERROR_HOOK);
     await axios({
       method: "post",
       url: discordAlert.hook,
       data: {
-        content: `Error stack: \`\`\` ${stack}\`\`\`\nSetup: ${this.game.setup.name} (${this.game.setup.id})\nGame Link: ${process.env.BASE_URL}/game/${this.game.id}/review`,
+        content: `Error stack: \`\`\` ${stack}\`\`\`\nSetup: ${this.game.setup.name} (${this.game.setup.id})\nGame Link: ${process.env.BASE_URL}/game/${this.game.id}/review\nState: ${this.game.getStateName()}\nPlayers:\n\`\`\`\n${playerSummary}\n\`\`\``,
         username: "Errorbot",
         attachments: [],
         thread_name: `Game Error! ${e}`,
@@ -128,6 +130,12 @@ module.exports = class Player {
 
   socketListeners() {
     const socket = this.socket;
+    const gameId = this.game.id;
+    const originalOn = socket.on.bind(socket);
+    socket.on = (event, handler) =>
+      originalOn(event, (...args) =>
+        gameContext.run({ gameId }, () => handler(...args))
+      );
     var speechPast = [];
     var votePast = [];
 
