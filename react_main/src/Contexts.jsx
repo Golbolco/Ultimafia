@@ -204,9 +204,12 @@ export function UserProvider({
   const { mode, systemMode } = useColorScheme();
   useEffect(() => {
     const colorScheme = mode === "system" ? systemMode : mode;
-    document.documentElement.classList.remove("dark-mode", "light-mode");
+    document.documentElement.classList.remove(
+      "dark-mode",
+      "light-mode"
+    );
     document.documentElement.classList.add(`${colorScheme}-mode`);
-  }, [mode]);
+  }, [mode, systemMode]);
 
   return (
     <>
