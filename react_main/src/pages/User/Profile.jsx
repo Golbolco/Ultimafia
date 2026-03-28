@@ -105,6 +105,7 @@ export default function Profile() {
   const [oldPronouns, setOldPronouns] = useState();
   const [editingPronouns, setEditingPronouns] = useState(false);
   const [isFriend, setIsFriend] = useState(false);
+  const [isFriendRequested, setIsFriendRequested] = useState(false);
   const [isLove, setIsLove] = useState(false);
   const [isMarried, setIsMarried] = useState(false);
   const [kudos, setKudos] = useState(0);
@@ -154,6 +155,9 @@ export default function Profile() {
   const [nameHistory, setNameHistory] = useState([]);
   const [nameHistoryLoading, setNameHistoryLoading] = useState(false);
   const [joined, setJoined] = useState(null);
+  const [pokeStatus, setPokeStatus] = useState({ status: "none" });
+  const [pokesDisabled, setPokesDisabled] = useState(false);
+  const [incomingPokes, setIncomingPokes] = useState([]);
 
   const user = useContext(UserContext);
   const siteInfo = useContext(SiteInfoContext);
@@ -259,6 +263,7 @@ export default function Profile() {
             filterProfanity(res.data.pronouns, user.settings, "\\*") || ""
           );
           setIsFriend(res.data.isFriend);
+          setIsFriendRequested(res.data.isFriendRequested);
           setIsLove(res.data.isLove);
           setIsMarried(res.data.isMarried);
           setSettings(res.data.settings);
@@ -296,6 +301,9 @@ export default function Profile() {
           setHiddenStamps(res.data.hiddenStamps || []);
           setProfileFamily(res.data.family || null);
           setJoined(res.data.joined || null);
+          setPokeStatus(res.data.pokeStatus || { status: "none" });
+          setPokesDisabled(res.data.pokesDisabled || false);
+          setIncomingPokes(res.data.incomingPokes || []);
           setFriendsPage(1);
           loadFriends(resolvedId, "", 1);
 
@@ -360,7 +368,7 @@ export default function Profile() {
   }
 
   function onFriendUserClick() {
-    if (isFriend) {
+    if (isFriend || isFriendRequested) {
       var shouldUnfriend = window.confirm(
         "Are you sure you wish to unfriend or cancel your friend request?"
       );
@@ -370,7 +378,13 @@ export default function Profile() {
     axios
       .post("/api/user/friend", { user: profileUserId })
       .then((res) => {
-        setIsFriend(!isFriend);
+        if (isFriend) {
+          setIsFriend(false);
+        } else if (isFriendRequested) {
+          setIsFriendRequested(false);
+        } else {
+          setIsFriendRequested(true);
+        }
         siteInfo.showAlert(res.data, "success");
       })
       .catch(errorAlert);
@@ -648,6 +662,52 @@ export default function Profile() {
       .catch(errorAlert);
   }
 
+  function onPokeClick() {
+    axios
+      .post("/api/user/poke", { targetId: userId })
+      .then((res) => {
+        setPokeStatus({ status: "pending_sent" });
+        siteInfo.showAlert(res.data, "success");
+      })
+      .catch((e) => {
+        siteInfo.showAlert(e.response?.data || "Error sending poke");
+      });
+  }
+
+  function onPokeBackClick(fromUserId) {
+    axios
+      .post("/api/user/poke/back", { targetId: fromUserId })
+      .then((res) => {
+        setIncomingPokes((prev) =>
+          prev.filter((p) => p.from.id !== fromUserId)
+        );
+        siteInfo.showAlert(res.data, "success");
+      })
+      .catch((e) => {
+        siteInfo.showAlert(e.response?.data || "Error poking back");
+      });
+  }
+
+  function onPokeDismissClick(fromUserId) {
+    if (
+      !window.confirm(
+        "Dismiss this poke? They won't be able to poke you again for 30 days."
+      )
+    )
+      return;
+    axios
+      .post("/api/user/poke/dismiss", { targetId: fromUserId })
+      .then((res) => {
+        setIncomingPokes((prev) =>
+          prev.filter((p) => p.from.id !== fromUserId)
+        );
+        siteInfo.showAlert(res.data, "success");
+      })
+      .catch((e) => {
+        siteInfo.showAlert(e.response?.data || "Error dismissing poke");
+      });
+  }
+
   function loadFriends(id, filterArg = "", pageToSet) {
     if (!id) return;
     const query = filterArg ? `?${filterArg}` : "";
@@ -922,7 +982,7 @@ export default function Profile() {
             <>
               <IconButton aria-label="friend user">
                 <i
-                  className={`fas fa-user-plus ${isFriend ? "sel" : ""}`}
+                  className={`fas fa-user-plus ${isFriend || isFriendRequested ? "sel" : ""}`}
                   onClick={onFriendUserClick}
                 />
               </IconButton>
@@ -975,6 +1035,46 @@ export default function Profile() {
                 onClose={() => setReportDialogOpen(false)}
                 prefilledArgs={{ userId: profileUserId, userName: name }}
               />
+              {isFriend && !pokesDisabled && !user.settings?.disablePokes && (
+                <>
+                  {pokeStatus.status === "none" && (
+                    <IconButton
+                      aria-label="poke user"
+                      title="Poke"
+                      onClick={onPokeClick}
+                    >
+                      <i className="fas fa-hand-pointer btn-poke" />
+                    </IconButton>
+                  )}
+                  {pokeStatus.status === "pending_sent" && (
+                    <IconButton
+                      aria-label="poke sent"
+                      title="You already poked this person."
+                      disabled
+                    >
+                      <i className="fas fa-hand-pointer btn-poke disabled" />
+                    </IconButton>
+                  )}
+                  {pokeStatus.status === "pending_received" && (
+                    <IconButton
+                      aria-label="poke back"
+                      title={`Poke back${pokeStatus.count > 1 ? ` (streak: ${pokeStatus.count})` : ""}`}
+                      onClick={() => onPokeBackClick(userId)}
+                    >
+                      <i className="fas fa-hand-pointer btn-poke sel" />
+                    </IconButton>
+                  )}
+                  {pokeStatus.status === "cooldown" && (
+                    <IconButton
+                      aria-label="poke cooldown"
+                      title="You cannot poke this person yet."
+                      disabled
+                    >
+                      <i className="fas fa-hand-pointer btn-poke disabled" />
+                    </IconButton>
+                  )}
+                </>
+              )}
             </>
           )}
         </Stack>
@@ -1508,6 +1608,44 @@ export default function Profile() {
                   Friend Requests
                 </Typography>
                 <div className="content">{friendRequestRows}</div>
+              </div>
+            )}
+            {incomingPokes.length > 0 && !user.settings?.disablePokes && (
+              <div className="box-panel" style={panelStyle}>
+                <Typography variant="h3" style={headingStyle}>
+                  Pokes
+                </Typography>
+                <div className="content">
+                  {incomingPokes.map((poke) => (
+                    <div className="poke-item" key={poke.from.id}>
+                      <div className="poke-name-wrapper">
+                        <NameWithAvatar
+                          id={poke.from.id}
+                          name={poke.from.name}
+                          avatar={poke.from.avatar}
+                        />
+                        {poke.count >= 1000000 ? (
+                          <span className="poke-streak-badge trophy" title="1,000,000 pokes!">
+                            <i className="fas fa-trophy" />
+                          </span>
+                        ) : poke.count > 1 ? (
+                          <span className="poke-streak-badge">
+                            {poke.count}
+                          </span>
+                        ) : null}
+                      </div>
+                      <div className="btns poke-back-btn" onClick={() => onPokeBackClick(poke.from.id)} title="Poke Back">
+                        <i className="fas fa-hand-pointer" />
+                        <span>Poke Back</span>
+                      </div>
+                      <i
+                        className="fas fa-times poke-dismiss"
+                        title="Dismiss"
+                        onClick={() => onPokeDismissClick(poke.from.id)}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
             <div className="box-panel" style={panelStyle}>
