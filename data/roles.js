@@ -1211,6 +1211,15 @@ const roleData = {
       ],
       nightOrder: [["Track", PRIORITY_INVESTIGATIVE_DEFAULT]],
     },
+    Tutor: {
+      alignment: "Village",
+      category: "Investigative",
+      tags: ["Information", "Conversion", "Visiting", "Basic"],
+      description: [
+        "Each night, choose a Village-aligned player to tutor. They will temporarily become a random Information role for the rest of that night and the following day. They will be informed of their new role at the start of day. You receive no feedback on your action.",
+      ],
+      nightOrder: [["Tutor", PRIORITY_INVESTIGATIVE_DEFAULT]],
+    },
     Voyeur: {
       alignment: "Village",
       category: "Investigative",
