@@ -131,15 +131,17 @@ module.exports = class Message {
       }
     } else return;
 
-    return this.parseMessageInfoObj(version, senderId);
+    return this.parseMessageInfoObj(version, senderId, player);
   }
 
-  parseMessageInfoObj(version, senderId) {
+  parseMessageInfoObj(version, senderId, recipient) {
     return {
       id: version.id,
       senderId: senderId,
       content: version.content,
-      meetingId: version.meeting && version.meeting.id,
+      meetingId:
+        version.meeting &&
+        this.game.mapMeetingIdForWire(recipient, version.meeting),
       prefix: version.prefix,
       time: version.timeSent,
       quotable: version.quotable,

@@ -59,6 +59,9 @@ module.exports = class Player {
     this.passiveExtraRoles = [];
     this.joinTime = Date.now(); // Track when player joined for host reassignment
     this.youAreBeingVoteKicked = false;
+    /** Wire-safe meeting ids (unique per player per meeting; not comparable across accounts). */
+    this._clientMeetingByReal = Object.create(null);
+    this._realMeetingByClient = Object.create(null);
   }
 
   init() {
@@ -110,6 +113,48 @@ module.exports = class Player {
     this.user.nameColor = p.nameColor;
     this.user.customEmotes = p.customEmotes;
     delete this.anonId;
+  }
+
+  assignClientMeetingId(meeting) {
+    const realId = meeting.id;
+    if (this._clientMeetingByReal[realId]) return;
+    const clientId = shortid.generate();
+    this._clientMeetingByReal[realId] = clientId;
+    this._realMeetingByClient[clientId] = realId;
+  }
+
+  clearClientMeetingId(meeting) {
+    const realId = meeting.id;
+    const clientId = this._clientMeetingByReal[realId];
+    if (!clientId) return;
+    delete this._clientMeetingByReal[realId];
+    delete this._realMeetingByClient[clientId];
+  }
+
+  getClientMeetingIdForWire(meeting) {
+    if (!meeting) return null;
+    return this._clientMeetingByReal[meeting.id] || meeting.id;
+  }
+
+  resolveIncomingMeetingId(clientId) {
+    if (clientId == null || clientId === "") return null;
+    const s = String(clientId);
+    if (this._realMeetingByClient[s]) return this._realMeetingByClient[s];
+    if (
+      this.spectator &&
+      this.game._spectatorRealByWire &&
+      this.game._spectatorRealByWire[s]
+    ) {
+      return this.game._spectatorRealByWire[s];
+    }
+    if (this.game.getMeeting(s)) return s;
+    return null;
+  }
+
+  getMeetingFromClientId(clientId) {
+    const realId = this.resolveIncomingMeetingId(clientId);
+    if (!realId) return null;
+    return this.game.getMeeting(realId);
   }
 
   async handleError(e) {
@@ -194,7 +239,7 @@ module.exports = class Player {
 
         speechPast.push(Date.now());
 
-        var meeting = this.game.getMeeting(message.meetingId);
+        var meeting = this.getMeetingFromClientId(message.meetingId);
         if (!meeting) return;
 
         meeting.speak({
@@ -241,6 +286,10 @@ module.exports = class Player {
 
         speechPast.push(Date.now());
 
+        quote.toMeetingId = this.resolveIncomingMeetingId(quote.toMeetingId);
+        quote.fromMeetingId = this.resolveIncomingMeetingId(quote.fromMeetingId);
+        if (!quote.toMeetingId || !quote.fromMeetingId) return;
+
         var meeting = this.game.getMeeting(quote.toMeetingId);
         if (!meeting) return;
 
@@ -276,7 +325,7 @@ module.exports = class Player {
 
         votePast.push(Date.now());
 
-        var meeting = this.game.getMeeting(vote.meetingId);
+        var meeting = this.getMeetingFromClientId(vote.meetingId);
         if (!meeting) return;
 
         const gameStateBeforeVote = this.game.currentState;
@@ -301,7 +350,7 @@ module.exports = class Player {
 
         if (!Utils.validProp(meetingId)) return;
 
-        var meeting = this.game.getMeeting(meetingId);
+        var meeting = this.getMeetingFromClientId(meetingId);
         if (!meeting) return;
 
         meeting.unvote(this, target);
@@ -337,7 +386,7 @@ module.exports = class Player {
 
         if (!Utils.validProp(meetingId)) return;
 
-        var meeting = this.game.getMeeting(meetingId);
+        var meeting = this.getMeetingFromClientId(meetingId);
         if (!meeting) return;
 
         meeting.typing(this.id, isTyping);
@@ -692,7 +741,7 @@ module.exports = class Player {
           }
         }
 
-        const meeting = this.game.getMeeting(cmd.raw.meetingId);
+        const meeting = this.getMeetingFromClientId(cmd.raw.meetingId);
         let recipients;
 
         if (!this.alive) {
@@ -1143,7 +1192,7 @@ module.exports = class Player {
     this.send("vote", {
       voterId: voterId,
       target: targetToSend,
-      meetingId: vote.meeting.id,
+      meetingId: this.getClientMeetingIdForWire(vote.meeting),
       noLog,
     });
 
@@ -1181,7 +1230,7 @@ module.exports = class Player {
 
     this.send("unvote", {
       voterId: voterId,
-      meetingId: info.meeting.id,
+      meetingId: this.getClientMeetingIdForWire(info.meeting),
       target: targetToSend,
     });
 
@@ -1205,7 +1254,7 @@ module.exports = class Player {
       if (info.cancel) return;
     }
 
-    this.send("typing", clientTyping);
+    this.send("typing", info);
   }
 
   sendAlert(message, extraStyle) {
@@ -1486,17 +1535,20 @@ module.exports = class Player {
   }
 
   joinedMeeting(meeting) {
+    this.assignClientMeetingId(meeting);
     this.history.addMeeting(meeting);
   }
 
   leftMeeting(meeting) {
+    const clientId = this.getClientMeetingIdForWire(meeting);
     this.history.removeMeeting(meeting);
-    this.send("leftMeeting", meeting.id);
+    this.clearClientMeetingId(meeting);
+    this.send("leftMeeting", clientId);
   }
 
   sendMeetingMembers(meeting) {
     this.send("members", {
-      meetingId: meeting.id,
+      meetingId: this.getClientMeetingIdForWire(meeting),
       members: meeting.getMembers(),
     });
   }

@@ -182,6 +182,10 @@ export default function Game() {
 
   const isParticipant = !isSpectator && !review;
   const currentStateObject = history.states[history.currentState];
+  const changeSetupSpeechMeetingId =
+    currentStateObject &&
+    currentStateObject.meetings &&
+    Object.values(currentStateObject.meetings).find((m) => m.speech)?.id;
   const unresolvedActionCount = Object.values(
     currentStateObject ? currentStateObject.meetings : {}
   ).filter(
@@ -1012,9 +1016,10 @@ export default function Game() {
           gameType={gameType}
           currentSetup={setup}
           onSetupChange={(setupId) => {
+            if (!changeSetupSpeechMeetingId) return;
             socket.send("speak", {
               content: `/changeSetup ${setupId}`,
-              meetingId: "main",
+              meetingId: changeSetupSpeechMeetingId,
             });
             setChangeSetupDialogOpen(false);
           }}

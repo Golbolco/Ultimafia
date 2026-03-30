@@ -34,6 +34,7 @@ const ObjectID = mongo.ObjectID;
 const axios = require("axios");
 const { ordinal, rating, rate, predictWin } = require("openskill");
 const { bradleyTerryFull } = require("openskill/models");
+const shortid = require("shortid");
 
 module.exports = class Game {
   constructor(options) {
@@ -98,6 +99,8 @@ module.exports = class Game {
     this.spectatorLimit = constants.maxSpectators;
     this.history = new History(this);
     this.spectatorHistory = new History(this, "spectator");
+    this._spectatorWireByReal = Object.create(null);
+    this._spectatorRealByWire = Object.create(null);
     this.spectatorMeetFilter = { "*": true };
     this.timers = {};
     this.actions = [new Queue()];
@@ -385,6 +388,35 @@ module.exports = class Game {
   getMeeting(meetingId, state) {
     state = state == null ? this.currentState : state;
     return this.history.states[state].meetings[meetingId];
+  }
+
+  getSpectatorClientMeetingId(meeting) {
+    const realId = meeting.id;
+    if (this._spectatorWireByReal[realId])
+      return this._spectatorWireByReal[realId];
+    const clientId = shortid.generate();
+    this._spectatorWireByReal[realId] = clientId;
+    this._spectatorRealByWire[clientId] = realId;
+    return clientId;
+  }
+
+  mapMeetingIdForWire(recipient, meeting) {
+    if (!meeting) return null;
+    if (recipient === "spectator") return this.getSpectatorClientMeetingId(meeting);
+    if (recipient && recipient.getClientMeetingIdForWire)
+      return recipient.getClientMeetingIdForWire(meeting);
+    return meeting.id;
+  }
+
+  mapMeetingIdForWireFromReal(recipient, realId, fromState) {
+    if (realId == null || realId === "") return null;
+    const hasState =
+      fromState !== undefined && fromState !== null && fromState !== "";
+    const stateNum = hasState ? Number(fromState) : this.currentState;
+    const state = Number.isNaN(stateNum) ? this.currentState : stateNum;
+    const meeting = this.getMeeting(String(realId), state);
+    if (!meeting) return String(realId);
+    return this.mapMeetingIdForWire(recipient, meeting);
   }
 
   getMeetingByName(name) {

@@ -91,7 +91,7 @@ module.exports = class Spectator extends Player {
 
         speechPast.push(Date.now());
 
-        var meeting = this.game.getMeeting(message.meetingId);
+        var meeting = this.getMeetingFromClientId(message.meetingId);
         if (!meeting) return;
 
         meeting.speak({
@@ -137,6 +137,10 @@ module.exports = class Spectator extends Player {
         }
 
         speechPast.push(Date.now());
+
+        quote.toMeetingId = this.resolveIncomingMeetingId(quote.toMeetingId);
+        quote.fromMeetingId = this.resolveIncomingMeetingId(quote.fromMeetingId);
+        if (!quote.toMeetingId || !quote.fromMeetingId) return;
 
         var meeting = this.game.getMeeting(quote.toMeetingId);
         if (!meeting) return;
@@ -192,14 +196,14 @@ module.exports = class Spectator extends Player {
     this.send("vote", {
       voterId: vote.voter.id,
       target: vote.target,
-      meetingId: vote.meeting.id,
+      meetingId: this.game.getSpectatorClientMeetingId(vote.meeting),
     });
   }
 
   seeUnvote(info) {
     this.send("unvote", {
       voterId: info.voter.id,
-      meetingId: info.meeting.id,
+      meetingId: this.game.getSpectatorClientMeetingId(info.meeting),
     });
   }
 };

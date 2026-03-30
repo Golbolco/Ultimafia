@@ -299,7 +299,12 @@ module.exports = class Meeting {
     }
 
     return {
-      id: this.id,
+      id:
+        player && player !== "spectator" && player.getClientMeetingIdForWire
+          ? player.getClientMeetingIdForWire(this)
+          : player === "spectator"
+          ? this.game.getSpectatorClientMeetingId(this)
+          : this.id,
       name: this.getName(member),
       actionName: this.getActionName(member),
       members: this.getMembers(),
@@ -1221,7 +1226,9 @@ module.exports = class Meeting {
         if (!isSilenced || _playerId === playerId) {
           this.members[_playerId].player.seeTyping({
             playerId,
-            meetingId: isTyping ? this.id : null,
+            meetingId: isTyping
+              ? this.members[_playerId].player.getClientMeetingIdForWire(this)
+              : null,
           });
         }
       }

@@ -43,13 +43,19 @@ module.exports = class Quote extends Message {
     this.game.events.emit("message", this);
   }
 
-  parseMessageInfoObj(version, senderId) {
+  parseMessageInfoObj(version, senderId, recipient) {
     return {
       isQuote: true,
       senderId: senderId,
       messageId: version.messageId,
-      toMeetingId: version.meeting && version.meeting.id,
-      fromMeetingId: version.fromMeetingId,
+      toMeetingId:
+        version.meeting &&
+        this.game.mapMeetingIdForWire(recipient, version.meeting),
+      fromMeetingId: this.game.mapMeetingIdForWireFromReal(
+        recipient,
+        version.fromMeetingId,
+        version.fromState
+      ),
       fromState: version.fromState,
       time: version.timeSent,
       textColor: version.textColor,

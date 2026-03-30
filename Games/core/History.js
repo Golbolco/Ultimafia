@@ -123,7 +123,8 @@ module.exports = class History {
 
         if (meeting.noRecord && isRecord) continue;
 
-        res[state].meetings[meetingId] = meeting.getMeetingInfo(this.player);
+        const meetingInfo = meeting.getMeetingInfo(this.player);
+        res[state].meetings[meetingInfo.id] = meetingInfo;
       }
 
       for (let alert of info.alerts) {

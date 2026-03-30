@@ -51,7 +51,7 @@ module.exports = class AcrotopiaMeeting extends Meeting {
 
     voter.send("unvote", {
       voterId: voter.id,
-      meetingId: this.id,
+      meetingId: voter.getClientMeetingIdForWire(this),
       target: selection,
     });
   }
