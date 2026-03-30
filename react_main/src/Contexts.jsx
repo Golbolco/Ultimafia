@@ -8,6 +8,9 @@ import axios from "axios";
 import { GlobalStyles, useColorScheme, useTheme } from "@mui/material";
 import { getIconFilter } from "utilsFolder/iconFilter";
 import { generateContrastLookup, autoContrastColor } from "utilsFolder/autoContrast";
+import { getSiteTheme } from "./constants/themes";
+import { isRetroThemeForcedByCalendar } from "./utils/holidayThemes";
+import { useCalendarTick } from "./hooks/useCalendarTick";
 
 export const UserContext = React.createContext();
 export const SiteInfoContext = React.createContext();
@@ -16,8 +19,9 @@ export const GameContext = React.createContext();
 export function UserProvider({
   children,
   setUserLoading,
-  setCustomPrimaryColor,
+  setSiteTheme,
 }) {
+  const calendarTick = useCalendarTick();
   const siteInfo = useContext(SiteInfoContext);
   const theme = useTheme();
   const [inGame, setInGame] = useState(null);
@@ -192,24 +196,68 @@ export function UserProvider({
     if (user.settings && user.settings.iconFilter) {
       setIconFilter(getIconFilter(user.settings.iconFilter));
     }
-    if (
-      user.settings &&
-      user.settings.customPrimaryColor &&
-      user.settings.customPrimaryColor !== "none"
-    ) {
-      setCustomPrimaryColor(user.settings.customPrimaryColor);
-    }
   }, [user.settings]);
 
-  const { mode, systemMode } = useColorScheme();
   useEffect(() => {
-    const colorScheme = mode === "system" ? systemMode : mode;
+    if (!setSiteTheme) {
+      return;
+    }
+    const custom =
+      user.settings?.customPrimaryColor &&
+      user.settings.customPrimaryColor !== "none"
+        ? user.settings.customPrimaryColor
+        : null;
+    const palette = isRetroThemeForcedByCalendar()
+      ? "retro"
+      : user.loggedIn && user.settings
+        ? user.settings.siteColorScheme || "dark"
+        : "dark";
+    setSiteTheme(getSiteTheme(custom, palette));
+  }, [
+    user.loaded,
+    user.loggedIn,
+    user.settings?.siteColorScheme,
+    user.settings?.customPrimaryColor,
+    setSiteTheme,
+    calendarTick,
+  ]);
+
+  const { mode, systemMode, setMode } = useColorScheme();
+  useEffect(() => {
+    const resolved = mode === "system" ? systemMode : mode;
     document.documentElement.classList.remove(
       "dark-mode",
-      "light-mode"
+      "light-mode",
+      "retro-mode"
     );
-    document.documentElement.classList.add(`${colorScheme}-mode`);
-  }, [mode, systemMode]);
+    if (
+      isRetroThemeForcedByCalendar() ||
+      user.settings?.siteColorScheme === "retro"
+    ) {
+      document.documentElement.classList.add("retro-mode");
+    } else if (resolved === "light" || resolved === "dark") {
+      document.documentElement.classList.add(`${resolved}-mode`);
+    }
+  }, [mode, systemMode, user.settings?.siteColorScheme, calendarTick]);
+
+  useEffect(() => {
+    if (isRetroThemeForcedByCalendar()) {
+      setMode("dark");
+      return;
+    }
+    if (
+      user.loaded &&
+      user.loggedIn &&
+      user.settings?.siteColorScheme &&
+      ["system", "light", "dark", "retro"].includes(user.settings.siteColorScheme)
+    ) {
+      setMode(
+        user.settings.siteColorScheme === "retro"
+          ? "dark"
+          : user.settings.siteColorScheme
+      );
+    }
+  }, [user.loaded, user.loggedIn, user.settings?.siteColorScheme, setMode, calendarTick]);
 
   return (
     <>

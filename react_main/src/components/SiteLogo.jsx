@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box } from "@mui/material";
 
 import logovalentines from "images/logos/logo-valentines.png";
@@ -6,20 +6,28 @@ import logopride from "images/logos/logo-pride.png";
 import logohalloween from "images/logos/logo-halloween.png";
 import logowinter from "images/logos/logo-winter.png";
 import logodefault from "images/logos/logo-default.png";
+import logobm from "images/logos/logo-bm.png";
 import { Link } from "react-router-dom";
 import {
   isHalloweenThemeActive,
   isPrideThemeActive,
+  isRetroThemeForcedByCalendar,
   isValentinesThemeActive,
   isWinterThemeActive,
 } from "../utils/holidayThemes";
+import { UserContext } from "../Contexts";
 
 export default function SiteLogo({
   small = false,
   large = false,
   newTab = false,
 }) {
+  const user = useContext(UserContext);
+
   const getLogoSrc = () => {
+    if (isRetroThemeForcedByCalendar() || user?.settings?.siteColorScheme === "retro") {
+      return logobm;
+    }
     if (isValentinesThemeActive()) return logovalentines; // February: Valentine's
     if (isPrideThemeActive()) return logopride; // June: Pride
     if (isHalloweenThemeActive()) return logohalloween; // October: Halloween
