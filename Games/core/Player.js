@@ -1205,14 +1205,6 @@ module.exports = class Player {
       if (info.cancel) return;
     }
 
-    const clientTyping = { playerId: info.playerId, isTyping: Boolean(info.isTyping) };
-    if (clientTyping.isTyping) {
-      const meetings = this.getMeetings();
-      const meetingIndex = meetings.findIndex((m) => m.id === info.meetingId);
-      if (meetingIndex === -1) return;
-      clientTyping.meetingIndex = meetingIndex;
-    }
-
     this.send("typing", clientTyping);
   }
 
