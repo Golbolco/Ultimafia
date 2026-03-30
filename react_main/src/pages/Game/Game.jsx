@@ -631,6 +631,13 @@ export default function Game() {
     });
 
     socket.on("roleReveal", (info) => {
+      const appearance = info.role || "";
+      const roleName = appearance.split(":")[0];
+      const modPart = appearance.split(":")[1];
+      const roleData = {
+        roleName,
+        modifiers: modPart ? modPart.split("/") : [],
+      };
       // Only show modal if this is for the current player and game type supports it
       if (
         info.playerId === selfRef.current &&

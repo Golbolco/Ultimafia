@@ -1221,6 +1221,7 @@ module.exports = class Meeting {
         if (!isSilenced || _playerId === playerId) {
           this.members[_playerId].player.seeTyping({
             playerId,
+            isTyping,
             meetingId: isTyping ? this.id : null,
           });
         }
