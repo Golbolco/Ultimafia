@@ -1205,7 +1205,10 @@ module.exports = class Player {
       if (info.cancel) return;
     }
 
-    this.send("typing", clientTyping);
+    this.send("typing", {
+      playerId: info.playerId,
+      meetingId: info.meetingId,
+    });
   }
 
   sendAlert(message, extraStyle) {
