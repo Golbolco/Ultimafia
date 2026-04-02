@@ -47,9 +47,6 @@ export function getSiteTheme(customPrimaryColor, sitePalette = "dark") {
     else if (isValentines) {
       return "#fc007e";
     }
-    if (mode === "retro") {
-      return "#D50032";
-    }
     // Different colors for light and dark modes
     else return mode === "light" ? "#D50032" : "#EFBF04";
   };
@@ -63,9 +60,6 @@ export function getSiteTheme(customPrimaryColor, sitePalette = "dark") {
     }
     else if (isValentines) {
       return "#fc007e";
-    }
-    if (mode === "retro") {
-      return "#B80028";
     }
     // Different colors for light and dark modes that complement the primary
     return mode === "light" ? "#B80028" : "#D4A704";
@@ -100,28 +94,6 @@ export function getSiteTheme(customPrimaryColor, sitePalette = "dark") {
       main: "#F1F1F1",
     },
   };
-
-  const retroPalette = {
-    mode: "dark",
-    primary: {
-      main: getPrimaryColor("retro"),
-    },
-    secondary: {
-      main: getSecondaryColor("retro"),
-    },
-    info: {
-      main: "#DAA520",
-    },
-    text: {
-      main: "#F1F1F1",
-    },
-    background: {
-      default: "#454978",
-      paper: "#5357a5",
-    },
-  };
-
-  const useRetroAsDarkPalette = sitePalette === "retro";
 
   const commonComponents = {
     MuiAccordion: {
@@ -233,27 +205,9 @@ export function getSiteTheme(customPrimaryColor, sitePalette = "dark") {
       dark: {
         components: {
           ...commonComponents,
-          ...(useRetroAsDarkPalette
-            ? {
-                MuiPaper: {
-                  styleOverrides: {
-                    root: {
-                      variants: [
-                        {
-                          props: { variant: "outlined" },
-                          style: {
-                            backgroundColor: "var(--scheme-color-sec)",
-                          },
-                        },
-                      ],
-                    },
-                  },
-                },
-              }
-            : {}),
         },
         palette: {
-          ...(useRetroAsDarkPalette ? retroPalette : darkPalette),
+          ...darkPalette,
           activeAppBarText: {
             main: "var(--mui-palette-primary-main)",
           },
