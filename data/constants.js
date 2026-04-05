@@ -36,6 +36,7 @@ if (process.env.NODE_ENV.includes("development")) {
     fileAppeal: 5 * 60 * 100,
     staffApplication: 24 * 60 * 60 * 100,
     poke: 5 * 100,
+    tradeStamp: 2 * 100,
   };
 } else {
   rates = {
@@ -55,6 +56,7 @@ if (process.env.NODE_ENV.includes("development")) {
     fileAppeal: 5 * 60 * 1000,
     staffApplication: 24 * 60 * 60 * 1000,
     poke: 5 * 1000,
+    tradeStamp: 2 * 1000,
   };
 }
 
@@ -483,6 +485,7 @@ module.exports = {
     manageCompetitive: true,
     adjustMinGames: true,
     awardTrophy: true,
+    awardStamp: true,
     deleteStrategy: true,
     deleteFanart: true,
     seeModPanel: true,
@@ -546,6 +549,7 @@ module.exports = {
         "createPoll",
         "manageCompetitive",
         "awardTrophy",
+        "awardStamp",
         "deleteStrategy",
         "deleteFanart",
         "seeModPanel",
