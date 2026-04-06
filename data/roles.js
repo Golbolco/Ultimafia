@@ -2892,7 +2892,7 @@ const roleData = {
         },
       ],
     },
-    Liquidator: {
+    Repoman: {
       alignment: "Mafia",
       category: "Support",
       tags: ["Items", "Information", "Advanced"],

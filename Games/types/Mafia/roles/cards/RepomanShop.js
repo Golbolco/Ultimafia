@@ -43,7 +43,7 @@ function rollShopOptions() {
   return shuffled.slice(0, 3);
 }
 
-module.exports = class LiquidatorShop extends Card {
+module.exports = class RepomanShop extends Card {
   constructor(role) {
     super(role);
 
@@ -93,7 +93,7 @@ module.exports = class LiquidatorShop extends Card {
     };
 
     this.meetings = {
-      "Liquidator Shop": {
+      "Repoman Shop": {
         actionName: "Browse Shop",
         states: ["Day"],
         flags: ["voting", "noVeg"],
@@ -213,10 +213,10 @@ module.exports = class LiquidatorShop extends Card {
           exclude: ["membersIfOpen"],
         },
         shouldMeet: function () {
-          const liquidator = this.game.players.find(
-            (p) => p.role.name === "Liquidator" && p.alive
+          const repoman = this.game.players.find(
+            (p) => p.role.name === "Repoman" && p.alive
           );
-          return liquidator?.role.data.doubleKillActive === true;
+          return repoman?.role.data.doubleKillActive === true;
         },
         action: {
           labels: ["kill", "mafia"],
@@ -252,10 +252,10 @@ module.exports = class LiquidatorShop extends Card {
 
     switch (option.internal) {
       case "RoleReveal":
-        player.holdItem("LiquidatorReveal");
+        player.holdItem("RepomanReveal");
         if (isGift) {
           player.queueAlert(
-            `:gift: You have been gifted Liquidator Intel. Use it to reveal a player's role to the Mafia!`
+            `:gift: You have been gifted Repoman Intel. Use it to reveal a player's role to the Mafia!`
           );
         } else {
           player.queueAlert(
@@ -269,7 +269,7 @@ module.exports = class LiquidatorShop extends Card {
         for (let p of player.game.alivePlayers()) {
           if (p.role.alignment === "Mafia") {
             p.queueAlert(
-              `:knife: The Liquidator has purchased a Double Kill. The Mafia may kill a second target tonight!`
+              `:knife: The Repoman has purchased a Double Kill. The Mafia may kill a second target tonight!`
             );
           }
         }

@@ -1,14 +1,14 @@
 const Item = require("../Item");
 const { PRIORITY_REVEAL_DEFAULT } = require("../const/Priority");
 
-module.exports = class LiquidatorReveal extends Item {
+module.exports = class RepomanReveal extends Item {
   constructor() {
-    super("LiquidatorReveal");
+    super("RepomanReveal");
     this.cannotBeSnooped = true;
     this.cannotBeStolen = true;
     this.lifespan = 1;
 
-    this.meetings["Liquidator Intel"] = {
+    this.meetings["Repoman Intel"] = {
       actionName: "Reveal Role",
       states: ["Day"],
       flags: ["voting", "noVeg"],
@@ -23,7 +23,7 @@ module.exports = class LiquidatorReveal extends Item {
           for (let p of this.game.players) {
             if (p.faction === this.actor.faction) {
               p.queueAlert(
-                `:briefcase: The Liquidator has purchased intel. ${this.target.name}'s role is ${role}!`
+                `:briefcase: The Repoman has purchased intel. ${this.target.name}'s role is ${role}!`
               );
             }
           }
