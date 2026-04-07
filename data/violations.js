@@ -15,10 +15,10 @@ const violationDefinitions = [
       },
     ],
     offenses: [
-      "1 day",
-      "3 days",
-      "3 weeks",
-      "6 months",
+      "12 hours",
+      "24 hours",
+      "48 hours",
+      "Permaban",
       "Permaban",
       "Permaban",
     ],
@@ -42,14 +42,14 @@ const violationDefinitions = [
       {
         type: "paragraph",
         content:
-          "Breaking of this rule may result in punishment dependent on severity [Idk how we will change scale of punishment here]",
+          "Breaking this rule may result in punishment dependent on severity.",
       },
     ],
     offenses: [
-      "1 day",
-      "3 days",
-      "3 weeks",
-      "6 months",
+      "12 hours",
+      "24 hours",
+      "48 hours",
+      "Permaban",
       "Permaban",
       "Permaban",
     ],
@@ -79,14 +79,14 @@ const violationDefinitions = [
       {
         type: "paragraph",
         content:
-          "Breaking of this rule may result in punishment dependent on severity [Idk how we will change scale of punishment here]",
+          "Breaking this rule may result in punishment dependent on severity.",
       },
     ],
     offenses: [
-      "1 day",
-      "3 days",
-      "3 weeks",
-      "6 months",
+      "24 hours",
+      "24 hours",
+      "48 hours",
+      "Permaban",
       "Permaban",
       "Permaban",
     ],
@@ -105,14 +105,14 @@ const violationDefinitions = [
       {
         type: "paragraph",
         content:
-          "Concerns regarding user behavior should be addressed through the appropriate reporting channels. The designated reporting tools exist to ensure issues are reviewed and handled in a fair and consistent manner. Breaking of this rule may result in punishment dependent on severity [Idk how we will change scale of punishment here]",
+          "Concerns regarding user behavior should be addressed through the appropriate reporting channels. The designated reporting tools exist to ensure issues are reviewed and handled in a fair and consistent manner. Breaking this rule may result in punishment dependent on severity.",
       },
     ],
     offenses: [
-      "1 day",
-      "3 days",
-      "3 weeks",
-      "6 months",
+      "12 hours",
+      "24 hours",
+      "48 hours",
+      "Permaban",
       "Permaban",
       "Permaban",
     ],
@@ -131,14 +131,14 @@ const violationDefinitions = [
       {
         type: "paragraph",
         content:
-          "Breaking of this rule may result in punishment dependent on severity [Idk how we will change scale of punishment here]",
+          "Breaking this rule may result in punishment dependent on severity.",
       },
     ],
     offenses: [
-      "1 day",
-      "3 days",
-      "3 weeks",
-      "6 months",
+      "24 hours",
+      "24 hours",
+      "48 hours",
+      "Permaban",
       "Permaban",
       "Permaban",
     ],
@@ -167,10 +167,10 @@ const violationDefinitions = [
     description:
       "Threatening, pressuring, or blackmailing users in order to influence their actions, decisions, or participation within the community. Conduct considered as coercion specifically includes leveraging or threatening social, reputational, or other consequences, particularly those extending off-site (online or offline), in order to gain compliance or exert control from other users.",
     offenses: [
-      "1 day",
-      "3 days",
-      "3 weeks",
-      "6 months",
+      "24 hours",
+      "24 hours",
+      "48 hours",
+      "Permaban",
       "Permaban",
       "Permaban",
     ],
@@ -183,9 +183,9 @@ const violationDefinitions = [
     description:
       "Pretending to be another user with intent to defame or frame them. Includes creating a similar username or outright claiming to be them maliciously.",
     offenses: [
-      "3 months",
-      "6 months",
-      "Permaban",
+      "24 hours",
+      "24 hours",
+      "48 hours",
       "Permaban",
       "Permaban",
       "Permaban",
