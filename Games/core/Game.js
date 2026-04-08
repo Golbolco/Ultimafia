@@ -811,6 +811,7 @@ module.exports = class Game {
 
     if (wasRanked) {
       this.queueAlert("The game is now unranked.");
+      this.broadcastOptions();
     }
   }
 
@@ -820,6 +821,7 @@ module.exports = class Game {
 
     if (wasCompetitive) {
       this.queueAlert("The game is now unranked.");
+      this.broadcastOptions();
     }
   }
 
