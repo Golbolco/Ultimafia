@@ -766,6 +766,7 @@ module.exports = class Meeting {
       return false;
     }
 
+
     if (this.inputType != "text") {
       if (this.targets.indexOf(selection) != -1) target = selection;
       else if (
