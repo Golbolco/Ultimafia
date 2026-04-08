@@ -648,11 +648,25 @@ async function _getCompRoundInfo(seasonNumber = null, roundNumber = null) {
     }
   }
 
-  // Get the current round, if any
+  const specifiedRound =
+    Number.isFinite(roundNumber) && roundNumber > 0;
+
+  // Get the current round, if any (unaccounted = in progress or awaiting finalization)
   roundInfo.round = await models.CompetitiveRound.findOne(roundQuery)
     .select("-_id")
     .sort({ number: -1 })
     .lean();
+
+  // Completed seasons have no unaccounted rounds — for "latest", show the final round instead
+  if (!roundInfo.round && !specifiedRound) {
+    roundInfo.round = await models.CompetitiveRound.findOne({
+      season: roundInfo.seasonNumber,
+      number: { $gt: 0 },
+    })
+      .select("-_id")
+      .sort({ number: -1 })
+      .lean();
+  }
 
   if (!roundInfo.round) {
     return roundInfo;

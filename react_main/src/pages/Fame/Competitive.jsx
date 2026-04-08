@@ -208,7 +208,9 @@ function Overview({ roundInfo, seasonInfo }) {
                 <Typography variant="h3" sx={{
                   marginRight: isPhoneDevice ? undefined : "auto !important",
                 }}>
-                  Round {roundInfo.round.number} standings
+                  {roundInfo.round
+                    ? `Round ${roundInfo.round.number} standings`
+                    : "Round standings"}
                 </Typography>
                 <PageNav
                   page={pageNumRound}
