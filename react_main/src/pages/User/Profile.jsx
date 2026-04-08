@@ -80,7 +80,7 @@ function FavoritedRolesPanel({
 
   return (
     <CasePanel
-      title={`Favorited Roles (${items.length})`}
+      title={`Favorited Roles`}
       panelStyle={panelStyle}
       headingStyle={headingStyle}
       className="box-panel favorited-roles"
