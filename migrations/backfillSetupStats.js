@@ -58,6 +58,36 @@ function parseJson(s, fallback) {
   }
 }
 
+function mongoConnectOptions() {
+  const rawUrl = (process.env.MONGO_URL || "").trim();
+  const hasScheme = /^mongodb(\+srv)?:\/\//i.test(rawUrl);
+
+  if (hasScheme) {
+    return {
+      uri: rawUrl,
+      options: {
+        user: process.env.MONGO_USER,
+        pass: process.env.MONGO_PW,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
+    };
+  }
+
+  const host = rawUrl || "localhost:27017";
+  const dbName = process.env.MONGO_DB || "ultimafia";
+
+  return {
+    uri: `mongodb://${host}/${dbName}?authSource=admin`,
+    options: {
+      user: process.env.MONGO_USER,
+      pass: process.env.MONGO_PW,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    },
+  };
+}
+
 function gameTypeTag(game) {
   if (game.competitive) return "competitive";
   if (game.ranked) return "ranked";
@@ -175,13 +205,8 @@ async function main() {
       ? parseInt(process.argv[limitArg + 1], 10)
       : 0;
 
-  await mongoose.connect(
-    process.env.MONGO_URL || "mongodb://localhost:27017/ultimafia",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  );
+  const { uri, options } = mongoConnectOptions();
+  await mongoose.connect(uri, options);
 
   logger.info("Connected. Scanning games…");
 
