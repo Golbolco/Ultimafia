@@ -16,7 +16,7 @@ const DiscordStrategy = require("passport-discord").Strategy;
 
 let callbackUrl;
 
-if (constants.isDevelopment) {
+if (process.env.NODE_ENV.includes("development")) {
   callbackUrl = "http://127.0.0.1:3000/auth/discord/redirect";
 } else {
   callbackUrl = process.env.BASE_URL + "/auth/discord/redirect";
@@ -63,11 +63,10 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await models.User.findOne({ discordId: id });
-    done(null, user || false);
-  } catch (err) {
-    done(err);
+  console.log("Deserializing");
+  const user = await models.User.findOne({ discordId: id });
+  if (user) {
+    done(null, user);
   }
 });
 
@@ -162,7 +161,7 @@ router.post("/verifyCaptcha", async function (req, res) {
       );
 
     if (
-      constants.isDevelopment ||
+      process.env.NODE_ENV.includes("development") ||
       (capRes.data.success &&
         capRes.data.action == "auth" &&
         capRes.data.score > constants.captchaThreshold)
@@ -343,13 +342,13 @@ async function authSuccess(req, uid, email, discordProfile) {
         goldHearts: constants.initialGoldHeartCapacity,
       });
 
-      if (constants.isDevelopment) {
+      if (process.env.NODE_ENV.includes("development")) {
         user.dev = true;
       }
 
       await user.save();
 
-      if (constants.isDevelopment) {
+      if (process.env.NODE_ENV.includes("development")) {
         var group = await models.Group.findOne({
           name: "Owner",
         }).select("rank");

@@ -203,22 +203,7 @@ var deprecated = false;
         // The main server authenticating as a server
         socket.on("authAsServer", async (token) => {
           try {
-            const key = process.env.LOAD_BALANCER_KEY;
-            if (!key) {
-              logger.error(
-                "LOAD_BALANCER_KEY is not set; game server cannot authenticate the load balancer."
-              );
-              return;
-            }
-            if (token == key) {
-              socket.isServer = true;
-              // Reset LB ClientSocket heartbeat immediately (avoids waiting for next ping interval)
-              socket.send("p");
-            } else {
-              logger.warn(
-                "authAsServer rejected: LOAD_BALANCER_KEY does not match the main server process."
-              );
-            }
+            if (token == process.env.LOAD_BALANCER_KEY) socket.isServer = true;
           } catch (e) {
             logger.error(e);
           }

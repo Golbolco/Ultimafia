@@ -16,12 +16,9 @@ const modifiers = Object.entries(modifierData)
     return acc;
   }, {});
 
-/** True when NODE_ENV is set and includes "development"; safe if NODE_ENV is unset. */
-const isDevelopment = (process.env.NODE_ENV || "").includes("development");
-
 var rates = null;
 
-if (isDevelopment) {
+if (process.env.NODE_ENV.includes("development")) {
   rates = {
     hostGame: 60 * 100,
     createSetup: 60 * 100,
@@ -64,7 +61,6 @@ if (isDevelopment) {
 }
 
 module.exports = {
-  isDevelopment,
   restart: null,
   gameTypes: [
     "Mafia",
@@ -349,7 +345,7 @@ module.exports = {
   referralGames: 5,
   referralCoins: 50,
 
-  minMafiaSetupTotal: isDevelopment ? 3 : 5,
+  minMafiaSetupTotal: process.env.NODE_ENV.includes("development") ? 3 : 5,
   captchaThreshold: 0.25,
 
   initialRedHeartCapacity: 15,
@@ -369,9 +365,9 @@ module.exports = {
   pokeDismissCooldownMillis: 30 * 24 * 60 * 60 * 1000, // 30 days
 
   // Penalty starts at 10 minutes with level 0, up to 60 minutes with level 5
-  leavePenaltyMinimumMillis: isDevelopment ? 1000 : 600000,
-  leavePenaltyMaximumMillis: isDevelopment ? 5000 : 3600000,
-  leavePenaltyPerLevelMillis: isDevelopment ? 1000 : 600000,
+  leavePenaltyMinimumMillis: process.env.NODE_ENV.includes("development") ? 1000 : 600000,
+  leavePenaltyMaximumMillis: process.env.NODE_ENV.includes("development") ? 5000 : 3600000,
+  leavePenaltyPerLevelMillis: process.env.NODE_ENV.includes("development") ? 1000 : 600000,
   leavePenaltyForgivenessAmount: 1,
   // Penalties reset in level after 3 days
   leavePenaltyDurationMillis: 259200000,
