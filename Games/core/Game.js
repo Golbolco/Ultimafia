@@ -83,7 +83,7 @@ module.exports = class Game {
     this.pregameCountdownLength =
       options.settings.pregameCountdownLength != null
         ? options.settings.pregameCountdownLength
-        : constants.isDevelopment ? 1000 : 10000;
+        : process.env.NODE_ENV.includes("development") ? 1000 : 10000;
     this.postgameLength = 1000 * 60 * 2;
     this.players = new ArrayHash();
     this.playersGone = {};
