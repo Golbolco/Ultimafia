@@ -102,19 +102,8 @@ function computeFactionFortunePoints(opts) {
     return { pointsWonByFactions, pointsLostByFactions };
   }
 
-  if (factionNames.length === 2) {
-    const [a, b] = factionNames;
-    let winA = Math.round(K * weights[b]);
-    let winB = Math.round(K * weights[a]);
-    if (shouldCapFortuneAt120(a)) winA = Math.min(120, winA);
-    if (shouldCapFortuneAt120(b)) winB = Math.min(120, winB);
-    pointsWonByFactions[a] = winA;
-    pointsWonByFactions[b] = winB;
-    pointsLostByFactions[a] = Math.round(K * weights[a]);
-    pointsLostByFactions[b] = Math.round(K * weights[b]);
-    return { pointsWonByFactions, pointsLostByFactions };
-  }
-
+  // Same formula for all faction counts: win payout uses this faction's weight
+  // (previously n===2 inverted opponent weights, which could zero one side).
   for (const f of factionNames) {
     let winPts = Math.round(K * weights[f]);
     if (shouldCapFortuneAt120(f)) winPts = Math.min(120, winPts);
