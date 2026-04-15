@@ -1022,7 +1022,7 @@ async function getOpenGames(gameType) {
   var games = [];
 
   for (let gameId of allGames) {
-    let game = await getGameInfo(gameId);
+    let game = await getGameInfo(gameId, true);
 
     if (game && (!gameType || game.type == gameType) && game.status == "Open") {
       games.push(game);
@@ -1037,7 +1037,7 @@ async function getOpenPublicGames(gameType) {
   var games = [];
 
   for (let gameId of allGames) {
-    let game = await getGameInfo(gameId);
+    let game = await getGameInfo(gameId, true);
 
     if (
       game &&
@@ -1057,7 +1057,7 @@ async function getInProgressGames(gameType) {
   var games = [];
 
   for (let gameId of allGames) {
-    let game = await getGameInfo(gameId);
+    let game = await getGameInfo(gameId, true);
 
     if (
       game &&
@@ -1076,7 +1076,7 @@ async function getInProgressPublicGames(gameType) {
   var games = [];
 
   for (let gameId of allGames) {
-    let game = await getGameInfo(gameId);
+    let game = await getGameInfo(gameId, true);
 
     if (
       game &&
@@ -1102,6 +1102,30 @@ async function getAllGames(gameType) {
   }
 
   return games;
+}
+
+async function getOpenGameCountsByLobby({ canSeePrivate } = {}) {
+  const allGames = await client.smembersAsync("games");
+  const counts = {};
+  let hasOpen = false;
+  let hasOpenUnranked = false;
+
+  for (const gameId of allGames) {
+    const status = await client.getAsync(`game:${gameId}:status`);
+    if (status !== "Open") continue;
+
+    const settings = JSON.parse(
+      (await client.getAsync(`game:${gameId}:settings`)) || "{}"
+    );
+    if (!canSeePrivate && settings.private) continue;
+
+    const lobby = await client.getAsync(`game:${gameId}:lobby`);
+    counts[lobby] = (counts[lobby] || 0) + 1;
+    hasOpen = true;
+    if (!settings.ranked) hasOpenUnranked = true;
+  }
+
+  return { counts, hasOpen, hasOpenUnranked };
 }
 
 async function createGame(gameId, info) {
@@ -1574,6 +1598,7 @@ module.exports = {
   getInProgressGames,
   getInProgressPublicGames,
   getAllGames,
+  getOpenGameCountsByLobby,
   createGame,
   joinGame,
   leaveGame,

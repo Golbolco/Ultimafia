@@ -112,6 +112,39 @@ router.get("/mostPlayedRecently", async (req, res) => {
   }
 });
 
+const OPEN_COUNTS_TTL_MS = 3000;
+const openCountsCache = { public: null, full: null };
+
+function getCachedOpenCounts(canSeePrivate) {
+  const key = canSeePrivate ? "full" : "public";
+  const entry = openCountsCache[key];
+  const now = Date.now();
+  if (entry && entry.expires > now) return entry.promise;
+
+  const promise = redis.getOpenGameCountsByLobby({ canSeePrivate });
+  openCountsCache[key] = { promise, expires: now + OPEN_COUNTS_TTL_MS };
+  promise.catch(() => {
+    if (openCountsCache[key] && openCountsCache[key].promise === promise) {
+      openCountsCache[key] = null;
+    }
+  });
+  return promise;
+}
+
+router.get("/openCounts", async function (req, res) {
+  res.setHeader("Content-Type", "application/json");
+  try {
+    const userId = await routeUtils.verifyLoggedIn(req, true);
+    const canSeePrivate =
+      userId && (await routeUtils.verifyPermission(userId, "breakGame"));
+    const result = await getCachedOpenCounts(Boolean(canSeePrivate));
+    res.send(result);
+  } catch (e) {
+    logger.error(e);
+    res.send({ counts: {}, hasOpen: false, hasOpenUnranked: false });
+  }
+});
+
 router.get("/list", async function (req, res) {
   res.setHeader("Content-Type", "application/json");
   try {
@@ -159,18 +192,25 @@ router.get("/list", async function (req, res) {
 
     games = games.slice(start, end);
 
+    const setupIds = [
+      ...new Set(games.map((g) => g.settings.setup).filter(Boolean)),
+    ];
+    const setupDocs = setupIds.length
+      ? await models.Setup.find({ id: { $in: setupIds } }).select(
+          "id gameType name roles closed gameSettings useRoleGroups roleGroupSizes count total -_id"
+        )
+      : [];
+    const setupMap = new Map(
+      setupDocs.map((doc) => [doc.id, doc.toJSON()])
+    );
+
     for (let i in games) {
       let game = games[i];
       let newGame = {};
 
       newGame.id = game.id;
       newGame.type = game.type;
-      newGame.setup = await models.Setup.findOne({
-        id: game.settings.setup,
-      }).select(
-        "id gameType name roles closed gameSettings useRoleGroups roleGroupSizes count total -_id"
-      );
-      newGame.setup = newGame.setup.toJSON();
+      newGame.setup = setupMap.get(game.settings.setup) || null;
       newGame.hostId = game.hostId;
       newGame.players = game.players.length;
       newGame.spectatorCount = game.spectatorCount;
