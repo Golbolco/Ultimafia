@@ -1,20 +1,26 @@
 const mafiaStatsObj = {
   totalGames: 0,
   wins: {
-    count: 0,
-    total: 0,
+    count: 0, // games won
+    total: 0, // games completed (wins + losses, excludes abandons)
   },
   abandons: {
-    count: 0,
-    total: 0,
+    count: 0, // games abandoned
+    total: 0, // always equals count (recordStat always called with inc=true)
   },
 };
 
-const mafiaStatsSet = {
-  all: mafiaStatsObj,
+const mafiaStatsBucket = {
+  ...mafiaStatsObj,
   bySetup: {},
   byRole: {},
   byAlignment: {},
+};
+
+const mafiaStatsSet = {
+  // "all" is legacy — contains only ranked + competitive stats
+  all: mafiaStatsBucket,
+  unranked: mafiaStatsBucket,
 };
 
 const allStats = {

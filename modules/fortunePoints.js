@@ -1,16 +1,24 @@
 /**
  * Fortune / misfortune points for ranked & competitive games.
- * Uses empirical setup win rates (all modes combined).
+ * Uses empirical setup win rates derived only from ranked and competitive
+ * games — unranked games do not influence fortune payouts.
  */
 const constants = require("../data/constants");
 
+const FORTUNE_GAME_TYPES = new Set(["ranked", "competitive"]);
+
+// entries: Array<[gameType, isFactionWin]>
 function winRateFromAlignmentEntries(entries) {
   if (!entries || !entries.length) return null;
   let wins = 0;
-  for (const row of entries) {
-    if (Array.isArray(row) && row[1] === true) wins++;
+  let games = 0;
+  for (const [gameType, isFactionWin] of entries) {
+    if (!FORTUNE_GAME_TYPES.has(gameType)) continue;
+    games++;
+    if (isFactionWin === true) wins++;
   }
-  return wins / entries.length;
+  if (games === 0) return null;
+  return wins / games;
 }
 
 /**
@@ -116,29 +124,23 @@ function computeFactionFortunePoints(opts) {
 }
 
 /**
- * Build alignmentWinRates-shaped map from SetupVersion.setupStats (legacy object and/or alignmentRows).
+ * Build alignmentWinRates-shaped map from SetupVersion.setupStats.alignmentRows.
  * @param {object} setupStats
  * @returns {object} map factionKey -> Array<[gameType, boolean]>
  */
 function alignmentRowsToWinRateMap(setupStats) {
   const map = {};
   if (!setupStats) return map;
-  const legacy = setupStats.alignmentWinRates;
-  if (legacy && typeof legacy === "object" && !Array.isArray(legacy)) {
-    for (const k of Object.keys(legacy)) {
-      const v = legacy[k];
-      if (Array.isArray(v)) {
-        map[k] = v.slice();
-      }
-    }
-  }
+  // Legacy `alignmentWinRates` stored bare booleans with no gameType tag,
+  // so entries cannot be attributed to ranked/competitive and are skipped.
   const rows = setupStats.alignmentRows;
+  // rows: Array<[factionKey, gameType, isFactionWin]>
   if (Array.isArray(rows)) {
     for (const row of rows) {
       if (!Array.isArray(row) || row.length < 3) continue;
-      const [k, gameType, won] = row;
-      if (!map[k]) map[k] = [];
-      map[k].push([gameType, won]);
+      const [factionKey, gameType, isFactionWin] = row;
+      if (!map[factionKey]) map[factionKey] = [];
+      map[factionKey].push([gameType, isFactionWin]);
     }
   }
   return map;

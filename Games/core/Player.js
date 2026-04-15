@@ -1789,25 +1789,32 @@ module.exports = class Player {
   }
 
   recordStat(stat, inc) {
-    if (!this.game.ranked && !this.game.competitive) return;
+    if (
+      this.game.type !== "Mafia" &&
+      !this.game.ranked &&
+      !this.game.competitive
+    )
+      return;
 
     if (!this.user.stats[this.game.type])
       this.user.stats[this.game.type] = dbStats.statsSet(this.game.type);
 
     const stats = this.user.stats[this.game.type];
 
-    if (!stats.all) stats.all = dbStats.statsObj(this.game.type);
+    const bucket =
+      this.game.ranked || this.game.competitive ? "all" : "unranked";
+    if (!stats[bucket]) stats[bucket] = dbStats.statsObj(this.game.type);
 
-    this.updateStatsObj(stats.all, stat, inc);
-    this.updateStatsMap(stats, "bySetup", this.game.setup.id, stat, inc);
+    this.updateStatsObj(stats[bucket], stat, inc);
+    this.updateStatsMap(stats[bucket], "bySetup", this.game.setup.id, stat, inc);
 
     if (!this.role) return;
 
     var role = `${this.role.name}${
       this.role.modifier ? ":" + this.role.modifier : ""
     }`;
-    this.updateStatsMap(stats, "byRole", role, stat, inc);
-    this.updateStatsMap(stats, "byAlignment", this.role.alignment, stat, inc);
+    this.updateStatsMap(stats[bucket], "byRole", role, stat, inc);
+    this.updateStatsMap(stats[bucket], "byAlignment", this.role.alignment, stat, inc);
   }
 
   updateStatsMap(stats, mapName, key, stat, inc) {
