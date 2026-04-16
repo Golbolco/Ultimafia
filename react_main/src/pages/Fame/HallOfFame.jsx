@@ -441,12 +441,12 @@ export default function HallOfFame() {
             </Alert>
           )}
 
-          {data && data.supportedFilters.timeRanges.length === 1 && (
+          {/* {data?.supportedFilters?.timeRanges?.length === 1 && (
             <Alert severity="info">
               The Hall of Fame currently uses all-time cached rankings. Recent and seasonal
               splits need additional precomputation before they can be enabled.
             </Alert>
-          )}
+          )} */}
         </Stack>
       </Paper>
 
