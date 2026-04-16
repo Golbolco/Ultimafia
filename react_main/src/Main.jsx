@@ -275,6 +275,7 @@ function Header({ setShowAnnouncementTemporarily }) {
               {
                 label: "Fame",
                 items: [
+                  { text: "Hall of Fame", path: "/fame/hall-of-fame" },
                   { text: "Competitive", path: "/fame/competitive" },
                   { text: "Contributors", path: "/fame/contributors" },
                   { text: "Donors", path: "/fame/donors" },
@@ -349,6 +350,7 @@ function Header({ setShowAnnouncementTemporarily }) {
             <NavDropdown
               label="Fame"
               items={[
+                { text: "Hall of Fame", path: "/fame/hall-of-fame" },
                 { text: "Competitive", path: "/fame/competitive" },
                 { text: "Contributors", path: "/fame/contributors" },
                 { text: "Donors", path: "/fame/donors" },
