@@ -6183,8 +6183,9 @@ const roleData = {
       alignment: "Event",
       tags: ["Event", "Game Ender"],
       description: [
-        "If this Event occurs, the game will end and No One wins if nobody dies during the day.",
-        "This is unaffected by Win-con altering abilities.",
+        "If this Event occurs, the game will end with a no-win scenario if nobody dies during the day.",
+        "This is unaffected by win-con altering abilities.",
+        "This event is the default endgame event, triggered by failing to kill or condemn after 3 continuous phases (by default)."
       ],
     },
     "Black Hole": {
