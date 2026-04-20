@@ -633,6 +633,12 @@ module.exports = class Player {
         this.game.changeSetup(setupToQuery);
         return;
       case "diceroll":
+          if (this.game.ranked || this.game.competitive) {
+          this.sendAlert(
+            "You cannot use /diceroll in ranked or competitive games."
+          );
+          return;
+        }
         /* Code for cooldown, but it's not needed since only user can see the result :(
 
         if (this.dicerollCooldown == true) {
