@@ -2507,6 +2507,8 @@ function SpeechInput(props) {
   const [clearTyping, setClearTyping] = useState();
   const [checkboxOptions, setCheckboxOptions] = useState({});
   const [isDisconnected, setIsDisconnected] = useState(false);
+  const [speakCooldownUntil, setSpeakCooldownUntil] = useState(0);
+  const [speakCooldownRemainingMs, setSpeakCooldownRemainingMs] = useState(0);
 
   var placeholder = "";
 
@@ -2573,6 +2575,44 @@ function SpeechInput(props) {
     }
   }, [lastTyped]);
 
+  useEffect(() => {
+    if (!socket.on) return;
+
+    socket.on("speakCooldown", (info) => {
+      if (typeof info !== "object" || info == null) return;
+
+      const cooldownMs = Math.max(Number(info.cooldownMs) || 0, 0);
+      if (!cooldownMs) return;
+
+      const cooldownUntil = Date.now() + cooldownMs;
+      setSpeakCooldownUntil((prev) => Math.max(prev, cooldownUntil));
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    if (!speakCooldownUntil) {
+      setSpeakCooldownRemainingMs(0);
+      return;
+    }
+
+    const updateRemaining = () => {
+      setSpeakCooldownRemainingMs(
+        Math.max(0, speakCooldownUntil - Date.now())
+      );
+    };
+
+    updateRemaining();
+    const interval = setInterval(updateRemaining, 100);
+
+    return () => clearInterval(interval);
+  }, [speakCooldownUntil]);
+
+  const isSpeakCooldownActive = speakCooldownRemainingMs > 0;
+  const speakCooldownSeconds = (speakCooldownRemainingMs / 1000).toFixed(1);
+  const speechPlaceholder = isSpeakCooldownActive
+    ? `Cooldown: ${speakCooldownSeconds}s`
+    : placeholder;
+
   const timeoutRef = useRef(null);
   useEffect(() => {
     if (socket.on) {
@@ -2609,6 +2649,7 @@ function SpeechInput(props) {
   }
 
   function onSpeechType(e) {
+    if (isSpeakCooldownActive) return;
     setSpeechInput(e.target.value);
 
     if (
@@ -2622,6 +2663,8 @@ function SpeechInput(props) {
   }
 
   function onSpeechSubmit(e) {
+    if (isSpeakCooldownActive) return;
+
     if (e.key === "Enter" && selTab && speechInput.length) {
       const abilityInfo = speechDropdownValue.split(":");
       var abilityName = abilityInfo[0];
@@ -2716,10 +2759,16 @@ function SpeechInput(props) {
             maxLength: MaxGameMessageLength,
           }}
           value={speechInput}
-          placeholder={placeholder}
+          placeholder={speechPlaceholder}
           onChange={onSpeechType}
           onKeyDown={onSpeechSubmit}
           enterKeyHint="done"
+          disabled={isSpeakCooldownActive}
+          helperText={
+            isSpeakCooldownActive
+              ? `You're sending too fast. Try again in ${speakCooldownSeconds}s.`
+              : ""
+          }
           sx={{
             "& fieldset": { border: "none" },
             input: { color: "var(--scheme-color-text)" },
