@@ -721,26 +721,11 @@ module.exports = class Game {
     this.makeUnranked();
     this.makeUncompetitive();
 
-    // Queue the veg kill action before any async work so it is in the
-    // action queue when processActionQueue() runs synchronously in
-    // gotoNextState(). Previously the queueAction was after the await,
-    // causing it to be deferred past processActionQueue().
-    this.queueAction(
-      new Action({
-        actor: player,
-        target: player,
-        priority: -999,
-        game: this,
-        labels: ["hidden", "absolute", "uncontrollable"],
-        run: function () {
-          if (this.target.hasEffect("Unveggable")) {
-            return;
-          }
-          this.target.kill("veg", this.actor);
-          this.game.exorcisePlayer(this.actor);
-        },
-      })
-    );
+    // Apply veg immediately so the player is marked dead/exorcised before
+    // any win checks. Queued veg actions can be skipped in delay-action
+    // states (e.g. Night) if the game ends before the queue is processed.
+    player.kill("veg", player);
+    this.exorcisePlayer(player);
 
     if (this.breakIntegrity()) {
       await this.refundHeartsForIntegrityBreak(player, wasRanked, wasCompetitive);
