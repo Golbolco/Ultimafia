@@ -2507,7 +2507,10 @@ function SpeechInput(props) {
   const [clearTyping, setClearTyping] = useState();
   const [checkboxOptions, setCheckboxOptions] = useState({});
   const [isDisconnected, setIsDisconnected] = useState(false);
-  const [speakCooldownUntil, setSpeakCooldownUntil] = useState(0);
+  const [speakCooldown, setSpeakCooldown] = useState({
+    until: 0,
+    durationMs: 0,
+  });
   const [speakCooldownRemainingMs, setSpeakCooldownRemainingMs] = useState(0);
 
   var placeholder = "";
@@ -2584,31 +2587,49 @@ function SpeechInput(props) {
       const cooldownMs = Math.max(Number(info.cooldownMs) || 0, 0);
       if (!cooldownMs) return;
 
-      const cooldownUntil = Date.now() + cooldownMs;
-      setSpeakCooldownUntil((prev) => Math.max(prev, cooldownUntil));
+      const now = Date.now();
+      setSpeakCooldown((prev) => {
+        const prevRemaining = Math.max(prev.until - now, 0);
+        const nextDurationMs = Math.max(prevRemaining, cooldownMs);
+
+        return {
+          until: now + nextDurationMs,
+          durationMs: nextDurationMs,
+        };
+      });
     });
   }, [socket]);
 
   useEffect(() => {
-    if (!speakCooldownUntil) {
+    if (!speakCooldown.until) {
       setSpeakCooldownRemainingMs(0);
       return;
     }
 
     const updateRemaining = () => {
-      setSpeakCooldownRemainingMs(
-        Math.max(0, speakCooldownUntil - Date.now())
-      );
+      const remaining = Math.max(0, speakCooldown.until - Date.now());
+      setSpeakCooldownRemainingMs(remaining);
     };
 
     updateRemaining();
     const interval = setInterval(updateRemaining, 100);
 
     return () => clearInterval(interval);
-  }, [speakCooldownUntil]);
+  }, [speakCooldown.until]);
 
   const isSpeakCooldownActive = speakCooldownRemainingMs > 0;
   const speakCooldownSeconds = (speakCooldownRemainingMs / 1000).toFixed(1);
+  const speakCooldownProgressPercent = speakCooldown.durationMs
+    ? Math.min(
+        100,
+        Math.max(
+          0,
+          ((speakCooldown.durationMs - speakCooldownRemainingMs) /
+            speakCooldown.durationMs) *
+            100
+        )
+      )
+    : 0;
   const speechPlaceholder = isSpeakCooldownActive
     ? `Cooldown: ${speakCooldownSeconds}s`
     : placeholder;
@@ -2745,35 +2766,63 @@ function SpeechInput(props) {
           anchorOrigin={{ vertical: "top", horizontal: "left" }}
           transformOrigin={{ vertical: "bottom", horizontal: "left" }}
         />
-        <TextField
-          id="speechInput"
-          className="speech-input"
-          fullWidth
-          aria-autocomplete="none"
-          name="MafiaSpeech"
-          inputProps={{
-            inputMode: "text",
-            autoCorrect: "on",
-            autoCapitalize: "on",
-            autoComplete: "off",
-            maxLength: MaxGameMessageLength,
-          }}
-          value={speechInput}
-          placeholder={speechPlaceholder}
-          onChange={onSpeechType}
-          onKeyDown={onSpeechSubmit}
-          enterKeyHint="done"
-          disabled={isSpeakCooldownActive}
-          helperText={
-            isSpeakCooldownActive
-              ? `You're sending too fast. Try again in ${speakCooldownSeconds}s.`
-              : ""
-          }
-          sx={{
-            "& fieldset": { border: "none" },
-            input: { color: "var(--scheme-color-text)" },
-          }}
-        />
+        <div className="speech-input-field-group">
+          <TextField
+            id="speechInput"
+            className="speech-input"
+            fullWidth
+            aria-autocomplete="none"
+            name="MafiaSpeech"
+            inputProps={{
+              inputMode: "text",
+              autoCorrect: "on",
+              autoCapitalize: "on",
+              autoComplete: "off",
+              maxLength: MaxGameMessageLength,
+            }}
+            value={speechInput}
+            placeholder={speechPlaceholder}
+            onChange={onSpeechType}
+            onKeyDown={onSpeechSubmit}
+            enterKeyHint="done"
+            disabled={isSpeakCooldownActive}
+            helperText={
+              isSpeakCooldownActive
+                ? `You're sending too fast. Try again in ${speakCooldownSeconds}s.`
+                : ""
+            }
+            sx={{
+              "& .MuiOutlinedInput-root": isSpeakCooldownActive
+                ? {
+                    animation: "speak-cooldown-pulse 1.2s ease-in-out infinite",
+                    "& fieldset": {
+                      border: "1px solid rgba(244, 67, 54, 0.75) !important",
+                    },
+                    "&:hover fieldset": {
+                      border: "1px solid rgba(244, 67, 54, 0.9) !important",
+                    },
+                    "&.Mui-focused fieldset": {
+                      border: "1px solid rgba(244, 67, 54, 0.95) !important",
+                    },
+                  }
+                : {
+                    "& fieldset": { border: "none" },
+                  },
+              "& .MuiFormHelperText-root": isSpeakCooldownActive
+                ? { color: "rgba(244, 67, 54, 0.9)", marginTop: "4px" }
+                : {},
+              input: { color: "var(--scheme-color-text)" },
+            }}
+          />
+          {isSpeakCooldownActive && (
+            <div className="speech-cooldown-progress">
+              <div
+                className="speech-cooldown-progress-fill"
+                style={{ width: `${speakCooldownProgressPercent}%` }}
+              />
+            </div>
+          )}
+        </div>
         <EmotePicker
           className="speech-dropdown"
           players={players}
