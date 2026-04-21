@@ -6,6 +6,7 @@ const constants = require("../data/constants");
 const logger = require("../modules/logging")(".");
 const shortid = require("shortid");
 const axios = require("axios");
+const { transferCoinsFromBank } = require("../modules/coinBank");
 const router = express.Router();
 
 const COINS_PER_USD = 5;
@@ -732,11 +733,9 @@ router.post("/paypal/capture-order", async function (req, res) {
       });
     }
 
-    const updatedUser = await models.User.findOneAndUpdate(
-      { id: userId },
-      { $inc: { coins: orderDoc.coins } },
-      { new: true }
-    )
+    await transferCoinsFromBank(userId, orderDoc.coins);
+
+    const updatedUser = await models.User.findOne({ id: userId })
       .select("coins")
       .lean()
       .exec();

@@ -33,6 +33,7 @@ const mongo = require("mongodb");
 const ObjectID = mongo.ObjectID;
 const axios = require("axios");
 const fortunePoints = require("../../modules/fortunePoints");
+const { transferCoinsFromBank } = require("../../modules/coinBank");
 
 module.exports = class Game {
   constructor(options) {
@@ -3719,6 +3720,17 @@ module.exports = class Game {
             }
           }
         }
+        if (coinsEarned > 0) {
+          try {
+            await transferCoinsFromBank(player.user.id, coinsEarned);
+          } catch (e) {
+            logger.error(
+              `Error transferring ${coinsEarned} coins from bank to ${player.user.id}:`,
+              e
+            );
+          }
+        }
+
         await models.User.updateOne(
           { id: player.user.id },
           {
@@ -3726,7 +3738,6 @@ module.exports = class Game {
             $addToSet: { achievements: { $each: player.EarnedAchievements } },
             $set: userSet,
             $inc: {
-              coins: coinsEarned,
               kudos:
                 kudosTarget && kudosTarget.user.id == player.user.id ? 1 : 0,
               points: pointsWon > 0 ? pointsWon : 0,
