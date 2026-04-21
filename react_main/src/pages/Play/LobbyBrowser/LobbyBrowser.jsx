@@ -267,6 +267,7 @@ export default function LobbyBrowser() {
                   ? "lobby"
                   : `lobby-${lobbyName}`
               }
+              postLocation={lobbyName === "All" ? "lobby" : undefined}
             />
           </Stack>
         </Grid2>

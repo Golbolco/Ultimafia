@@ -16,6 +16,7 @@ import { Comment } from "./Comment";
 export default function Comments(props) {
   const location = props.location;
   const isMulti = Array.isArray(location);
+  const postLocation = isMulti ? props.postLocation : location;
   const locationKey = isMulti ? location.join(",") : location;
 
   const [page, setPage] = useState(1);
@@ -71,9 +72,9 @@ export default function Comments(props) {
   }
 
   function onPostSubmit() {
-    if (isMulti) return;
+    if (!postLocation) return;
     axios
-      .post("/api/comment", { content: postContent, location })
+      .post("/api/comment", { content: postContent, location: postLocation })
       .then(() => {
         onCommentsPageNav(1);
         setPostContent("");
@@ -101,8 +102,7 @@ export default function Comments(props) {
 
   if (!loaded) return <Loading small />;
 
-  const canPost =
-    !isMulti && user.loggedIn && user.perms.postReply;
+  const canPost = Boolean(postLocation) && user.loggedIn && user.perms.postReply;
 
   const topBar = (
     <Paper sx={{ p: 1 }}>
