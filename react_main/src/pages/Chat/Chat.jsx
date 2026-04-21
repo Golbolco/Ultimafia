@@ -212,7 +212,6 @@ export default function Chat() {
   function onOpenNewChatDialog() {
     setNewChatDialogOpen(true);
     setUserSearchVal("");
-    socket.send("getUsers", "");
   }
 
   function onCloseNewChatDialog() {
@@ -295,8 +294,33 @@ export default function Chat() {
   function onUserSearch(e) {
     const query = e.target.value;
     setUserSearchVal(query);
-    socket.send("getUsers", query);
   }
+
+  useEffect(() => {
+    if (!newChatDialogOpen) return;
+
+    if (userSearchVal.length > 0) {
+      axios
+        .get(`/api/user/searchName?query=${userSearchVal}`)
+        .then((res) => {
+          updateChatInfo({
+            type: "users",
+            users: res.data,
+          });
+        })
+        .catch(errorAlert);
+    } else {
+      axios
+        .get("/api/user/online")
+        .then((res) => {
+          updateChatInfo({
+            type: "users",
+            users: res.data,
+          });
+        })
+        .catch(errorAlert);
+    }
+  }, [newChatDialogOpen, userSearchVal]);
 
   function onCreateDM() {
     var users = Object.keys(newDMUsers);
