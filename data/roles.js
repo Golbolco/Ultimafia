@@ -182,7 +182,7 @@ const itemSanity = {
 };
 const gunModifiers = {
         Loyal: [
-          "Your starting Gun will do nothing when shooting players of a diffrent alignment.",
+          "Your starting Gun will do nothing when shooting players of a different alignment.",
         ],
         Disloyal: [
           "Your starting Gun will do nothing when shooting players of the same alignment.",
@@ -202,7 +202,7 @@ const gunModifiers = {
           "Your starting Gun will do nothing when shooting players with non-Banished Roles.",
         ],
         Vain: ["Your starting Gun will kill you when shooting players of the same alignment."],
-        Weak: ["Your starting Gun will kill you when shooting players of a diffrent alignment."],
+        Weak: ["Your starting Gun will kill you when shooting players of a different alignment."],
         Sacrificial: ["Your starting Gun will kill you when shooting another player."],
         Regretful: ["Your starting Gun will kill you when killing a player."],
         Random: ["Your starting Gun will shoot a Random player when used."],
@@ -1227,12 +1227,12 @@ const roleData = {
     },
     Tutor: {
       alignment: "Village",
-      category: "Investigative",
+      category: "Conversion",
       tags: ["Conversion", "Visiting", "Basic"],
       description: [
-        "Each night, choose a player to tutor.  If they are Village aligned, they will temporarily become a random Information role for the rest of that night and the following day. They will be informed of their new role at the start of day. You receive no feedback on your action.",
+        "Each night, choose a player to tutor. If they are Village aligned, they will temporarily become a random Information role for the rest of that night and the following day. They will be informed of their new role at the start of day. You receive no feedback on your action.",
       ],
-      nightOrder: [["Tutor", PRIORITY_INVESTIGATIVE_DEFAULT]],
+      nightOrder: [["Tutor", PRIORITY_CONVERT_DEFAULT]],
     },
     Voyeur: {
       alignment: "Village",
@@ -2098,6 +2098,9 @@ const roleData = {
           "All Freemasons die if they attempt to convert a Serial Killer.",
         ],
       "Cult Leader": [
+          "Cultists and Cult Leaders will die if targeted by Freemasons.",
+        ],
+      Cultist: [
           "Cultists and Cult Leaders will die if targeted by Freemasons.",
         ],
       },
@@ -4895,7 +4898,7 @@ const roleData = {
       nightOrder: [["Visit", PRIORITY_SUPPORT_VISIT_DEFAULT]],
       SpecialInteractions: {
         Assassin: [
-          "If an Assassin is Present, Fool will win at the end of the game if they were elected as Room Leader in 2 diffrent rooms.",
+          "If an Assassin is Present, Fool will win at the end of the game if they were elected as Room Leader in 2 different rooms.",
         ],
       },
       skins: [
@@ -5685,10 +5688,14 @@ const roleData = {
       description: [
         "At the beginning of the game, some players randomly receive clovers.",
         "Each night, you can choose to visit one player and steal a random item from them, preferentially stealing Clovers.",
-        "If that player is a Leprechaun, you kill them.",
         "You win if you are holding three Clovers.",
       ],
       nightOrder: [["Steal Items", PRIORITY_ITEM_TAKER_DEFAULT]],
+      SpecialInteractions: {
+        Leprechaun: [
+          "If a Leprechaun visits another Leprechaun, they will steal all their items and kill them.",
+        ],
+      },
     },
     Anarchist: {
       alignment: "Independent",
