@@ -54,7 +54,7 @@ export default function StampTradeModal({
         .then((res) => setFriends(res.data || []))
         .catch(() => setFriends([]));
     }
-  }, [open, user?.id]);
+  }, [open, user?.id, recipientId]);
 
   if (!stamp) return null;
 
@@ -103,6 +103,30 @@ export default function StampTradeModal({
       .then(() => {
         siteInfo.showAlert(
           targetId ? "Trade sent." : "Trade posted publicly.",
+          "success"
+        );
+        if (onTradeAction) onTradeAction();
+      })
+      .catch(errorAlert)
+      .finally(() => setSubmitting(false));
+  }
+
+  function handleGift() {
+    if (submitting) return;
+    const targetId = recipientId || selectedFriendId;
+    if (!targetId) return;
+    setSubmitting(true);
+    axios
+      .post("/api/stampTrades/gift", {
+        gameType: stamp.gameType,
+        role: stamp.role,
+        recipientUserId: targetId,
+      })
+      .then(() => {
+        siteInfo.showAlert(
+          targetId === recipientId
+            ? `Gift sent to ${recipientName || "user"}.`
+            : `Gift sent to ${selectedFriend?.name || "user"}.`,
           "success"
         );
         if (onTradeAction) onTradeAction();
@@ -243,14 +267,24 @@ export default function StampTradeModal({
             Respond to Trade
           </Button>
         ) : (
-          <Button
-            onClick={handleStart}
-            variant="contained"
-            color="primary"
-            disabled={submitting}
-          >
-            {startLabel}
-          </Button>
+          <>
+            <Button
+              onClick={handleStart}
+              variant="contained"
+              color="primary"
+              disabled={submitting}
+            >
+              {startLabel}
+            </Button>
+            <Button
+              onClick={handleGift}
+              variant="contained"
+              color="secondary"
+              disabled={submitting || !(recipientId || selectedFriendId)}
+            >
+              Gift
+            </Button>
+          </>
         )}
       </DialogActions>
     </Dialog>

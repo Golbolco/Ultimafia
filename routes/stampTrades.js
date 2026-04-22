@@ -61,6 +61,23 @@ async function getAvailableStampIds(userId, gameType, role) {
   return available;
 }
 
+async function getGiftableStampId(userId, gameType, role) {
+  const stamps = await models.Stamp.find({ userId, gameType, role }).select(
+    "_id"
+  );
+  if (stamps.length < 1) {
+    throw new Error("You do not own this stamp.");
+  }
+  const lockedIds = await getLockedStampIds(userId);
+  const available = stamps
+    .map((s) => String(s._id))
+    .filter((id) => !lockedIds.has(id));
+  if (available.length < 1) {
+    throw new Error("This stamp is currently locked in another trade.");
+  }
+  return available[0];
+}
+
 // Detects whether a recent insert collided with another active trade that
 // already referenced the same stamp (cross-field case where the DB partial
 // unique indexes on initiatorStamp / recipientStamp cannot help because the
@@ -424,6 +441,118 @@ router.post("/initiate", async (req, res) => {
   } catch (e) {
     logger.error(e);
     errors.serverError(res, "Error starting trade. Please try again.");
+  }
+});
+
+router.post("/gift", async (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  try {
+    const userId = await routeUtils.verifyLoggedIn(req);
+    if (!(await routeUtils.rateLimit(userId, "tradeStamp", res))) return;
+    const gameType = String(req.body.gameType || "").trim();
+    const role = String(req.body.role || "").trim();
+    const recipientUserId = String(req.body.recipientUserId || "").trim();
+
+    if (!gameType || !role || !recipientUserId) {
+      res.status(400);
+      res.send("Stamp gameType, role, and recipientUserId are required.");
+      return;
+    }
+    const roleErr = validateStampRole(gameType, role);
+    if (roleErr) {
+      res.status(400);
+      res.send(roleErr);
+      return;
+    }
+    if (recipientUserId === userId) {
+      res.status(400);
+      res.send("You cannot gift to yourself.");
+      return;
+    }
+
+    const [initiatorUser, recipientUser] = await Promise.all([
+      models.User.findOne({ id: userId, deleted: false }).select("_id name"),
+      models.User.findOne({
+        id: recipientUserId,
+        deleted: false,
+      }).select("_id id name blockedUsers"),
+    ]);
+    if (!initiatorUser) {
+      res.status(404);
+      res.send("User not found.");
+      return;
+    }
+    if (!recipientUser) {
+      res.status(404);
+      res.send("Recipient not found.");
+      return;
+    }
+    if ((recipientUser.blockedUsers || []).includes(userId)) {
+      res.status(403);
+      res.send("You cannot gift to this user.");
+      return;
+    }
+
+    let stampId;
+    try {
+      stampId = await getGiftableStampId(userId, gameType, role);
+    } catch (e) {
+      res.status(400);
+      res.send(e.message);
+      return;
+    }
+
+    const moved = await models.Stamp.findOneAndUpdate(
+      { _id: stampId, userId },
+      [
+        {
+          $set: {
+            originalOwnerId: { $ifNull: ["$originalOwnerId", userId] },
+            originalOwner: { $ifNull: ["$originalOwner", initiatorUser._id] },
+            user: recipientUser._id,
+            userId: recipientUserId,
+            hidden: false,
+          },
+        },
+      ],
+      { new: true }
+    );
+    if (!moved) {
+      res.status(409);
+      res.send("Could not gift this stamp right now. Please try again.");
+      return;
+    }
+
+    const now = Date.now();
+    await models.StampTrade.create({
+      id: shortid.generate(),
+      initiatorId: userId,
+      initiator: initiatorUser._id,
+      initiatorStamp: moved._id,
+      initiatorGameType: gameType,
+      initiatorRole: role,
+      recipientId: recipientUserId,
+      recipient: recipientUser._id,
+      status: "COMPLETED",
+      createdAt: now,
+      updatedAt: now,
+      completedAt: now,
+    });
+
+    await routeUtils.createNotification(
+      {
+        content: `${initiatorUser.name} gifted you a ${role} stamp.`,
+        icon: "fas fa-gift",
+        link: `/user/${userId}`,
+      },
+      [recipientUserId]
+    );
+
+    res.send({ ok: true });
+  } catch (e) {
+    logger.error(e);
+    res.status(500);
+    res.send("Error gifting stamp.");
   }
 });
 

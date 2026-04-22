@@ -202,52 +202,69 @@ export default function RecentTradesFeed() {
               </Typography>
             )}
             <Stack spacing={0.75}>
-              {trades.map((t) => (
-                <Box
-                  key={t.id}
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr auto 1fr",
-                    alignItems: "center",
-                    gap: 1,
-                    fontSize: "0.75rem",
-                    "& .user-name .MuiTypography-root": { fontSize: "0.75rem" },
-                  }}
-                >
-                  <Box sx={{ display: "flex", justifyContent: "flex-end", minWidth: 0 }}>
-                    <NameWithAvatar
-                      id={t.initiator?.id}
-                      name={t.initiator?.name}
-                      avatar={t.initiator?.avatar}
-                      small
-                    />
+              {trades.map((t) => {
+                const isGift = !t.recipientRole || !t.recipientGameType;
+                return (
+                  <Box
+                    key={t.id}
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr auto 1fr",
+                      alignItems: "center",
+                      gap: 1,
+                      fontSize: "0.75rem",
+                      "& .user-name .MuiTypography-root": { fontSize: "0.75rem" },
+                    }}
+                  >
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", minWidth: 0 }}>
+                      <NameWithAvatar
+                        id={t.initiator?.id}
+                        name={t.initiator?.name}
+                        avatar={t.initiator?.avatar}
+                        small
+                      />
+                    </Box>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                      <StampItem
+                        role={t.initiatorRole}
+                        gameType={t.initiatorGameType}
+                        size="small"
+                      />
+                      {isGift ? (
+                        <>
+                          <i
+                            className="fas fa-gift"
+                            style={{ fontSize: 11, opacity: 0.7 }}
+                          />
+                          <Typography variant="caption" sx={{ opacity: 0.65 }}>
+                            gifted
+                          </Typography>
+                        </>
+                      ) : (
+                        <>
+                          <i
+                            className="fas fa-exchange-alt"
+                            style={{ fontSize: 10, opacity: 0.6 }}
+                          />
+                          <StampItem
+                            role={t.recipientRole}
+                            gameType={t.recipientGameType}
+                            size="small"
+                          />
+                        </>
+                      )}
+                    </Box>
+                    <Box sx={{ display: "flex", justifyContent: "flex-start", minWidth: 0 }}>
+                      <NameWithAvatar
+                        id={t.recipient?.id}
+                        name={t.recipient?.name}
+                        avatar={t.recipient?.avatar}
+                        small
+                      />
+                    </Box>
                   </Box>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                    <StampItem
-                      role={t.initiatorRole}
-                      gameType={t.initiatorGameType}
-                      size="small"
-                    />
-                    <i
-                      className="fas fa-exchange-alt"
-                      style={{ fontSize: 10, opacity: 0.6 }}
-                    />
-                    <StampItem
-                      role={t.recipientRole}
-                      gameType={t.recipientGameType}
-                      size="small"
-                    />
-                  </Box>
-                  <Box sx={{ display: "flex", justifyContent: "flex-start", minWidth: 0 }}>
-                    <NameWithAvatar
-                      id={t.recipient?.id}
-                      name={t.recipient?.name}
-                      avatar={t.recipient?.avatar}
-                      small
-                    />
-                  </Box>
-                </Box>
-              ))}
+                );
+              })}
             </Stack>
           </>
         )}
