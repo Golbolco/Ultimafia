@@ -1316,6 +1316,15 @@ module.exports = class Game {
       for (let role in roleset) {
         for (let i = 0; i < roleset[role]; i++) {
           let roleName = role.split(":")[0];
+          const roleFromRoleData = roleData[this.type][roleName];
+          if (!roleFromRoleData) {
+            this.sendAlert(
+              `Bug report automatically filed. Thank you for your patience.`
+            );
+            throw new Error(
+              `Unknown role "${roleName}" in ${this.type} setup.`
+            );
+          }
           let isBanished =
             role.split(":")[1] &&
             role.split(":")[1].toLowerCase().includes("banished");
