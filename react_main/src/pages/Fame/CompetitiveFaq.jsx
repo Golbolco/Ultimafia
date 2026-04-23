@@ -52,7 +52,7 @@ export function CompetitiveFaqContent() {
         <Typography
           sx={{ display: "inline", fontWeight: "bold", fontStyle: "italic" }}
         >
-          {" seven "}
+          {" eight "}
         </Typography>
         days of a round. Each day progresses to the next when UTC/GMT midnight
         passes. These gold hearts are consumed upon the completion of a
