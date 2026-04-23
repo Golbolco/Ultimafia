@@ -1,5 +1,12 @@
 const models = require("../db/models");
 const redis = require("./redis");
+const roleData = require("../data/roles");
+const {
+  isCountableScrapbookRole,
+  getTotalObtainableStamps,
+} = require("../shared/scrapbook");
+
+const TOTAL_OBTAINABLE_STAMPS = getTotalObtainableStamps(roleData);
 
 const DEFAULT_PAGE_SIZE = 25;
 const MAX_PAGE_SIZE = 100;
@@ -239,7 +246,9 @@ async function getTrophyDataByUser(userIds) {
 }
 
 async function getScrapbookDataByUser(userIds) {
-  if (!userIds.length) return { scrapbookDataByUser: {}, scrapbookTotal: 0 };
+  if (!userIds.length) {
+    return { scrapbookDataByUser: {}, scrapbookTotal: TOTAL_OBTAINABLE_STAMPS };
+  }
 
   const stampGroups = await models.Stamp.aggregate([
     {
@@ -261,17 +270,13 @@ async function getScrapbookDataByUser(userIds) {
   ]);
 
   const scrapbookDataByUser = {};
-  const allUniqueStampKeys = new Set();
 
   for (const group of stampGroups) {
-    const userId = group._id.userId;
-    const stampKey = `${group._id.gameType}:${group._id.role}`;
-    allUniqueStampKeys.add(stampKey);
+    const { userId, gameType, role } = group._id;
+    if (!isCountableScrapbookRole(roleData, gameType, role)) continue;
 
     if (!scrapbookDataByUser[userId]) {
-      scrapbookDataByUser[userId] = {
-        scrapbookCount: 0,
-      };
+      scrapbookDataByUser[userId] = { scrapbookCount: 0 };
     }
 
     scrapbookDataByUser[userId].scrapbookCount += 1;
@@ -279,7 +284,7 @@ async function getScrapbookDataByUser(userIds) {
 
   return {
     scrapbookDataByUser,
-    scrapbookTotal: allUniqueStampKeys.size,
+    scrapbookTotal: TOTAL_OBTAINABLE_STAMPS,
   };
 }
 
