@@ -77,8 +77,10 @@ module.exports = class Spectator extends Player {
             constants.msgSpamRateLimit
           )
         ) {
+          const sentAt = Date.now();
           this.send("speakCooldown", {
             meetingId: message.meetingId,
+            sentAt,
             cooldownMs: Spam.getCooldownMs(
               speechPast,
               constants.msgSpamSumLimit,
@@ -139,8 +141,10 @@ module.exports = class Spectator extends Player {
             constants.msgSpamRateLimit
           )
         ) {
+          const sentAt = Date.now();
           this.send("speakCooldown", {
             meetingId: quote.toMeetingId,
+            sentAt,
             cooldownMs: Spam.getCooldownMs(
               speechPast,
               constants.msgSpamSumLimit,

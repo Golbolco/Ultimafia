@@ -1732,6 +1732,7 @@ export function TextMeetingLayout() {
           <SpeechInput
             meetings={meetings}
             selTab={selTab}
+            isCurrentState={stateViewing === history.currentState}
             players={players}
             options={game.options}
             socket={game.socket}
@@ -2496,6 +2497,7 @@ function SpeechInput(props) {
   const socket = props.socket;
   const meetings = props.meetings;
   const selTab = props.selTab;
+  const isCurrentState = props.isCurrentState;
   const players = props.players;
 
   const speechInput = props.speechInput;
@@ -2512,6 +2514,7 @@ function SpeechInput(props) {
     durationMs: 0,
   });
   const [speakCooldownRemainingMs, setSpeakCooldownRemainingMs] = useState(0);
+  const lastSpeakCooldownEventAtRef = useRef(0);
 
   var placeholder = "";
 
@@ -2583,6 +2586,14 @@ function SpeechInput(props) {
 
     socket.on("speakCooldown", (info) => {
       if (typeof info !== "object" || info == null) return;
+      if (!isCurrentState) return;
+      if (info.meetingId && info.meetingId !== selTab) return;
+
+      const sentAt = Number(info.sentAt) || 0;
+      if (sentAt > 0) {
+        if (sentAt < lastSpeakCooldownEventAtRef.current) return;
+        lastSpeakCooldownEventAtRef.current = sentAt;
+      }
 
       const cooldownMs = Math.max(Number(info.cooldownMs) || 0, 0);
       if (!cooldownMs) return;
@@ -2598,7 +2609,14 @@ function SpeechInput(props) {
         };
       });
     });
-  }, [socket]);
+  }, [socket, selTab, isCurrentState]);
+
+  useEffect(() => {
+    // Cooldown should only apply to the currently selected live meeting.
+    setSpeakCooldown({ until: 0, durationMs: 0 });
+    setSpeakCooldownRemainingMs(0);
+    lastSpeakCooldownEventAtRef.current = 0;
+  }, [selTab, isCurrentState]);
 
   useEffect(() => {
     if (!speakCooldown.until) {
