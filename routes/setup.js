@@ -9,6 +9,7 @@ const { isRoleDisabled } = require("../modules/roleAvailability");
 const modifierData = require("../data/modifiers");
 const gamesettingsData = require("../data/gamesettings");
 const redis = require("../modules/redis");
+const fortunePoints = require("../modules/fortunePoints");
 const logger = require("../modules/logging")(".");
 const utils = require("./utils");
 const mongoose = require("mongoose");
@@ -533,6 +534,15 @@ router.get("/:id", async function (req, res) {
 
       if (req.get("includeStats") == "true") {
         setup.stats = calculateStatsWithGranular(setupVersion, setup.gameType);
+        if (
+          (setup.ranked || setup.competitive) &&
+          setup.gameType === "Mafia"
+        ) {
+          setup.stats.fortunePayouts = fortunePoints.computeSoloPayoutsForSetup({
+            setupStats: setupVersion && setupVersion.setupStats,
+            factions: fortunePoints.getMafiaFactionsFromSetup(setup.roles),
+          });
+        }
       }
 
       // Count completed games with no leavers and no veg (hadVeg not true)
@@ -574,6 +584,15 @@ router.get("/:id/version/:setupVersionNum", async function (req, res) {
       if (setupVersion) {
         setupVersion = setupVersion.toJSON();
         setupVersion.stats = calculateStatsWithGranular(setupVersion, setup.gameType);
+        if (
+          (setup.ranked || setup.competitive) &&
+          setup.gameType === "Mafia"
+        ) {
+          setupVersion.stats.fortunePayouts = fortunePoints.computeSoloPayoutsForSetup({
+            setupStats: setupVersion.setupStats,
+            factions: fortunePoints.getMafiaFactionsFromSetup(setup.roles),
+          });
+        }
         res.send(setupVersion);
       } else {
         errors.notFound(res, "That setup version does not exist.");

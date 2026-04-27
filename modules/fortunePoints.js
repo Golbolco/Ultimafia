@@ -20,8 +20,10 @@
  * value is preserved as a compat shim for existing callers.
  */
 const constants = require("../data/constants");
+const roleData = require("../data/roles");
 
 const FORTUNE_GAME_TYPES = new Set(["ranked", "competitive"]);
+const MAJOR_ALIGNMENTS = new Set(["Village", "Mafia", "Cult"]);
 
 const ANCHOR_WR = 0.1;
 const ANCHOR_PAYOUT = 80;
@@ -54,14 +56,6 @@ function isMajorFaction(factionKey) {
   return false;
 }
 
-function winrateFor(factionKey, alignmentWinRates) {
-  const wr = winRateFromAlignmentEntries((alignmentWinRates || {})[factionKey]);
-  if (wr == null || Number.isNaN(wr)) {
-    return isMajorFaction(factionKey) ? DEFAULT_MAJOR_WR : DEFAULT_INDEPENDENT_WR;
-  }
-  return wr;
-}
-
 function soloPayout(factionKey, wr, K) {
   if (isMajorFaction(factionKey)) {
     return (1 - wr) * K;
@@ -89,6 +83,14 @@ function computeFactionFortunePoints(opts) {
   const winSet = new Set(winningFactions);
   const isJoint = winSet.size >= 2;
 
+  const soloRows = computeSoloPayoutsForSetup({
+    factions: factionNames,
+    alignmentWinRates: opts.alignmentWinRates,
+    K,
+  });
+  const rowByFaction = {};
+  for (const r of soloRows) rowByFaction[r.faction] = r;
+
   const pointsWonByFactions = {};
   const pointsLostByFactions = {};
 
@@ -101,13 +103,62 @@ function computeFactionFortunePoints(opts) {
       continue;
     }
 
-    const wr = winrateFor(f, opts.alignmentWinRates);
-    let payout = soloPayout(f, wr, K);
-    if (isJoint) payout *= jointDampFor(f);
-    pointsWonByFactions[f] = Math.round(payout);
+    const row = rowByFaction[f];
+    pointsWonByFactions[f] = isJoint
+      ? Math.round(row.soloPayoutExact * jointDampFor(f))
+      : row.soloPayout;
   }
 
   return { pointsWonByFactions, pointsLostByFactions };
+}
+
+/**
+ * Derive the faction list a Mafia setup can produce, mirroring the convention
+ * used in Game.js when stamping alignmentRows: Village/Mafia/Cult collapse to
+ * the alignment, Traitor collapses to "Mafia", everything else (Independents)
+ * uses the role name as its own faction key. Dedup + stable order.
+ *
+ * Used by route handlers so empty-history setups still yield a row per
+ * faction (showing the prior-based default payout).
+ *
+ * @param {Array<object>|string} setupRoles  setup.roles — either the parsed
+ *   array of role-group maps or the JSON string straight off the DB.
+ * @returns {string[]}  Faction keys, alphabetically sorted.
+ */
+function getMafiaFactionsFromSetup(setupRoles) {
+  if (!setupRoles) return [];
+  let groups = setupRoles;
+  if (typeof groups === "string") {
+    try {
+      groups = JSON.parse(groups);
+    } catch (e) {
+      return [];
+    }
+  }
+  if (!Array.isArray(groups)) return [];
+
+  const factions = new Set();
+  const mafiaRoles = roleData.Mafia || {};
+  for (const group of groups) {
+    if (!group) continue;
+    for (const rawKey of Object.keys(group)) {
+      const roleName = rawKey.split(":")[0];
+      const entry = mafiaRoles[roleName];
+      if (!entry || !entry.alignment) continue;
+      if (entry.alignment === "Event") continue;
+      // Match Game.js: Traitor (alignment Independent) plays as Mafia faction.
+      if (roleName === "Traitor") {
+        factions.add("Mafia");
+        continue;
+      }
+      if (MAJOR_ALIGNMENTS.has(entry.alignment)) {
+        factions.add(entry.alignment);
+      } else {
+        factions.add(roleName);
+      }
+    }
+  }
+  return Array.from(factions).sort();
 }
 
 /**
@@ -130,9 +181,67 @@ function alignmentRowsToWinRateMap(setupStats) {
   return map;
 }
 
+/**
+ * Per-faction solo-win fortune payouts, derived from historical
+ * ranked/competitive winrate. Factions with no eligible games fall back to
+ * the same priors as a real payout computation (50% major / 10% independent).
+ *
+ * Faction list comes from `opts.factions` if given, otherwise from the keys of
+ * `opts.alignmentWinRates`, otherwise from the keys derived from
+ * `opts.setupStats.alignmentRows`.
+ *
+ * Each row exposes both `soloPayout` (rounded int, for display) and
+ * `soloPayoutExact` (float, for callers like `computeFactionFortunePoints`
+ * that need to apply joint dampening before a final round).
+ *
+ * @param {object} opts
+ * @param {object} [opts.setupStats]        SetupVersion.setupStats; used when alignmentWinRates not provided.
+ * @param {object} [opts.alignmentWinRates] factionKey → Array<[gameType, won]>; takes precedence over setupStats.
+ * @param {string[]} [opts.factions]        Explicit faction list; defaults to alignmentWinRates keys.
+ * @param {number} [opts.K]                 Base payout (default constants.fortunePointsNominalK).
+ * @returns {Array<{ faction: string, isMajor: boolean, winrate: number,
+ *                   hasHistoricalWinrate: boolean, soloPayout: number,
+ *                   soloPayoutExact: number }>}
+ *          Sorted majors-first then alphabetically.
+ */
+function computeSoloPayoutsForSetup(opts) {
+  const o = opts || {};
+  const K = o.K != null ? o.K : constants.fortunePointsNominalK;
+  const alignmentWinRates =
+    o.alignmentWinRates || alignmentRowsToWinRateMap(o.setupStats);
+  const factions = o.factions || Object.keys(alignmentWinRates);
+
+  const result = factions.map((faction) => {
+    const observed = winRateFromAlignmentEntries(alignmentWinRates[faction]);
+    const hasHistoricalWinrate = observed != null && !Number.isNaN(observed);
+    const winrate = hasHistoricalWinrate
+      ? observed
+      : isMajorFaction(faction)
+      ? DEFAULT_MAJOR_WR
+      : DEFAULT_INDEPENDENT_WR;
+    const exact = soloPayout(faction, winrate, K);
+    return {
+      faction,
+      isMajor: isMajorFaction(faction),
+      winrate,
+      hasHistoricalWinrate,
+      soloPayout: Math.round(exact),
+      soloPayoutExact: exact,
+    };
+  });
+
+  result.sort((a, b) => {
+    if (a.isMajor !== b.isMajor) return a.isMajor ? -1 : 1;
+    return a.faction.localeCompare(b.faction);
+  });
+  return result;
+}
+
 module.exports = {
   winRateFromAlignmentEntries,
   isMajorFaction,
   computeFactionFortunePoints,
+  computeSoloPayoutsForSetup,
   alignmentRowsToWinRateMap,
+  getMafiaFactionsFromSetup,
 };

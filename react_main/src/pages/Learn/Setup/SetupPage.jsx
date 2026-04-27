@@ -1055,6 +1055,18 @@ export function SetupPage() {
                             : mergedGranular?.alignment
                         }
                         rolesRaw={siteInfo?.rolesRaw?.Mafia}
+                        payouts={
+                          statsViewMode === "alignment" &&
+                          (setup.ranked || setup.competitive) &&
+                          statsBundle?.fortunePayouts
+                            ? Object.fromEntries(
+                                statsBundle.fortunePayouts.map((p) => [
+                                  p.faction,
+                                  p,
+                                ])
+                              )
+                            : undefined
+                        }
                         emptyLabel={
                           statsGameFilter !== "all"
                             ? "No games for this filter yet. Try “All” or wait for more data."
