@@ -441,15 +441,21 @@ async function fetchStampTrades(cutoff, limit) {
     .sort({ updatedAt: -1 })
     .limit(limit)
     .lean();
+  const normalizeStatus = (status) =>
+    String(status || "")
+      .toLowerCase()
+      .replace(/_/g, " ");
   return rows.map((r) => ({
     id: `stamptrade:${r._id}`,
     type: "stampTrade",
     category: "profile",
-    actorId: r.initiatorId,
+    actorId: r.updatedAt !== r.createdAt && r.recipientId ? r.recipientId : r.initiatorId,
     timestamp: r.updatedAt,
     targetType: "user",
-    targetLabel: String(r.status || "").toLowerCase().replace(/_/g, " "),
-    contentPreview: "",
+    targetLabel: r.recipientRole
+      ? `${r.initiatorRole || "Unknown"} ↔ ${r.recipientRole}`
+      : `${r.initiatorRole || "Unknown"} gifted`,
+    contentPreview: normalizeStatus(r.status),
     link: null,
   }));
 }
