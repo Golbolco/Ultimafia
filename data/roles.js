@@ -5383,7 +5383,7 @@ const roleData = {
       description: [
         "No Evil roles will be present in the game.",
         "At night, you will passively and randomly kill players and use abilities of Evil roles that can spawn in the setup.",
-        "All information and death reveals are arbitrary.",
+        "Some information and role reveals may be falsified, and your own flips can appear as an Evil role.",
         "If Village declares Magus Game and a Magus is not present, all Village-aligned players die.",
         "Village must declare a Magus game to win.",
         "Village and you lose if only 2 players are alive.",
