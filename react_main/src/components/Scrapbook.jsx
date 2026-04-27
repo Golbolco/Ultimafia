@@ -30,12 +30,15 @@ const ITEMS_PER_PAGE = 20;
 const ITEMS_PER_SPREAD = ITEMS_PER_PAGE * 2;
 const FLIP_DURATION_MS = 550;
 
-export function StampItem({ gameType, role, count, hasLock, clickable, onClick, size }) {
+export function StampItem({ gameType, role, count, hasLock, clickable, onClick, size, borderType }) {
   const label = gameType === "Mafia" ? role : `${gameType} - ${role}`;
   const classNames = ["stamp"];
   if (clickable) classNames.push("stamp--clickable");
   if (hasLock) classNames.push("stamp--locked");
   if (size === "small") classNames.push("stamp--small");
+  if (borderType === "r") classNames.push("stamp--border-ranked");
+  else if (borderType === "c") classNames.push("stamp--border-competitive");
+  if (count > 99) classNames.push("stamp--shiny");
 
   return (
     <Tooltip title={label} arrow>
@@ -74,6 +77,7 @@ function renderStamp(s, { lockedCountsByRoleKey, isSelf, onStampClick, onRequest
       gameType={s.gameType}
       role={s.role}
       count={s.count}
+      borderType={s.borderType}
       hasLock={lockedCount > 0}
       clickable={clickable}
       onClick={
