@@ -96,7 +96,7 @@ var defaultOptions = {
     lobby: "Games",
     startingDice: 5,
     wildOnes: true,
-    spotOn: false,
+    spotOn: true,
     guessDiceLength: 2,
   },
   "Texas Hold Em": existingHostOptions["Texas Hold Em"] || {
@@ -119,6 +119,8 @@ var defaultOptions = {
     ...commonHostOptions,
     MaxRounds: 0,
     playCardsLength: 2,
+    sumToTen: false,
+    marriageRule: false,
   },
   Resistance: existingHostOptions["Resistance"] || {
     ...commonHostOptions,
@@ -150,6 +152,7 @@ var defaultOptions = {
     ...commonHostOptions,
     boardSize: 20,
     deadSnakeObstacles: true,
+    ifWallsAreTransparent: true,
     dayLength: 60,
     nightLength: 0.5,
   },

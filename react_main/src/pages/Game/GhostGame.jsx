@@ -10,8 +10,7 @@ import {
   Timer,
   SpeechFilter,
   SettingsMenu,
-  Notes,
-  PinnedMessages,
+  MobileLayout,
   GameTypeContext,
 } from "./Game";
 import { GameContext } from "../../Contexts";
@@ -80,12 +79,15 @@ export default function GhostGame(props) {
           <>
             <HistoryKeeper history={history} stateViewing={stateViewing} />
             <ActionList />
-            <PinnedMessages />
-            <Notes />
           </>
         }
       />
       <MobileLayout
+        outerLeftNavigationProps={{
+          label: "Info",
+          value: "players",
+          icon: <i className="fas fa-info" />,
+        }}
         outerLeftContent={
           <>
             <PlayerList />
@@ -98,12 +100,8 @@ export default function GhostGame(props) {
             <ActionList />
           </>
         }
-        additionalInfoContent={
-          <>
-            <PinnedMessages />
-            <Notes />
-          </>
-        }
+        chatTab
+        hideInfoTab
       />
     </GameTypeContext.Provider>
   );

@@ -107,11 +107,18 @@ export default function SecretDictatorGame(props) {
         }
       />
       <MobileLayout
+        outerLeftNavigationProps={{
+          label: "Info",
+          value: "players",
+          icon: <i className="fas fa-info" />,
+        }}
         outerLeftContent={
           <>
             <PlayerList />
             <KickActionList />
             <SpeechFilter />
+            <PinnedMessages />
+            <Notes />
           </>
         }
         innerRightNavigationProps={{
@@ -122,12 +129,8 @@ export default function SecretDictatorGame(props) {
         innerRightContent={
           <GameBoard history={history} stateViewing={stateViewing} />
         }
-        additionalInfoContent={
-          <>
-            <PinnedMessages />
-            <Notes />
-          </>
-        }
+        chatTab
+        hideInfoTab
       />
       {peekedPolicies && (
         <PolicyPeekModal

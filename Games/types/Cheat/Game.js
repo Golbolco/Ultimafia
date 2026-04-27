@@ -24,10 +24,6 @@ module.exports = class CheatGame extends Game {
         name: "Play Cards",
         length: options.settings.stateLengths["Play Cards"],
       },
-      {
-        name: "Call Lie",
-        length: options.settings.stateLengths["Call Lie"],
-      },
     ];
 
     //settings
@@ -45,6 +41,10 @@ module.exports = class CheatGame extends Game {
     this.randomizedPlayersCopy = []; //copy of above, but players don't get removed on dying / leaving. Used for deciding next player's
     // turn, since variable above would mess up indexes when players got removed.
     this.currentIndex = 0; //Index of player's current turn.
+    this.nextToPlay = null; // Player whose turn it currently is.
+    this.stackEntryId = 0; // Monotonic id for each card placed in TheStack.
+    this.lastPlay = null; // { player, cards: [...], claimedRank } — the most
+    // recent play, eligible for a Call Lie challenge.
 
     //information about last turn's bid
     this.lastAmountBid = 0;
@@ -169,60 +169,179 @@ module.exports = class CheatGame extends Game {
   }
 
   startRoundRobin() {
-    while (true) {
-      let nextPlayer = this.randomizedPlayersCopy[this.currentIndex];
-      if (nextPlayer.alive && nextPlayer.hasFolded != true) {
-        nextPlayer.howManySelected = false;
-        nextPlayer.whichFaceSelected = false;
-        nextPlayer.holdItem("Microphone");
+    for (let i = 0; i < this.randomizedPlayersCopy.length; i++) {
+      const candidate = this.randomizedPlayersCopy[this.currentIndex];
+      if (candidate.alive && candidate.hasFolded != true) {
+        candidate.howManySelected = false;
+        candidate.whichFaceSelected = false;
+        this.nextToPlay = candidate;
+        return;
+      }
+      this.currentIndex =
+        (this.currentIndex + 1) % this.randomizedPlayersCopy.length;
+    }
+  }
+
+  // Pick the next player around the round-robin who is alive and still has cards.
+  // A player with an empty hand is skipped — they can re-enter rotation if a
+  // Call Lie hands them the stack.
+  rotateNextToPlay() {
+    const order = this.randomizedPlayersCopy;
+    if (!order || order.length === 0) return;
+    if (!this.nextToPlay) {
+      this.nextToPlay = order[0];
+      return;
+    }
+    const startIdx = Math.max(order.indexOf(this.nextToPlay), 0);
+    for (let i = 1; i <= order.length; i++) {
+      const candidate = order[(startIdx + i) % order.length];
+      if (
+        candidate &&
+        candidate.alive &&
+        candidate.CardsInHand &&
+        candidate.CardsInHand.length > 0
+      ) {
+        this.nextToPlay = candidate;
+        this.currentIndex = (startIdx + i) % order.length;
         return;
       }
     }
   }
 
-  //Called each round, cycles between players.
-  incrementCurrentIndex() {
-    this.currentIndex =
-      (this.currentIndex + 1) % this.randomizedPlayersCopy.length;
+  rankLabel(n) {
+    if (n === 1) return "Ace";
+    if (n === 11) return "Jack";
+    if (n === 12) return "Queen";
+    if (n === 13) return "King";
+    return String(n);
   }
 
-  //After someone uses microphone, it passes it to the next player.
+  // State cycling is driven by `playCheatCards` (called from the active
+  // player's instant Submit action). incrementState stays a passthrough so
+  // we don't double-advance the rank/turn.
   incrementState() {
-    let previousState = this.getStateName();
+    super.incrementState();
+  }
 
-    console.log(this.spectatorMeetFilter);
-    if (previousState == "Call Lie") {
-      this.RoundNumber++;
-      this.RankNumber++;
-      if (this.RankNumber > 13) {
-        this.RankNumber = 1;
-      }
-      this.sendAlert(
-        `${
-          this.RankNumber != 1 &&
-          this.RankNumber != 11 &&
-          this.RankNumber != 12 &&
-          this.RankNumber != 13
-            ? this.RankNumber
-            : this.RankNumber == 1
-            ? "Ace"
-            : this.RankNumber == 11
-            ? "Jack"
-            : this.RankNumber == 12
-            ? "Queen"
-            : "King"
-        }s must be played!`
-      );
-      for (let player of this.randomizedPlayersCopy) {
-        player.hasLied = false;
-      }
-      this.incrementCurrentIndex();
-      this.sendAlert(
-        `${this.randomizedPlayersCopy[this.currentIndex].name}'s Turn!`
-      );
+  // ---- Play mechanic ----
+
+  pushStackEntry(value, player, claimedRank) {
+    this.stackEntryId += 1;
+    return {
+      value,
+      id: this.stackEntryId,
+      playerId: player ? player.id : null,
+      claimedRank: claimedRank ?? null,
+    };
+  }
+
+  // Resolves an instant play by the active player. Mirrors ratscrew's
+  // playCard/applySlap pattern: mutates state inline, advances `nextToPlay`,
+  // pushes a fresh extraInfo snapshot, then forces a state cycle so the
+  // next player's Play Card / Submit meetings open immediately.
+  playCheatCards(actor, cards) {
+    if (!cards || cards.length === 0) return;
+    const claimedRank = this.RankNumber;
+    const cardsCopy = [...cards];
+
+    for (let card of cardsCopy) {
+      const idx = actor.CardsInHand.indexOf(card);
+      if (idx !== -1) actor.CardsInHand.splice(idx, 1);
     }
 
-    super.incrementState();
+    for (let card of cardsCopy) {
+      this.TheStack.push(this.pushStackEntry(card, actor, claimedRank));
+    }
+
+    this.lastPlay = {
+      player: actor,
+      cards: cardsCopy,
+      claimedRank,
+    };
+
+    this.RoundNumber++;
+    this.RankNumber++;
+    if (this.RankNumber > 13) this.RankNumber = 1;
+
+    this.rotateNextToPlay();
+
+    this.broadcastExtraInfoUpdate();
+    // No explicit gotoNextState here — Submit's instant action returns to
+    // instantAction() which calls checkAllMeetingsReady, and the state
+    // cycles naturally (Play Card has its multi votes, Submit just
+    // finished, no other blockers).
+  }
+
+  applyCallLie(caller) {
+    if (!this.lastPlay) {
+      this.toast(`${caller.name} called lie — nothing to challenge`);
+      return;
+    }
+    if (this.lastPlay.player === caller) {
+      // Defensive — shouldMeet should already exclude the lastPlay player.
+      return;
+    }
+
+    const liar = this.lastPlay.player;
+    const cards = this.lastPlay.cards;
+    const claimedRank = this.lastPlay.claimedRank;
+
+    let actuallyLied = false;
+    for (let card of cards) {
+      const rank = this.readCard(card)[0];
+      if (rank !== claimedRank) {
+        actuallyLied = true;
+        break;
+      }
+    }
+
+    const stackCards = this.TheStack.map((entry) =>
+      typeof entry === "object" ? entry.value : entry
+    );
+    const taker = actuallyLied ? liar : caller;
+    taker.CardsInHand.push(...stackCards);
+
+    // Tell clients which cards were just revealed so they can flip the
+    // played pile face-up briefly before it disappears. The `time` field
+    // lets the client dedup replays from the socket wrapper's message
+    // history.
+    this.broadcast("cheatReveal", {
+      cards,
+      claimedRank,
+      liarName: liar.name,
+      callerName: caller.name,
+      takerName: taker.name,
+      wasLying: actuallyLied,
+      stackSize: stackCards.length,
+      time: Date.now(),
+    });
+
+    this.sendAlert(
+      `${caller.name} calls ${liar.name} a liar! And they were ${
+        actuallyLied ? "right" : "wrong"
+      }! ${taker.name} takes the stack of ${stackCards.length} card${
+        stackCards.length === 1 ? "" : "s"
+      }.`
+    );
+
+    this.toast(
+      actuallyLied
+        ? `${caller.name} caught ${liar.name} lying!`
+        : `${caller.name} miscalled — they take the stack`
+    );
+
+    this.TheStack = [];
+    this.lastPlay = null;
+    this.broadcastExtraInfoUpdate();
+  }
+
+  broadcastExtraInfoUpdate() {
+    const info = this.getStateInfo();
+    this.broadcast("cheatExtraInfo", info.extraInfo);
+  }
+
+  toast(message) {
+    this.broadcast("cheatToast", { message, time: Date.now() });
   }
 
   sortCards(cards) {
@@ -266,7 +385,6 @@ module.exports = class CheatGame extends Game {
       if (player.alive) {
         let Cards = this.drawDiscardPile.drawMultiple(amount);
         player.CardsInHand.push(...Cards);
-        player.sendAlert(`${Cards.join(", ")} have been added to your Hand!`);
       }
     });
   }
@@ -408,12 +526,20 @@ module.exports = class CheatGame extends Game {
       randomizedPlayers: simplifiedPlayers,
       isTheFlyingDutchman:
         this.chatName == "The Flying Dutchman" ? true : false,
-      whoseTurnIsIt:
-        this.randomizedPlayersCopy?.[this.currentIndex]?.user.id ?? 0,
+      whoseTurnIsIt: this.nextToPlay?.user?.id ?? 0,
       ThePot: this.ThePot,
       RoundNumber: this.RoundNumber,
       RankNumber: this.RankNumber,
       TheStack: this.TheStack,
+      lastPlay: this.lastPlay
+        ? {
+            playerId: this.lastPlay.player.id,
+            playerUserId: this.lastPlay.player.user?.id ?? 0,
+            playerName: this.lastPlay.player.name,
+            cardCount: this.lastPlay.cards.length,
+            claimedRank: this.lastPlay.claimedRank,
+          }
+        : null,
     };
     return info;
   }
@@ -440,6 +566,10 @@ module.exports = class CheatGame extends Game {
   // process player leaving immediately
   async playerLeave(player) {
     await super.playerLeave(player);
+
+    if (this.lastPlay && this.lastPlay.player === player) {
+      this.lastPlay = null;
+    }
 
     if (this.started && !this.finished) {
       const deadPlayerIndex = this.randomizedPlayers.findIndex(

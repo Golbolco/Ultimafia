@@ -87,10 +87,17 @@ export default function ResistanceGame(props) {
         }
       />
       <MobileLayout
+        outerLeftNavigationProps={{
+          label: "Info",
+          value: "players",
+          icon: <i className="fas fa-info" />,
+        }}
         outerLeftContent={
           <>
             <PlayerList />
             <SpeechFilter />
+            <PinnedMessages />
+            <Notes />
           </>
         }
         innerRightContent={
@@ -99,12 +106,8 @@ export default function ResistanceGame(props) {
             <ActionList />
           </>
         }
-        additionalInfoContent={
-          <>
-            <PinnedMessages />
-            <Notes />
-          </>
-        }
+        chatTab
+        hideInfoTab
       />
     </GameTypeContext.Provider>
   );

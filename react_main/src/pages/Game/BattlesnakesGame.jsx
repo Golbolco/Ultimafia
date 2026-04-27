@@ -6,19 +6,19 @@ import {
   TopBar,
   TextMeetingLayout,
   PlayerList,
+  ActionList,
+  MobileLayout,
   Timer,
   GameTypeContext,
 } from "./Game";
 import { GameContext } from "../../Contexts";
 import { battlesnakesAudioConfig } from "../../audio/audioConfigs";
-import { useIsPhoneDevice } from "hooks/useIsPhoneDevice";
 
 import "css/gameBattlesnakes.css";
 import SnakeGameDisplay from "./SnakeGameDisplay";
 
 function SnakeGame(props) {
   const game = useContext(GameContext);
-  const isPhoneDevice = useIsPhoneDevice();
 
   const history = game.history;
   const updateHistory = game.updateHistory;
@@ -54,13 +54,6 @@ function SnakeGame(props) {
     });
   }, game.socket);
 
-  if (isPhoneDevice) {
-    // Unsupported
-    game.leaveGame();
-    alert("Battlesnakes is not presently supported on mobile devices.");
-    return <></>;
-  }
-
   return (
     <GameTypeContext.Provider
       value={{
@@ -91,6 +84,42 @@ function SnakeGame(props) {
             <TextMeetingLayout />
           </>
         }
+      />
+      <MobileLayout
+        chatTab
+        hideInfoTab
+        outerLeftNavigationProps={{
+          label: "Info",
+          value: "players",
+          icon: <i className="fas fa-info" />,
+        }}
+        outerLeftContent={
+          <>
+            <PlayerList />
+            <ActionList
+              meetingFilter={(m) => m.name === "Vote Kick"}
+              hideIfEmpty
+              scrollable={false}
+            />
+          </>
+        }
+        innerRightContent={
+          <>
+            {players && (
+              <SnakeGameDisplay
+                player={self}
+                players={players}
+                gameSocket={!game.review ? game.socket : undefined}
+                extraInfo={history.states[stateViewing]?.extraInfo}
+              />
+            )}
+          </>
+        }
+        innerRightNavigationProps={{
+          label: "Board",
+          value: "actions",
+          icon: <i className="fas fa-th" />,
+        }}
       />
     </GameTypeContext.Provider>
   );

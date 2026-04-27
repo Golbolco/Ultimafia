@@ -600,6 +600,14 @@ router.post("/host", async function (req, res) {
       return;
     }
 
+    if (constants.disabledGameTypes.indexOf(gameType) !== -1) {
+      errors.badRequest(
+        res,
+        `${gameType} is no longer available for new games.`
+      );
+      return;
+    }
+
     if (
       !routeUtils.validProp(lobby) ||
       constants.lobbies.indexOf(lobby) == -1
@@ -1290,18 +1298,24 @@ const settingsChecks = {
   },
   Ratscrew: (settings, setup) => {
     let MaxRounds = settings.MaxRounds;
+    const sumToTen = !!settings.sumToTen;
+    const marriageRule = !!settings.marriageRule;
 
     return {
       MaxRounds,
+      sumToTen,
+      marriageRule,
     };
   },
   Battlesnakes: (settings, setup) => {
     const boardSize = settings.boardSize;
     const deadSnakeObstacles = settings.deadSnakeObstacles ?? true;
+    const ifWallsAreTransparent = settings.ifWallsAreTransparent ?? true;
 
     return {
       boardSize,
       deadSnakeObstacles,
+      ifWallsAreTransparent,
     };
   },
   "Dice Wars": (settings, setup) => {

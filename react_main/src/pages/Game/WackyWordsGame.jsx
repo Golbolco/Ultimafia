@@ -9,12 +9,12 @@ import {
   PlayerList,
   SpeechFilter,
   SettingsMenu,
-  Notes,
   MobileLayout,
   GameTypeContext,
   SideMenu,
 } from "./Game";
 import { GameContext } from "../../Contexts";
+import { Avatar } from "../User/User";
 
 import "css/gameAcrotopia.css";
 
@@ -47,6 +47,28 @@ export default function WackyWordsGame() {
   const extraInfo = currentState && currentState.extraInfo;
   const meetings = currentState ? currentState.meetings : {};
   const self = game.self;
+  const isSpectator = game.isSpectator;
+
+  const spectatorMeetingFilter = (m) => {
+    if (m.name === "Vote Kick") return false;
+    if (m.inputType === "text") return false;
+    if (m.inputType === "showAllOptions") return false;
+    return true;
+  };
+  const spectatorVotingOptions = (() => {
+    if (!isSpectator) return null;
+    const seen = new Set();
+    const options = [];
+    for (const m of Object.values(meetings || {})) {
+      if (!m || m.inputType !== "showAllOptions") continue;
+      for (const t of m.targets || []) {
+        if (seen.has(t)) continue;
+        seen.add(t);
+        options.push(t);
+      }
+    }
+    return options.length > 0 ? options : null;
+  })();
 
   const displayQuestion = pickDisplayQuestion(
     extraInfo?.currentQuestion,
@@ -73,6 +95,14 @@ export default function WackyWordsGame() {
 
   const scores = extraInfo?.scores;
   const playerHasVoted = extraInfo?.playerHasVoted;
+
+  const isCurrentState = stateViewing === history.currentState;
+  const bannerNav = {
+    onPrev: () => updateStateViewing({ type: "backward" }),
+    onNext: () => updateStateViewing({ type: "forward" }),
+    canPrev: stateViewing > 0,
+    canNext: stateViewing < history.currentState,
+  };
 
   const renderPlayerMarker = (player) => (
     <span className="acrotopia-score-chip acrotopia-player-chip">
@@ -102,7 +132,6 @@ export default function WackyWordsGame() {
               hideIfEmpty
               scrollable={false}
             />
-            <Notes />
             <SpeechFilter />
             <SettingsMenu />
           </>
@@ -118,12 +147,26 @@ export default function WackyWordsGame() {
                 <AcrotopiaBanner
                   round={extraInfo.round}
                   totalRound={extraInfo.totalRound}
+                  {...bannerNav}
                 />
                 <AcrotopiaPrompt currentQuestion={displayQuestion} />
-                <AcrotopiaActionArea hasPending={hasPendingAction} />
+                <AcrotopiaAskerStatus
+                  asker={extraInfo.asker}
+                  showStatus={!isQuestionShowable(displayQuestion)}
+                />
+                {isCurrentState && (
+                  <AcrotopiaActionArea
+                    hasPending={hasPendingAction}
+                    meetingFilter={isSpectator ? spectatorMeetingFilter : undefined}
+                  />
+                )}
+                {isCurrentState && isSpectator && spectatorVotingOptions && (
+                  <SpectatorResponses options={spectatorVotingOptions} />
+                )}
                 {showResponses && (
                   <AcrotopiaResponses
                     responseHistory={extraInfo.responseHistory}
+                    players={game.players}
                   />
                 )}
               </>
@@ -133,31 +176,96 @@ export default function WackyWordsGame() {
         rightPanelContent={<TextMeetingLayout />}
       />
       <MobileLayout
-        innerRightContent={
+        chatTab
+        hideInfoTab
+        outerLeftNavigationProps={{
+          label: "Info",
+          value: "players",
+          icon: <i className="fas fa-info" />,
+        }}
+        outerLeftContent={
           <>
-            <HistoryKeeperMobile
-              history={history}
-              stateViewing={stateViewing}
-              showResponses={showResponses}
+            <PlayerList
+              renderMarker={extraInfo ? renderPlayerMarker : undefined}
+              renderRowEnd={extraInfo ? renderPlayerRowEnd : undefined}
             />
-            <ActionList />
+            <ActionList
+              meetingFilter={(m) => m.name === "Vote Kick"}
+              hideIfEmpty
+              scrollable={false}
+            />
           </>
+        }
+        innerRightNavigationProps={{
+          label: "Game",
+          value: "actions",
+          icon: <i className="fas fa-gamepad" />,
+        }}
+        innerRightContent={
+          <HistoryKeeperMobile
+            history={history}
+            stateViewing={stateViewing}
+            displayQuestion={displayQuestion}
+            hasPendingAction={hasPendingAction}
+            showResponses={showResponses}
+            players={game.players}
+            isCurrentState={isCurrentState}
+            bannerNav={bannerNav}
+            actionMeetingFilter={isSpectator ? spectatorMeetingFilter : undefined}
+            spectatorVotingOptions={isSpectator ? spectatorVotingOptions : null}
+          />
         }
       />
     </GameTypeContext.Provider>
   );
 }
 
-function AcrotopiaBanner({ round, totalRound }) {
+function AcrotopiaBanner({
+  round,
+  totalRound,
+  onPrev,
+  onNext,
+  canPrev,
+  canNext,
+}) {
   const padded = String(round || 0).padStart(2, "0");
   const total = String(totalRound || 0).padStart(2, "0");
+  const arrowStyle = (enabled) => ({
+    background: "none",
+    border: "none",
+    color: "var(--acro-accent)",
+    cursor: enabled ? "pointer" : "default",
+    opacity: enabled ? 1 : 0.25,
+    padding: "0 6px",
+    fontSize: "1rem",
+  });
   return (
     <header className="acrotopia-banner">
       <div className="acrotopia-banner-left">
+        {onPrev && (
+          <button
+            onClick={canPrev ? onPrev : undefined}
+            disabled={!canPrev}
+            style={arrowStyle(canPrev)}
+            aria-label="Previous round"
+          >
+            <i className="fas fa-chevron-left" />
+          </button>
+        )}
         <span className="acrotopia-banner-label">Round</span>
         <span className="acrotopia-banner-now">{padded}</span>
         <span className="acrotopia-banner-sep">/</span>
         <span className="acrotopia-banner-of">{total}</span>
+        {onNext && (
+          <button
+            onClick={canNext ? onNext : undefined}
+            disabled={!canNext}
+            style={arrowStyle(canNext)}
+            aria-label="Next round"
+          >
+            <i className="fas fa-chevron-right" />
+          </button>
+        )}
       </div>
       <div className="acrotopia-banner-tag">Wacky Words</div>
     </header>
@@ -241,7 +349,18 @@ function renderPromptWithBlanks(text) {
   );
 }
 
-function AcrotopiaActionArea({ hasPending }) {
+function AcrotopiaAskerStatus({ asker, showStatus }) {
+  if (!showStatus || !asker) return null;
+  return (
+    <section className="acrotopia-prompt">
+      <p className="acrotopia-prompt-text">
+        <em>{asker} is asking a question…</em>
+      </p>
+    </section>
+  );
+}
+
+function AcrotopiaActionArea({ hasPending, meetingFilter }) {
   return (
     <section
       className={`acrotopia-action-area${
@@ -250,7 +369,7 @@ function AcrotopiaActionArea({ hasPending }) {
     >
       <ActionList
         bare
-        meetingFilter={(m) => m.name !== "Vote Kick"}
+        meetingFilter={meetingFilter || ((m) => m.name !== "Vote Kick")}
         hideIfEmpty
         className="acrotopia-action-list"
       />
@@ -258,18 +377,17 @@ function AcrotopiaActionArea({ hasPending }) {
   );
 }
 
-function AcrotopiaResponses({ responseHistory }) {
+function SpectatorResponses({ options }) {
   return (
     <section className="acrotopia-section">
       <h3 className="acrotopia-section-label">Responses</h3>
       <ul className="acrotopia-responses">
-        {responseHistory.map((r, i) => (
-          <li key={`${r.name}-${i}`} className="acrotopia-response">
+        {options.map((opt, i) => (
+          <li key={`${opt}-${i}`} className="acrotopia-response">
             <span className="acrotopia-response-quote" aria-hidden="true">
               &ldquo;
             </span>
-            <span className="acrotopia-response-text">{r.name}</span>
-            <span className="acrotopia-response-author">{r.display}</span>
+            <span className="acrotopia-response-text">{opt}</span>
           </li>
         ))}
       </ul>
@@ -277,23 +395,119 @@ function AcrotopiaResponses({ responseHistory }) {
   );
 }
 
-function HistoryKeeperMobile({ history, stateViewing, showResponses }) {
+function AcrotopiaResponses({ responseHistory, players }) {
+  const playerByName = {};
+  if (players) {
+    for (const p of Object.values(players)) {
+      if (p && p.name) playerByName[p.name] = p;
+    }
+  }
+  return (
+    <section className="acrotopia-section">
+      <h3 className="acrotopia-section-label">Responses</h3>
+      <ul className="acrotopia-responses">
+        {responseHistory.map((r, i) => {
+          const author = playerByName[r.display];
+          return (
+            <li key={`${r.name}-${i}`} className="acrotopia-response">
+              {r.isWinner && (
+                <>
+                  <i
+                    className="fas fa-crown"
+                    title="Winning response"
+                    style={{
+                      color: "#ff9800",
+                      WebkitTextStroke: "1px #000",
+                      marginRight: "6px",
+                    }}
+                  />
+                  {r.pointsAwarded > 0 && (
+                    <span
+                      style={{
+                        color: "#ff9800",
+                        fontWeight: "bold",
+                        marginRight: "6px",
+                      }}
+                    >
+                      +{r.pointsAwarded}
+                    </span>
+                  )}
+                </>
+              )}
+              <span className="acrotopia-response-quote" aria-hidden="true">
+                &ldquo;
+              </span>
+              <span className="acrotopia-response-text">{r.name}</span>
+              <span className="acrotopia-response-author">
+                {author && (
+                  <Avatar
+                    small
+                    id={author.userId}
+                    hasImage={author.avatar}
+                    name={author.name}
+                  />
+                )}
+                <span>{r.display}</span>
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
+function HistoryKeeperMobile({
+  history,
+  stateViewing,
+  displayQuestion,
+  hasPendingAction,
+  showResponses,
+  players,
+  isCurrentState,
+  bannerNav,
+  actionMeetingFilter,
+  spectatorVotingOptions,
+}) {
   if (stateViewing < 0) return null;
   const state = history.states[stateViewing];
   if (!state) return null;
-  const { round, totalRound, currentQuestion, responseHistory } =
-    state.extraInfo || {};
+  const { round, totalRound, responseHistory, asker } = state.extraInfo || {};
 
   return (
     <SideMenu
       title="Game Info"
       scrollable
       content={
-        <div className="acrotopia-stage acrotopia-stage-mobile">
-          <AcrotopiaBanner round={round} totalRound={totalRound} />
-          <AcrotopiaPrompt currentQuestion={currentQuestion} />
+        <div
+          className={`acrotopia-stage acrotopia-stage-mobile${
+            hasPendingAction ? " acrotopia-stage-active" : ""
+          }`}
+        >
+          <AcrotopiaBanner
+            round={round}
+            totalRound={totalRound}
+            {...(bannerNav || {})}
+          />
+          <AcrotopiaPrompt currentQuestion={displayQuestion} />
+          <AcrotopiaAskerStatus
+            asker={asker}
+            showStatus={!isQuestionShowable(displayQuestion)}
+          />
+          {isCurrentState && (
+            <AcrotopiaActionArea
+              hasPending={hasPendingAction}
+              meetingFilter={actionMeetingFilter}
+            />
+          )}
+          {isCurrentState && spectatorVotingOptions && (
+            <SpectatorResponses options={spectatorVotingOptions} />
+          )}
           {showResponses && responseHistory && responseHistory.length > 0 && (
-            <AcrotopiaResponses responseHistory={responseHistory} />
+            <AcrotopiaResponses
+              responseHistory={responseHistory}
+              players={players}
+            />
           )}
         </div>
       }

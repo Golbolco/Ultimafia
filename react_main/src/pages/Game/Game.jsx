@@ -1106,8 +1106,8 @@ export function TopBar() {
       });
   }
 
-  if (isPhoneDevice && game.selectedPanel !== "info") {
-    // The top bar doubles as an info panel for mobile
+  if (isPhoneDevice && game.selectedPanel !== "menu") {
+    // The top bar doubles as an info panel for mobile, shown in the Menu tab
     return <></>;
   }
 
@@ -1247,7 +1247,10 @@ export function TopBar() {
         <Typography variant="h3">
           {game.setup.name}
         </Typography>
-        <SetupInfo setup={game.setup} />
+        <SetupInfo
+          setup={game.setup}
+          gameTypeOptions={game.options?.gameTypeOptions}
+        />
       </Stack>
     );
   }
@@ -1288,16 +1291,7 @@ function MobileMenu() {
         paddingBottom: 0,
       }}
     >
-      <SettingsForm />
-      <Button
-        onClick={game.onLeaveGameClick}
-        startIcon={<img src={exit} alt="Leave" />}
-        sx={{
-          mt: "auto",
-        }}
-      >
-        Leave
-      </Button>
+      <SettingsForm onLeave={game.onLeaveGameClick} />
     </Stack>
   );
 
@@ -1412,6 +1406,7 @@ export function MobileLayout({
               icon={<i className="fas fa-info" />}
             />
           )}
+          <BottomNavigationAction {...innerRightNavigationProps} />
           {chatTab ? (
             <BottomNavigationAction
               label="Chat"
@@ -1431,7 +1426,6 @@ export function MobileLayout({
               {!singleState && <Divider orientation="vertical" flexItem />}
             </Stack>
           )}
-          <BottomNavigationAction {...innerRightNavigationProps} />
           <BottomNavigationAction
             label="Menu"
             value="menu"
@@ -4863,7 +4857,7 @@ export function LastWillEntry() {
   );
 }
 
-function SettingsForm({ handleClose = null }) {
+function SettingsForm({ handleClose = null, onLeave = null }) {
   const game = useContext(GameContext);
   const { settings, updateSettings } = game;
 
@@ -5019,7 +5013,7 @@ function SettingsForm({ handleClose = null }) {
           Cancel
         </Button>
       )}
-      <div style={{ flex: 1 }} />
+      {!handleClose && !onLeave && <div style={{ flex: 1 }} />}
       <Button
         color="primary"
         onClick={saveSettings}
@@ -5029,6 +5023,17 @@ function SettingsForm({ handleClose = null }) {
       >
         Save
       </Button>
+      {onLeave && (
+        <Button
+          onClick={onLeave}
+          startIcon={<img src={exit} alt="Leave" />}
+          sx={{
+            flex: "1",
+          }}
+        >
+          Leave
+        </Button>
+      )}
     </Stack>
   );
 
