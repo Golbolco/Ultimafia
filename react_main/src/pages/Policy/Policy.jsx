@@ -6,7 +6,7 @@ import PrivacyPolicy from "./PrivacyPolicy";
 import TermsOfService from "./TermsOfService";
 import Rules from "./Rules";
 import Moderation from "./Moderation";
-import { ModerationLog } from "./Moderation";
+import { ModRoster } from "./Moderation";
 import Reports from "./Reports";
 import CompetitiveManagement from "./Moderation/CompetitiveManagement";
 import StaffHandbook from "./Moderation/StaffHandbook";
@@ -31,7 +31,7 @@ export default function Policy() {
         <Route path="tos" element={<TermsOfService />} />
         <Route path="privacy" element={<PrivacyPolicy />} />
         <Route path="moderation" element={<Moderation />}>
-          <Route index element={<ModerationLog />} />
+          <Route index element={<ModRoster />} />
           <Route
             path="reports"
             element={<Reports basePath="/policy/moderation" />}

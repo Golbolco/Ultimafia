@@ -22,7 +22,7 @@ import "css/moderation.css";
 
 export { ModCommands, COMMAND_COLOR } from "./Moderation/ModCommands";
 
-export function ModerationLog() {
+export function ModRoster() {
   const { results = "", setResults = () => {}, user } =
     useOutletContext() || {};
   const [groups, setGroups] = useState([]);
@@ -124,7 +124,7 @@ function getTabValue(pathname) {
   if (pathname.includes("/competitive")) return "competitive";
   if (pathname.includes("/handbook")) return "handbook";
   if (pathname.includes("/flagged-intake")) return "flagged-intake";
-  return "log";
+  return "roster";
 }
 
 export default function Moderation() {
@@ -160,7 +160,7 @@ export default function Moderation() {
 
   const handleTabChange = (_, newValue) => {
     const base = "/policy/moderation";
-    if (newValue === "log") navigate(base);
+    if (newValue === "roster") navigate(base);
     else if (newValue === "reports") navigate(`${base}/reports`);
     else if (newValue === "competitive") navigate(`${base}/competitive`);
     else if (newValue === "handbook") navigate(`${base}/handbook`);
@@ -170,7 +170,7 @@ export default function Moderation() {
   return (
     <Box>
       <Tabs value={tabValue} onChange={handleTabChange}>
-        <Tab label="Moderation Log" value="log" />
+        <Tab label="Roster" value="roster" />
         <Tab label="Staff Handbook" value="handbook" />
         {user?.perms?.viewModActions && (
           <Tab label="Reports" value="reports" />
