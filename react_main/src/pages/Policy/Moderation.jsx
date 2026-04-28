@@ -15,7 +15,7 @@ import { Badge, NameWithAvatar, StatusIcon } from "pages/User/User";
 import { Loading } from "components/Loading";
 
 import { ModCommands } from "./Moderation/ModCommands";
-import { ModActions } from "./Moderation/ModActions";
+import Volunteer from "./Moderation/Volunteer";
 
 import "css/main.css";
 import "css/moderation.css";
@@ -111,7 +111,7 @@ export function ModerationLog() {
         </Grid>
         <Grid item xs={12} md={4} key={"mod-actions"}>
           <Stack direction="column" spacing={1}>
-            <ModActions setResults={setResults} />
+            <Volunteer />
           </Stack>
         </Grid>
       </Grid>
@@ -124,7 +124,6 @@ function getTabValue(pathname) {
   if (pathname.includes("/competitive")) return "competitive";
   if (pathname.includes("/handbook")) return "handbook";
   if (pathname.includes("/flagged-intake")) return "flagged-intake";
-  if (pathname.includes("/volunteer")) return "volunteer";
   return "log";
 }
 
@@ -166,7 +165,6 @@ export default function Moderation() {
     else if (newValue === "competitive") navigate(`${base}/competitive`);
     else if (newValue === "handbook") navigate(`${base}/handbook`);
     else if (newValue === "flagged-intake") navigate(`${base}/flagged-intake`);
-    else if (newValue === "volunteer") navigate(`${base}/volunteer`);
   };
 
   return (
@@ -174,7 +172,6 @@ export default function Moderation() {
       <Tabs value={tabValue} onChange={handleTabChange}>
         <Tab label="Moderation Log" value="log" />
         <Tab label="Staff Handbook" value="handbook" />
-        <Tab label="Volunteer" value="volunteer" />
         {user?.perms?.viewModActions && (
           <Tab label="Reports" value="reports" />
         )}
