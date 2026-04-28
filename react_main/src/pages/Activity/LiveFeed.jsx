@@ -1,15 +1,18 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import axios from "axios";
 import {
+  Autocomplete,
   Box,
   ButtonBase,
   Stack,
   Tab,
   Tabs,
+  TextField,
   Typography,
 } from "@mui/material";
 
 import { useErrorAlert } from "components/Alerts";
+import { useModCommands } from "pages/Policy/Moderation/commands";
 import ActivityRow from "./ActivityRow";
 
 // Three mutually-exclusive category tabs. Each owns a set of per-type sub
@@ -110,6 +113,15 @@ export default function LiveFeed({ windowKey }) {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(false);
+  const [staffNameFilter, setStaffNameFilter] = useState("");
+  const [staffNameQuery, setStaffNameQuery] = useState("");
+  const [staffNameOptions, setStaffNameOptions] = useState([]);
+  const [actionTypeFilter, setActionTypeFilter] = useState("");
+  const modCommands = useModCommands({}, () => {}, () => {});
+  const actionTypeOptions = useMemo(
+    () => Object.keys(modCommands).sort(),
+    [modCommands]
+  );
 
   const category = CATEGORIES[categoryIdx];
   const activeTypes = typesByCat[category.key];
@@ -135,6 +147,21 @@ export default function LiveFeed({ windowKey }) {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    if (category.key !== "mod") return;
+    if (staffNameQuery.length === 0) {
+      setStaffNameOptions([]);
+      return;
+    }
+
+    axios
+      .get(`/api/user/searchName?query=${staffNameQuery}`)
+      .then((res) => {
+        setStaffNameOptions(res.data.map((user) => user.name));
+      })
+      .catch((e) => errorAlertRef.current(e));
+  }, [category.key, staffNameQuery]);
 
   // Reset to first page when window or category changes so the user isn't
   // stuck on page N of a new filter's result set.
@@ -165,9 +192,25 @@ export default function LiveFeed({ windowKey }) {
       const subKey = typeMatch[it.type];
       // If a row's type isn't owned by any sub-filter in this tab, hide it.
       if (!subKey) return false;
-      return activeTypes.has(subKey);
+      if (!activeTypes.has(subKey)) return false;
+
+      if (category.key !== "mod") return true;
+
+      if (staffNameFilter) {
+        const actorName = String(it.actorName || "");
+        if (actorName.toLowerCase() !== staffNameFilter.toLowerCase()) {
+          return false;
+        }
+      }
+
+      if (actionTypeFilter) {
+        if (it.type !== "modAction") return false;
+        if (String(it.targetLabel || "") !== actionTypeFilter) return false;
+      }
+
+      return true;
     });
-  }, [items, typeMatch, activeTypes]);
+  }, [items, typeMatch, activeTypes, category.key, staffNameFilter, actionTypeFilter]);
 
   return (
     <Stack direction="column" spacing={2.5}>
@@ -213,6 +256,48 @@ export default function LiveFeed({ windowKey }) {
             onClick={() => toggleType(t.key)}
           />
         ))}
+        {category.key === "mod" && (
+          <>
+            <Autocomplete
+              options={staffNameOptions}
+              inputValue={staffNameQuery}
+              onInputChange={(e, newValue) => {
+                setStaffNameQuery(newValue);
+              }}
+              onChange={(e, newValue) => {
+                setStaffNameFilter(newValue || "");
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Staff Name"
+                  variant="outlined"
+                  size="small"
+                />
+              )}
+              sx={{ width: 220 }}
+              freeSolo
+              clearOnEscape
+            />
+            <Autocomplete
+              options={actionTypeOptions}
+              value={actionTypeFilter || null}
+              onChange={(e, newValue) => {
+                setActionTypeFilter(newValue || "");
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Action Type"
+                  variant="outlined"
+                  size="small"
+                />
+              )}
+              sx={{ width: 220 }}
+              clearOnEscape
+            />
+          </>
+        )}
         <Box sx={{ flexGrow: 1 }} />
         <ButtonBase
           onClick={load}
