@@ -52,6 +52,10 @@ function parseWindow(req) {
   return WINDOWS[w] ? { key: w, ms: WINDOWS[w] } : { key: "24h", ms: WINDOWS["24h"] };
 }
 
+function getGameTrendUnit(windowKey) {
+  return windowKey === "24h" ? "hour" : "day";
+}
+
 async function guard(req, res) {
   const userId = await routeUtils.verifyLoggedIn(req);
   if (!userId) return null;
@@ -162,7 +166,9 @@ router.get("/games", async function (req, res) {
 
     const cutoff = Date.now() - ms;
 
-    const [mafiaAgg, typeAgg, topSetupsAgg] = await Promise.all([
+    const bucketUnit = getGameTrendUnit(windowKey);
+
+    const [mafiaAgg, typeAgg, topSetupsAgg, trendAgg] = await Promise.all([
       // Mafia games split into competitive / ranked / unranked. Competitive
       // takes precedence over ranked since a comp game is also ranked.
       models.Game.aggregate([
@@ -213,12 +219,36 @@ router.get("/games", async function (req, res) {
           },
         },
       ]),
+      models.Game.aggregate([
+        { $match: { startTime: { $gte: cutoff } } },
+        {
+          $project: {
+            bucket: {
+              $toLong: {
+                $dateTrunc: {
+                  date: { $toDate: "$startTime" },
+                  unit: bucketUnit,
+                  timezone: "UTC",
+                },
+              },
+            },
+          },
+        },
+        { $group: { _id: "$bucket", count: { $sum: 1 } } },
+        { $sort: { _id: 1 } },
+      ]),
     ]);
 
     res.status(200).send({
       mafiaGames: mafiaAgg.map((r) => ({ label: r._id, count: r.count })),
       gameTypes: typeAgg.map((r) => ({ label: r._id || "Unknown", count: r.count })),
       topSetups: topSetupsAgg,
+      gameTrend: {
+        bucketUnit,
+        start: cutoff,
+        end: Date.now(),
+        points: trendAgg.map((r) => ({ bucketStart: r._id, count: r.count })),
+      },
     });
   } catch (e) {
     logger.error(e);
