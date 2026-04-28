@@ -95,7 +95,6 @@ import { getSetupBackgroundColor } from "../Play/LobbyBrowser/gameRowColors.js";
 
 import lore from "images/emotes/lore.webp";
 import poison from "images/emotes/poison.webp";
-import unicorn from "images/emotes/unicorn.webp";
 import exit from "images/emotes/exit.png";
 import veg from "images/emotes/veg.webp";
 import { usePopover, InfoPopover, SetupInfo } from "components/Popover";
@@ -1025,10 +1024,7 @@ export default function Game() {
           gameType={gameType}
           currentSetup={setup}
           onSetupChange={(setupId) => {
-            socket.send("speak", {
-              content: `/changeSetup ${setupId}`,
-              meetingId: "main",
-            });
+            socket.send("changeSetup", setupId);
             setChangeSetupDialogOpen(false);
           }}
         />
@@ -1167,21 +1163,6 @@ export function TopBar() {
           </IconButton>
         </Tooltip>
       )}
-
-      {!game.review &&
-        game.history.currentState === -1 &&
-        game.self &&
-        game.players[game.self] &&
-        game.players[game.self].userId === game.hostId && (
-          <Tooltip title="Change Setup">
-            <IconButton
-              size="large"
-              onClick={() => game.setChangeSetupDialogOpen(true)}
-            >
-              <img src={unicorn} alt="Change Setup" />
-            </IconButton>
-          </Tooltip>
-        )}
 
       {!game.review && game.history.currentState === -2 && (
         <Tooltip title="Rehost">
@@ -5023,6 +5004,21 @@ function SettingsForm({ handleClose = null, onLeave = null }) {
       >
         Save
       </Button>
+      {!game.review &&
+        !game.options?.competitive &&
+        game.history.currentState === -1 &&
+        game.self &&
+        game.players[game.self] &&
+        game.players[game.self].userId === game.hostId && (
+          <Button
+            onClick={() => game.setChangeSetupDialogOpen(true)}
+            sx={{
+              flex: "1",
+            }}
+          >
+            Change Setup
+          </Button>
+        )}
       {onLeave && (
         <Button
           onClick={onLeave}
