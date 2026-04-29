@@ -6531,12 +6531,12 @@ const roleData = {
     },
   },
   "Spot It": {
-    Towerer: {
+    Steeplejack: {
       alignment: "Town",
       tags: ["None"],
       description: ["Turns the game into The Tower, where players must find the matching symbol with their card!"],
     },
-    Weller: {
+    Welldigger: {
       alignment: "Town",
       tags: ["None"],
       description: ["Turns the game into The Well, where players must get rid of their cards first!"],
