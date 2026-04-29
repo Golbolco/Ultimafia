@@ -10,8 +10,7 @@ import {
   TextMeetingLayout,
   ActionList,
 } from "./Game";
-import { GameContext } from "../../Contexts";
-import roleData from "../../../../data/roles";
+import { GameContext, SiteInfoContext } from "../../Contexts";
 import "css/game.css";
 import "css/gameAcrotopia.css";
 const images = require.context('../../images/roles', true, /\.png$/);
@@ -253,13 +252,14 @@ function SpotItCard({ symbols, onSymbolClick, isCenter }) {
 }
 
 function SymbolIcon({ symbol, onClick, size }) {
+  const siteInfo = useContext(SiteInfoContext);
   const roleKey = symbol
     .replace("-vivid.png", "")
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
-  const roleInfo = roleData?.Mafia?.[roleKey];
+  const roleInfo = siteInfo?.rolesRaw?.Mafia?.[roleKey];
   const alignment = (roleInfo?.alignment || "Village").toLowerCase();
 
   let imageSrc;
