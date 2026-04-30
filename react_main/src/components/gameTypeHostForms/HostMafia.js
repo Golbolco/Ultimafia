@@ -95,7 +95,6 @@ export default function HostMafia() {
       ref: "readyCheck",
       value: defaults.readyCheck,
       type: "boolean",
-      showIf: ["!competitive"],
     },
     {
       label: "No Vegging",
