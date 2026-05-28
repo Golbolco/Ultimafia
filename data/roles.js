@@ -6567,6 +6567,20 @@ const roleData = {
       description: ["Turns the game into The Well, where players must get rid of their cards first!"],
     }, 
   },
+  Settlers: {
+    Settler: {
+      alignment: "Settler",
+      tags: ["None"],
+      description: [
+        "Build Villages and Roads, collect resources, and race to 10 points.",
+      ],
+    },
+    Host: {
+      alignment: "Host",
+      tags: ["None"],
+      description: ["Facilitates the game."],
+    },
+  },
 };
 
 module.exports = roleData;

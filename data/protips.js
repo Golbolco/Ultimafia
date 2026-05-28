@@ -83,6 +83,10 @@ const protips = {
     "Look for opportunities to attack weaker neighboring territories.",
     "Remember that attacking increases your dice count, so plan your moves accordingly.",
   ],
+  Settlers: [
+    "Opening placement matters more than any single build later.",
+    "Roads connect future villages and trading spots; plan two turns ahead.",
+  ],
 };
 
 module.exports = protips;

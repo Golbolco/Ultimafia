@@ -159,6 +159,7 @@ const effectData = {
   "Liars Dice": {},
   "Texas Hold Em": {},
   Cheat: {},
+  Settlers: {},
 };
 
 module.exports = effectData;

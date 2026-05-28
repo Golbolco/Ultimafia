@@ -222,6 +222,7 @@ const tagData = {
   Battleship: {},
   "Spot It": {},
   "Dice Wars": {},
+  Settlers: {},
 };
 
 module.exports = tagData;

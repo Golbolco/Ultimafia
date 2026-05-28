@@ -340,6 +340,28 @@ const learnGameDescriptions = [
       },
     ],
   },
+  {
+    gameType: "Settlers",
+    description: [
+      {
+        type: "paragraph",
+        parts: [
+          { type: "text", content: "Based on the board game " },
+          {
+            type: "link",
+            href: "https://www.catan.com/",
+            label: "Settlers of Catan",
+          },
+          { type: "text", content: "." },
+        ],
+      },
+      {
+        type: "paragraph",
+        content:
+          "Settlers is a resource and expansion game for 3-4 players. Build Villages and Roads, gather resources from terrain hexes, and grow your network toward the victory threshold.",
+      },
+    ],
+  },
 ];
 
 const learnGameDescriptionByType = learnGameDescriptions.reduce(

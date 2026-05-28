@@ -389,6 +389,7 @@ const gameSettingData = {
   "Dice Wars": {},
   "Spot It": {},
   Battleship: {},
+  Settlers: {},
   "Connect Four": {
     Whispers: {
       category: "Standard",

@@ -214,6 +214,7 @@ const modifierData = {
   "Connect Four": {},
   Battleship: {},
   "Spot It": {},
+  Settlers: {},
 };
 
 module.exports = modifierData;
