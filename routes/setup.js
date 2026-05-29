@@ -1558,6 +1558,33 @@ const countChecks = {
 
     return true;
   },
+  Settlers: (roles, count, total, closed) => {
+    let settlerCount = 0;
+    let hostCount = 0;
+
+    if (closed) {
+      settlerCount = count["Settler"] || 0;
+      hostCount = count["Host"] || 0;
+    } else {
+      for (let role in roles) {
+        const roleName = role.split(":")[0];
+        if (roleName === "Settler") settlerCount += roles[role];
+        else if (roleName === "Host") hostCount += roles[role];
+      }
+    }
+
+    if (hostCount > 1) return "At most one Host is allowed.";
+
+    if (settlerCount < 3 || settlerCount > 4) {
+      return "Must have between 3 and 4 Settlers.";
+    }
+
+    if (settlerCount + hostCount !== total) {
+      return "Settler and Host counts must add up to the total player count.";
+    }
+
+    return true;
+  },
 };
 
 const optionsChecks = {
@@ -1627,6 +1654,9 @@ const optionsChecks = {
     return setup;
   },
   Battleship: (setup) => {
+    return setup;
+  },
+  Settlers: (setup) => {
     return setup;
   },
 };
