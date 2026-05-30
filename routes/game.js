@@ -1388,6 +1388,16 @@ const settingsChecks = {
   Battleship: (settings, setup) => {
     return {};
   },
+  Settlers: (settings, setup) => {
+    let maxRounds = Number(settings.maxRounds);
+    if (isNaN(maxRounds)) maxRounds = Number(setup.maxRounds) || 40;
+
+    if (maxRounds < 10 || maxRounds > 120) {
+      return "Max rounds must be between 10 and 120.";
+    }
+
+    return { maxRounds };
+  },
 };
 
 module.exports = router;
