@@ -6,7 +6,7 @@ const Winners = require("../../core/Winners");
 const TERRAINS = [
   { name: "Pasture", resource: "Livestock", count: 4, color: "#9ccc65" },
   { name: "Field", resource: "Bread", count: 4, color: "#fdd835" },
-  { name: "Forest", resource: "Timber", count: 3, color: "#2e7d32" },
+  { name: "Forest", resource: "Timber", count: 4, color: "#2e7d32" },
   { name: "Hill", resource: "Clay", count: 3, color: "#ef6c00" },
   { name: "Mountain", resource: "Stone", count: 3, color: "#757575" },
   { name: "Desert", resource: null, count: 1, color: "#d7b98e" },
